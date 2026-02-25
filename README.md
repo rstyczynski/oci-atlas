@@ -327,7 +327,9 @@ bash cli_client/test/validate_linux.sh
 **Node.js client (Jest):**
 ```bash
 # macOS
-cd node_client && npm test
+cd node_client
+npm test
+cd ..
 
 # Linux via Podman (node:20-slim)
 bash node_client/test/validate_linux.sh
