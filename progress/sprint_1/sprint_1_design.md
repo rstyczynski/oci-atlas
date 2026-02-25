@@ -45,10 +45,10 @@ tenancies/v1   (new)         →  tenancy + per-region subscription attributes
 
 **Data Flow:**
 
-A client authenticating as tenancy `avq_prod` in region `eu-zurich-1` can:
+A client authenticating as tenancy `acme_prod` in region `eu-zurich-1` can:
 
 1. Look up `regions/v2[eu-zurich-1]` → public CIDRs for the physical region
-2. Look up `tenancies/v1[avq_prod].regions[eu-zurich-1]` → proxy, vault, toolchain, observability
+2. Look up `tenancies/v1[acme_prod].regions[eu-zurich-1]` → proxy, vault, toolchain, observability
 
 ### Technical Specification
 
@@ -139,7 +139,12 @@ Map keyed by tenancy short name. Each entry contains realm membership and a regi
       },
       "regions": {
         "type": "object",
-        "description": "Per-region subscription attributes, keyed by OCI region identifier (e.g. eu-zurich-1)",
+        "description": "Per-region subscription attributes, keyed by OCI region identifier (e.g. eu-zurich-1). Keys must correspond to entries in regions/v2 — enforced by data governance, not schema.",
+        "$comment": "Region keys reference regions/v2 map keys. Cross-document referential integrity is validated by tooling outside JSON Schema.",
+        "propertyNames": {
+          "pattern": "^[a-z]+-[a-z]+-[0-9]+$",
+          "description": "OCI region identifier format, e.g. eu-zurich-1"
+        },
         "additionalProperties": {
           "type": "object",
           "required": ["network", "security", "toolchain", "observability"],
@@ -270,6 +275,16 @@ Both schema files pass `ajv compile --spec=draft2020` without errors.
 
 **Reusability:** `cidr_entry` `$defs` pattern reused from `regions_v1` in both new schemas.
 
+**DAL Implications (future sprint):**
+
+The v2 data model requires a unified DAL that is aware of both `regions/v2` and `tenancies/v1` as data sources. Key constraints for the future DAL design:
+
+1. **Tenancy name as required input** — the current DALs auto-discover region from the OCI SDK but have no tenancy name awareness. A v2 DAL must accept the tenancy short name (e.g. `acme_prod`) via configuration, environment variable, or OCI SDK tenancy OCID resolution.
+2. **Two internal fetches, single external API** — a call to `getProxy()` or `getPublicCIDR()` must internally route to the correct domain (`tenancies/v1` or `regions/v2`) transparently to the caller.
+3. **Cross-document key consistency** — the region identifier used as key in `tenancies/v1[*].regions` must match the key used in `regions/v2`. Enforced by data governance convention and future validation tooling, not by JSON Schema.
+
+A `GD-2` backlog item is proposed in `sprint_1_proposedchanges.md` to cover the unified DAL implementation.
+
 ### Design Decisions
 
 **Decision 1:** `network.private` in `tenancies/v1` mirrors `network.public` structure (array of `cidr_entry`)
@@ -280,8 +295,9 @@ Both schema files pass `ajv compile --spec=draft2020` without errors.
 **Rationale:** Per Product Owner answer — a tenancy belongs to one realm. Consistent with BACKLOG diagram.
 **Alternatives Considered:** Multi-realm per tenancy — out of scope for v1.
 
-**Decision 3:** `regions` sub-map in `tenancies/v1` uses `additionalProperties` (no key constraint)
-**Rationale:** JSON Schema cannot enforce foreign-key relationships; key format convention (`eu-zurich-1`) is a data governance rule, not a schema rule.
+**Decision 3:** `regions` sub-map in `tenancies/v1` uses `propertyNames` pattern + `additionalProperties`
+**Rationale:** JSON Schema cannot enforce cross-file foreign-key relationships; key format (`eu-zurich-1`) is enforced by `propertyNames` pattern, while referential integrity (key must exist in `regions/v2`) is a data governance convention enforced by future validation tooling (see proposed GD-2).
+**Alternatives Considered:** No key constraint at all — rejected as too permissive; enum of region names — rejected as brittle (requires schema update per new region).
 
 ### Open Design Questions
 
