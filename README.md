@@ -4,8 +4,19 @@ Catalog of OCI region attributes (proxy, network, realm membership, etc.), realm
 
 Global directory is the equivalent of `jq data.json` — except the data file lives centrally in OCI Object Storage, is schema-validated before every upload, versioned by domain, and consumed through structured data access layers in Node.js, CLI, and Terraform instead of ad-hoc one-off queries.
 
-## Contents 
+## Contents
 
+- [Quick start](#quick-start)
+- [Testing](#testing)
+- [Repository structure](#repository-structure)
+- [Data domains](#data-domains)
+  - [Object path convention](#object-path-convention)
+  - [Data definition](#data-definition)
+  - [Auto-discovery](#auto-discovery)
+  - [Data Access Layer (DAL)](#data-access-layer-dal)
+- [Data structures](#data-structures)
+  - [`realms/v1` schema](#realmsv1-schema)
+  - [`regions/v1` schema](#regionsv1-schema)
 
 ## Quick start
 
