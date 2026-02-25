@@ -1,0 +1,23 @@
+{
+  "name": "global-directory-node-client",
+  "version": "1.0.0",
+  "description": "Node.js/TypeScript client for the OCI global directory (regions, proxy lookup)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "example:regions": "ts-node examples/regions.ts",
+    "example:region": "ts-node examples/region.ts",
+    "example:realms": "ts-node examples/realms.ts",
+    "example:realm": "ts-node examples/realm.ts"
+  },
+  "dependencies": {
+    "oci-common": "^2.125.1",
+    "oci-objectstorage": "^2.125.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "regions/v1",
+  "title": "regions/v1",
+  "description": "OCI region attributes — network, proxy, vault, toolchain, observability",
+  "type": "object",
+  "properties": {
+    "last_updated_timestamp": {
+      "type": "string",
+      "description": "ISO 8601 UTC timestamp injected by tf_manager at upload time"
+    }
+  },
+  "additionalProperties": {
+    "type": "object",
+    "required": ["key", "realm", "network", "security", "toolchain", "observability"],
+    "additionalProperties": false,
+    "properties": {
+      "key": {
+        "type": "string",
+        "description": "Short region code, e.g. ZRH, FRA"
+      },
+      "realm": {
+        "type": "string",
+        "description": "Realm the region belongs to, e.g. oc1, tst01"
+      },
+      "network": {
+        "type": "object",
+        "required": ["public", "internal", "proxy"],
+        "additionalProperties": false,
+        "properties": {
+          "public": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/cidr_entry" }
+          },
+          "internal": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/cidr_entry" }
+          },
+          "proxy": {
+            "type": "object",
+            "required": ["url", "ip", "port", "noproxy"],
+            "additionalProperties": false,
+            "properties": {
+              "url":     { "type": "string" },
+              "ip":      { "type": "string" },
+              "port":    { "type": "string" },
+              "noproxy": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "security": {
+        "type": "object",
+        "required": ["vault"],
+        "additionalProperties": false,
+        "properties": {
+          "vault": {
+            "type": "object",
+            "required": ["ocid", "crypto_endpoint", "management_endpoint"],
+            "additionalProperties": false,
+            "properties": {
+              "ocid":                { "type": "string" },
+              "crypto_endpoint":     { "type": "string" },
+              "management_endpoint": { "type": "string" }
+            }
+          }
+        }
+      },
+      "toolchain": {
+        "type": "object",
+        "required": ["github"],
+        "additionalProperties": false,
+        "properties": {
+          "github": {
+            "type": "object",
+            "required": ["runner"],
+            "additionalProperties": false,
+            "properties": {
+              "runner": {
+                "type": "object",
+                "required": ["labels", "image"],
+                "additionalProperties": false,
+                "properties": {
+                  "labels": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "type": "string" }
+                  },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "observability": {
+        "type": "object",
+        "required": ["prometheus_scraping_cidr", "loki_destination_cidr", "loki_fqdn"],
+        "additionalProperties": false,
+        "properties": {
+          "prometheus_scraping_cidr": { "type": "string" },
+          "loki_destination_cidr":    { "type": "string" },
+          "loki_fqdn":                { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "cidr_entry": {
+      "type": "object",
+      "required": ["cidr", "description", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "cidr":        { "type": "string" },
+        "description": { "type": "string" },
+        "tags":        { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

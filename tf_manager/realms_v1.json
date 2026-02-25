@@ -1,0 +1,23 @@
+{
+    "oc1": {
+        "type": "public",
+        "geo-region": "global",
+        "name": "OCI Public",
+        "description": "Standard commercial OCI realm (oraclecloud.com)",
+        "api_domain": "oraclecloud.com"
+    },
+    "oc19": {
+        "type": "sovereign",
+        "geo-region": "eu",
+        "name": "OCI EU Sovereign",
+        "description": "EU Sovereign Cloud — data residency and operational sovereignty within the European Union (oraclecloud.eu)",
+        "api_domain": "oraclecloud.eu"
+    },
+    "tst01": {
+        "type": "public",
+        "geo-region": "test",
+        "name": "Test dataset",
+        "description": "Non existing test dataset",
+        "api_domain": "test.oraclecloud.com"
+    }
+}

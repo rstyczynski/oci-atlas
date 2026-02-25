@@ -1,0 +1,4 @@
+region = "eu-zurich-1"
+
+# Other valid values: "eu-region1", "eu-region2", "region1", "region2"
+# When not set, the OCI provider reads the region from ~/.oci/config (same as TF_VAR_region unset).

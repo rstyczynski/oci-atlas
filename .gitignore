@@ -1,0 +1,24 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+terraform.tfplan
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Node.js
+node_modules/
+dist/
+*.js.map
+
+# OCI credentials / config (never commit)
+*.pem
+*.key
+oci_config
+
+# macOS
+.DS_Store

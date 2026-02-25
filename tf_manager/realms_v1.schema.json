@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "realms/v1",
+  "title": "realms/v1",
+  "description": "Realm-level attributes — type, name, geo-region, API domain",
+  "type": "object",
+  "properties": {
+    "last_updated_timestamp": {
+      "type": "string",
+      "description": "ISO 8601 UTC timestamp injected by tf_manager at upload time"
+    }
+  },
+  "additionalProperties": {
+    "type": "object",
+    "required": ["type", "geo-region", "name", "description", "api_domain"],
+    "additionalProperties": false,
+    "properties": {
+      "type": {
+        "type": "string",
+        "description": "Deployment model of the realm",
+        "enum": ["public", "government", "sovereign", "drcc", "alloy", "airgapped"]
+      },
+      "geo-region":  { "type": "string", "description": "Geographic scope, e.g. global, eu" },
+      "name":        { "type": "string", "description": "Human-readable realm name, e.g. OCI Public" },
+      "description": { "type": "string", "description": "Longer description of the realm" },
+      "api_domain":  { "type": "string", "description": "Second-level domain for OCI API endpoints in this realm, e.g. oraclecloud.com" }
+    }
+  }
+}
