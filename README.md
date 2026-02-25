@@ -7,7 +7,6 @@ Global directory is the equivalent of `jq data.json` — except the data file li
 ## Contents
 
 - [Quick start](#quick-start)
-- [Testing](#testing)
 - [Repository structure](#repository-structure)
 - [Data domains](#data-domains)
   - [Object path convention](#object-path-convention)
@@ -17,6 +16,11 @@ Global directory is the equivalent of `jq data.json` — except the data file li
 - [Data structures](#data-structures)
   - [`realms/v1` schema](#realmsv1-schema)
   - [`regions/v1` schema](#regionsv1-schema)
+- [Client libraries](#client-libraries)
+  - [Shell (CLI)](#shell-cli)
+  - [Node.js](#nodejs)
+  - [Terraform](#terraform)
+- [Testing](#testing)
 
 ## Quick start
 
@@ -96,30 +100,6 @@ cd ..
 
 cd ../..
 ```
-
-## Testing
-
-Client logic (JSON parsing, field access, DAL methods) is validated without any OCI connection. Tests override the data-fetch layer to read from the local JSON files in `tf_manager/` instead of calling OCI Object Storage. Both test suites can be run on macOS or inside a Linux container via Podman.
-
-**Shell client:**
-```bash
-# macOS
-bash cli_client/test/run_tests.sh
-
-# Linux via Podman (Ubuntu 24.04 default; override with IMAGE=oraclelinux:8)
-bash cli_client/test/validate_linux.sh
-```
-
-**Node.js client (Jest):**
-```bash
-# macOS
-cd node_client && npm test
-
-# Linux via Podman (node:20-slim)
-bash node_client/test/validate_linux.sh
-```
-
-Tests use `ts-jest` with value-level assertions (`expect(...).toBe`, `toContain`, `toHaveProperty`, etc.) grouped in `describe` blocks. Both client test suites exit non-zero on any failure, making them suitable for CI pipelines.
 
 ## Repository structure
 
@@ -306,3 +286,51 @@ Top-level keys are OCI region identifiers. Each entry carries realm membership, 
 | `observability.prometheus_scraping_cidr` | string | CIDR allowed to scrape Prometheus |
 | `observability.loki_destination_cidr` | string | CIDR of the Loki destination |
 | `observability.loki_fqdn` | string | FQDN of the Loki endpoint |
+
+## Client libraries
+
+Each client library contains a dedicated **Data Access Layer (DAL)** per domain and schema version. The DAL encodes the field structure of a specific schema version, exposes typed getter methods, and handles all OCI Object Storage interaction — callers never parse raw JSON directly.
+
+All three libraries share the same DAL naming convention (`gdir_<domain>_<version>`) and the same auto-discovery chain (region → realm → tenancy from the active OCI connection). They are fully independent and can be used individually.
+
+### Shell (CLI)
+
+Bash functions sourced from `cli_client/gdir_<domain>_<version>.sh`. No compilation step; requires only `bash`, `jq`, and the OCI CLI.
+
+→ See [`cli_client/README.md`](cli_client/README.md) for function reference, env-var overrides, and usage examples.
+
+### Node.js
+
+TypeScript classes in `node_client/src/gdir_<domain>_<version>.ts`, compiled with `tsc` and consumed via the package entry point. Async getter methods return typed interfaces defined in `types.ts`.
+
+→ See [`node_client/README.md`](node_client/README.md) for API reference, constructor config, and example scripts.
+
+### Terraform
+
+Reusable modules under `tf_client/gdir_<domain>_<version>/`. Each module exposes typed `output` blocks and is consumed by example configurations under `tf_client/examples/`.
+
+→ See [`tf_client/README.md`](tf_client/README.md) for module inputs, outputs, and example usage.
+
+## Testing
+
+Client logic (JSON parsing, field access, DAL methods) is validated without any OCI connection. Tests override the data-fetch layer to read from the local JSON files in `tf_manager/` instead of calling OCI Object Storage. Both test suites can be run on macOS or inside a Linux container via Podman.
+
+**Shell client:**
+```bash
+# macOS
+bash cli_client/test/run_tests.sh
+
+# Linux via Podman (Ubuntu 24.04 default; override with IMAGE=oraclelinux:8)
+bash cli_client/test/validate_linux.sh
+```
+
+**Node.js client (Jest):**
+```bash
+# macOS
+cd node_client && npm test
+
+# Linux via Podman (node:20-slim)
+bash node_client/test/validate_linux.sh
+```
+
+Tests use `ts-jest` with value-level assertions (`expect(...).toBe`, `toContain`, `toHaveProperty`, etc.) grouped in `describe` blocks. Both client test suites exit non-zero on any failure, making them suitable for CI pipelines.
