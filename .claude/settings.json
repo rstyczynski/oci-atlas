@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git submodule update --remote RUPStrikesBack)",
+      "Bash(git add .gitmodules RUPStrikesBack BACKLOG.md PLAN.md .claude/)"
+    ]
+  }
+}
