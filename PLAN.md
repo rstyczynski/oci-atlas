@@ -6,6 +6,16 @@ Instruction for the operator: keep the development sprint by sprint by changing 
 
 Instruction for the implementor: keep analysis, design and implementation as simple as possible to achieve goals presented as Backlog Items. Remove each not required feature sticking to the Backlog Items definitions.
 
+## Sprint 1 - Foundation Data Model
+
+Status: Progress
+Mode: managed
+
+Backlog Items:
+
+* GD-1. Build foundation data model
+
+
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 
 ## Sprint 1 - <Sprint Name>

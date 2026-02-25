@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "regions/v2",
+  "title": "regions/v2",
+  "description": "OCI physical region attributes — public network CIDRs only. Tenancy-specific attributes (proxy, vault, toolchain, observability) are in tenancies/v1.",
+  "type": "object",
+  "properties": {
+    "last_updated_timestamp": {
+      "type": "string",
+      "description": "ISO 8601 UTC timestamp injected by tf_manager at upload time"
+    }
+  },
+  "additionalProperties": {
+    "type": "object",
+    "required": ["key", "realm", "network"],
+    "additionalProperties": false,
+    "properties": {
+      "key": {
+        "type": "string",
+        "description": "Short region code, e.g. ZRH, FRA"
+      },
+      "realm": {
+        "type": "string",
+        "description": "Realm the region belongs to, e.g. oc1"
+      },
+      "network": {
+        "type": "object",
+        "required": ["public"],
+        "additionalProperties": false,
+        "properties": {
+          "public": {
+            "type": "array",
+            "description": "Public CIDR blocks published by Oracle for this region",
+            "items": { "$ref": "#/$defs/cidr_entry" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "cidr_entry": {
+      "type": "object",
+      "required": ["cidr", "description", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "cidr":        { "type": "string" },
+        "description": { "type": "string" },
+        "tags":        { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

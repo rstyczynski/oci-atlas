@@ -8,14 +8,34 @@ Global Directory is a centralized catalog system for Oracle Cloud Infrastructure
 
 Project aim is to deliver all the features listed in a below Backlog. Backlog Items selected for implementation are added to iterations detailed in `PLAN.md`. Full list of Backlog Items presents general direction and aim for this project.
 
-<!-- TODO: Define your Backlog Items below. Use the GD-N prefix. Example format:
+### GD-1. Build foundation data model
 
-### GD-1. Title of backlog item
+The region properties are strictly related to a tenancy for private attributes, and to physical region for physical attributes as e.g. public CIDRs. Both are associated to realm. Single region belongs to a single realm. The same with Tenancy. The tenancy may be subscribed to multiple realms.
 
-Description of what needs to be done and why.
+                    +----------------------+
+                    |         REALM        |
+                    +----------------------+
+                      1 |               | 1
+                        |               |
+                        v               v
+                 +------------+   +------------+
+                 |   REGION   |   |  TENANCY   |
+                 +------------+   +------------+
+                      ^                 ^
+                      |                 |
+                      +------- M:N -----+
+                          subscription
 
-### GD-2. Title of second item
+Currently realm_v1 describes a realm, and region_v1 as is described combined single tenancy from region point of view.
 
-Description of what needs to be done.
+The goal for a data model is to simplify runtime side scripts and programs' in environment discovery under defined OCI security context a.k.a connection.
 
--->
+This task defines data model for realm, region, and tenancy to be used by clients to discover for current region:
+1. proxy URL
+2. proxy IP, port
+3. prometheus attributes for current region
+4. github attributes for current region
+
+Note that region_v1 data set combines real regions and tenancies, what should be divided into proper data domains.
+
+Product of this task is to produce data model v2 reflecting tuple: realm, region, tenancy. It's just a model w/o provisioning add w/o DAL.

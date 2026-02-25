@@ -1,0 +1,126 @@
+{
+  "last_updated_timestamp": "2026-02-25T12:00:00Z",
+  "eu-zurich-1": {
+    "key": "ZRH",
+    "realm": "oc1",
+    "network": {
+      "public": [
+        { "cidr": "132.226.216.0/21", "description": "OCI compute", "tags": ["OCI"] },
+        { "cidr": "140.86.192.0/20",  "description": "OCI compute", "tags": ["OCI"] },
+        { "cidr": "140.86.208.0/21",  "description": "OCI compute", "tags": ["OCI"] },
+        { "cidr": "140.238.168.0/21", "description": "OCI compute", "tags": ["OCI"] },
+        { "cidr": "140.238.208.0/20", "description": "OCI compute", "tags": ["OCI"] },
+        { "cidr": "144.24.232.0/21",  "description": "OCI compute", "tags": ["OCI"] },
+        { "cidr": "144.24.240.0/20",  "description": "OCI compute", "tags": ["OCI"] },
+        { "cidr": "152.67.64.0/19",   "description": "OCI compute", "tags": ["OCI"] },
+        { "cidr": "134.70.88.0/22",   "description": "Oracle Services Network / Object Storage", "tags": ["OSN", "OBJECT_STORAGE"] },
+        { "cidr": "140.91.36.0/23",   "description": "Oracle Services Network", "tags": ["OSN"] },
+        { "cidr": "140.204.16.128/25","description": "Oracle Services Network", "tags": ["OSN"] },
+        { "cidr": "141.253.208.0/22", "description": "Oracle Services Network", "tags": ["OSN"] },
+        { "cidr": "192.29.56.0/23",   "description": "Oracle Services Network", "tags": ["OSN"] },
+        { "cidr": "192.29.60.0/23",   "description": "Oracle Services Network", "tags": ["OSN"] },
+        { "cidr": "192.29.178.0/23",  "description": "Oracle Services Network", "tags": ["OSN"] },
+        { "cidr": "192.29.180.0/22",  "description": "Oracle Services Network", "tags": ["OSN"] }
+      ]
+    }
+  },
+  "af-region-1": {
+    "key": "AF1",
+    "realm": "oc1",
+    "network": {
+      "public": [
+        { "cidr": "130.35.10.0/24", "description": "OCI public region1", "tags": ["public", "oci"] }
+      ]
+    }
+  },
+  "af-region-2": {
+    "key": "AF2",
+    "realm": "oc19",
+    "network": {
+      "public": [
+        { "cidr": "140.91.0.0/16", "description": "OCI public region2", "tags": ["public", "oci"] }
+      ]
+    }
+  },
+  "eu-region-2": {
+    "key": "EU2",
+    "realm": "oc19",
+    "network": {
+      "public": [
+        { "cidr": "140.91.10.0/24", "description": "OCI public eu-region2", "tags": ["public", "oci"] }
+      ]
+    }
+  },
+  "eu-region-1": {
+    "key": "EU1",
+    "realm": "oc1",
+    "network": {
+      "public": [
+        { "cidr": "130.35.20.0/24", "description": "OCI public eu-region1", "tags": ["public", "oci"] }
+      ]
+    }
+  },
+  "eu-region-3": {
+    "key": "EU3",
+    "realm": "oc1",
+    "network": {
+      "public": [
+        { "cidr": "130.35.21.0/24", "description": "OCI public eu-region-1a", "tags": ["public", "oci"] }
+      ]
+    }
+  },
+  "tst-region-1": {
+    "key": "T01",
+    "realm": "tst01",
+    "network": {
+      "public": [
+        { "cidr": "192.0.2.0/24", "description": "Test public tst-region-1", "tags": ["public", "test"] }
+      ]
+    }
+  },
+  "tst-region-2": {
+    "key": "T02",
+    "realm": "tst01",
+    "network": {
+      "public": [
+        { "cidr": "192.0.3.0/24", "description": "Test public tst-region-2", "tags": ["public", "test"] }
+      ]
+    }
+  },
+  "tst-region-3": {
+    "key": "T03",
+    "realm": "tst02",
+    "network": {
+      "public": [
+        { "cidr": "198.51.100.0/24", "description": "Test public tst-region-3", "tags": ["public", "test"] }
+      ]
+    }
+  },
+  "tst-region-4": {
+    "key": "T04",
+    "realm": "tst02",
+    "network": {
+      "public": [
+        { "cidr": "198.51.101.0/24", "description": "Test public tst-region-4", "tags": ["public", "test"] }
+      ]
+    }
+  },
+  "tst-region-5": {
+    "key": "T05",
+    "realm": "tst02",
+    "network": {
+      "public": [
+        { "cidr": "198.51.102.0/24", "description": "Test public tst-region-5", "tags": ["public", "test"] }
+      ]
+    }
+  },
+  "tst-region-6": {
+    "key": "T06",
+    "realm": "tst02",
+    "network": {
+      "public": [
+        { "cidr": "198.51.103.0/24", "description": "Test public tst-region-6", "tags": ["public", "test"] }
+      ]
+    }
+  }
+}

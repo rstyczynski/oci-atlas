@@ -2,7 +2,7 @@
 
 ## GD-1. Build foundation data model
 
-Status: Proposed
+Status: Accepted
 
 ### Requirement Summary
 
@@ -326,4 +326,4 @@ Low — schema-only sprint, no runtime impact.
 
 ## Design Approval Status
 
-Awaiting Review
+Approved
