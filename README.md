@@ -21,6 +21,7 @@ Global directory is the equivalent of `jq data.json` — except the data file li
   - [Node.js](#nodejs)
   - [Terraform](#terraform)
 - [Testing](#testing)
+- [References](#referenes)
 
 ## Quick start
 
@@ -336,3 +337,7 @@ bash node_client/test/validate_linux.sh
 ```
 
 Tests use `ts-jest` with value-level assertions (`expect(...).toBe`, `toContain`, `toHaveProperty`, etc.) grouped in `describe` blocks. Both client test suites exit non-zero on any failure, making them suitable for CI pipelines.
+
+## References
+
+Oracle public cloud CIDR informaton, (https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json)[https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json]
