@@ -1,6 +1,6 @@
 # Sprint 1 - Analysis
 
-Status: In Progress
+Status: Complete
 
 ## Sprint Overview
 
@@ -17,17 +17,17 @@ Produce JSON Schema v2 files reflecting the tuple (realm, region, tenancy). The 
 **Current State (regions_v1 field classification):**
 
 | Field | Nature | Target in v2 |
-|-------|--------|-------------|
+| ----- | ------ | ----------- |
 | `key` | Physical | `regions/v2` |
 | `realm` | Relationship | `regions/v2` |
 | `network.public` | Physical (OCI-published) | `regions/v2` |
 | `network.internal` | Physical | `regions/v2` |
-| `network.proxy` | Tenancy-specific | TBD — see Open Questions |
-| `security.vault` | Tenancy-specific (OCID is per-tenancy) | TBD |
-| `toolchain.github.runner` | Tenancy-specific | TBD |
-| `observability.prometheus_scraping_cidr` | Physical region CIDR | `regions/v2` |
-| `observability.loki_destination_cidr` | Tenancy-specific | TBD |
-| `observability.loki_fqdn` | Tenancy-specific | TBD |
+| `network.proxy` | Tenancy-specific | `tenancies/v1` |
+| `security.vault` | Tenancy-specific (OCID is per-tenancy) | `tenancies/v1` |
+| `toolchain.github.runner` | Tenancy-specific | `tenancies/v1` |
+| `observability.prometheus_scraping_cidr` | Tenancy-specific (confirmed) | `tenancies/v1` |
+| `observability.loki_destination_cidr` | Tenancy-specific | `tenancies/v1` |
+| `observability.loki_fqdn` | Tenancy-specific | `tenancies/v1` |
 
 **`realms/v1` assessment:** Clean — all fields are physical realm properties. Either reuse as-is or produce `realms/v2` if structural changes are needed.
 
@@ -95,4 +95,4 @@ The current `realms/v1` schema appears correct and complete. Should the product 
 
 ## Readiness for Design Phase
 
-Awaiting Clarification — three open questions must be answered before schema design can begin.
+Confirmed Ready — all open questions answered. Proceeding to Elaboration.
