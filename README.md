@@ -4,6 +4,9 @@ Catalog of OCI region attributes (proxy, network, realm membership, etc.), realm
 
 Global directory is the equivalent of `jq data.json` — except the data file lives centrally in OCI Object Storage, is schema-validated before every upload, versioned by domain, and consumed through structured data access layers in Node.js, CLI, and Terraform instead of ad-hoc one-off queries.
 
+## Contents 
+
+
 ## Quick start
 
 **Data** — edit `tf_manager/regions_v1.json` and/or `tf_manager/realms_v1.json`, then provision.
@@ -82,6 +85,30 @@ cd ..
 
 cd ../..
 ```
+
+## Testing
+
+Client logic (JSON parsing, field access, DAL methods) is validated without any OCI connection. Tests override the data-fetch layer to read from the local JSON files in `tf_manager/` instead of calling OCI Object Storage. Both test suites can be run on macOS or inside a Linux container via Podman.
+
+**Shell client:**
+```bash
+# macOS
+bash cli_client/test/run_tests.sh
+
+# Linux via Podman (Ubuntu 24.04 default; override with IMAGE=oraclelinux:8)
+bash cli_client/test/validate_linux.sh
+```
+
+**Node.js client (Jest):**
+```bash
+# macOS
+cd node_client && npm test
+
+# Linux via Podman (node:20-slim)
+bash node_client/test/validate_linux.sh
+```
+
+Tests use `ts-jest` with value-level assertions (`expect(...).toBe`, `toContain`, `toHaveProperty`, etc.) grouped in `describe` blocks. Both client test suites exit non-zero on any failure, making them suitable for CI pipelines.
 
 ## Repository structure
 

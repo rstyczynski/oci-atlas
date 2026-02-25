@@ -16,7 +16,8 @@ export async function streamToString(stream: Readable): Promise<string> {
  * and raw object fetch. Schema-independent.
  */
 export class gdir {
-  protected readonly client: objectstorage.ObjectStorageClient;
+  private _client: objectstorage.ObjectStorageClient | null = null;
+  private readonly ociConfig: gdir_config;
   protected readonly bucketName: string;
   protected readonly objectName: string;
 
@@ -25,16 +26,23 @@ export class gdir {
   private cachedNamespace: string | null = null;
 
   constructor(config: gdir_config = {}, objectName: string) {
-    const provider = new common.ConfigFileAuthenticationDetailsProvider(
-      config.ociConfigFile,
-      config.ociProfile
-    );
-    this.client = new objectstorage.ObjectStorageClient({
-      authenticationDetailsProvider: provider,
-    });
+    this.ociConfig = config;
     this.bucketName = config.bucketName ?? DEFAULT_BUCKET;
     this.objectName = objectName;
     this.explicitRegionKey = config.regionKey;
+  }
+
+  /** OCI client — lazily initialised on first use so subclasses that override
+   *  fetchObject() (e.g. test mocks) never need ~/.oci/config. */
+  protected get client(): objectstorage.ObjectStorageClient {
+    if (!this._client) {
+      const provider = new common.ConfigFileAuthenticationDetailsProvider(
+        this.ociConfig.ociConfigFile,
+        this.ociConfig.ociProfile
+      );
+      this._client = new objectstorage.ObjectStorageClient({ authenticationDetailsProvider: provider });
+    }
+    return this._client;
   }
 
   /** Namespace — cached after first call */
