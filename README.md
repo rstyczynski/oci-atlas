@@ -106,6 +106,8 @@ cd ..
 cd ../..
 ```
 
+> Note: `terraform init` requires access to registry.terraform.io to download providers. In restricted/offline environments, use a pre-populated `TF_PLUGIN_CACHE_DIR` or provider mirror; otherwise validation will fail even though the modules are correct.
+
 ### Online vs offline data for examples/tests
 
 - Online (live bucket): leave `TEST_DATA_DIR` unset; set `GDIR_BUCKET` if not `gdir_info`; ensure OCI CLI/SDK auth works (instance principal, config profile, etc.).
