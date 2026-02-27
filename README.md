@@ -25,7 +25,7 @@ Global directory is the equivalent of `jq data.json` — except the data file li
 
 ## Quick start
 
-**Data** — edit `tf_manager/regions_v1.json` and/or `tf_manager/realms_v1.json`, then provision.
+**Data** — edit `tf_manager/regions_v2.json`, `tf_manager/tenancies_v1.json`, and/or `tf_manager/realms_v1.json`, then provision.
 
 **Provision:**
 
@@ -142,7 +142,8 @@ The catalog is organised into **data domains** — independent datasets stored a
 
 | Domain | Current version | Object path | Description |
 |--------|----------------|-------------|-------------|
-| `regions` | `v1` | `regions/v1` | OCI region attributes — network, proxy, vault, toolchain, observability |
+| `regions` | `v2` | `regions/v2` | Physical region attributes — realm, public CIDRs |
+| `tenancies` | `v1` | `tenancies/v1` | Tenancy-scoped attributes per region — private CIDRs, proxy, vault, toolchain, observability |
 | `realms` | `v1` | `realms/v1` | Realm-level attributes — name, geo-region, API domain |
 
 Additional domains (e.g. `tenancies`, `residents`) follow the same pattern.
@@ -170,7 +171,7 @@ The catalog avoids requiring hardcoded identifiers by deriving them from the act
 |------|-----|----------|
 | **Tenancy / compartment** (`tf_manager`) | `oci os ns get-metadata` returns the tenancy root compartment OCID | `var.compartment_id` / `TF_VAR_compartment_id` |
 | **Region key** (all clients) | Bucket OCID encodes the region: `ocid1.bucket.<realm>.<region>.<hash>` → field `[3]` | `TF_VAR_region_key` · `REGION_KEY` env · `regionKey` constructor config |
-| **Realm key** (`tf_client/examples/realm`) | Active region is resolved first, then its `realm` field is read from `regions/v1` | `TF_VAR_realm_key` |
+| **Realm key** (`tf_client/examples/realm`) | Active region is resolved first, then its `realm` field is read from `regions/v2` | `TF_VAR_realm_key` |
 
 All three discoveries cascade from a single source: the OCI SDK credentials in `~/.oci/config`. No region, realm, or tenancy identifier needs to be hardcoded anywhere.
 
@@ -180,11 +181,11 @@ Each domain+version pair has a dedicated DAL in every client library. The DAL en
 
 The canonical DAL name for a domain+version is **`gdir_<domain>_<version>`**. Every client uses this name directly — as a class name, file name, or module name.
 
-| Client | DAL for `regions/v1` | DAL for `realms/v1` |
-|--------|----------------------|---------------------|
-| Node.js | class `gdir_regions_v1` in `node_client/src/gdir_regions_v1.ts` | class `gdir_realms_v1` in `node_client/src/gdir_realms_v1.ts` |
-| CLI | `cli_client/gdir_regions_v1.sh`, functions `gdir_v1_regions_*` | `cli_client/gdir_realms_v1.sh`, functions `gdir_v1_realms_*` |
-| Terraform | module `tf_client/gdir_regions_v1/` | module `tf_client/gdir_realms_v1/` |
+| Client | DAL for `regions/v2` | DAL for `tenancies/v1` | DAL for `realms/v1` |
+|--------|----------------------|------------------------|---------------------|
+| Node.js | class `gdir_regions_v2` in `node_client/src/gdir_regions_v2.ts` | class `gdir_tenancies_v1` in `node_client/src/gdir_tenancies_v1.ts` | class `gdir_realms_v1` in `node_client/src/gdir_realms_v1.ts` |
+| CLI | `cli_client/gdir_regions_v2.sh`, functions `gdir_v2_regions_*` | `cli_client/gdir_tenancies_v1.sh`, functions `gdir_v1_tenancies_*` | `cli_client/gdir_realms_v1.sh`, functions `gdir_v1_realms_*` |
+| Terraform | module `tf_client/gdir_regions_v2/` | module `tf_client/gdir_tenancies_v1/` | module `tf_client/gdir_realms_v1/` |
 
 When a schema changes incompatibly, a new version (`v2`) is introduced alongside the existing one. Consumers migrate at their own pace; both versions can be live simultaneously.
 
