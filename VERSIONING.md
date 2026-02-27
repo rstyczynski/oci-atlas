@@ -90,7 +90,7 @@ The alias always points to the current default MAJOR version. Consumers using th
 
 **Note:** Alias files are advisory. The canonical import remains the versioned file.
 
-### Maintenance branches
+### Maintenance branch naming
 
 Old MAJOR versions that require bug fixes are maintained on branches named `maint/v<MAJOR>` (e.g., `maint/v1`). The `main` branch always tracks the current active version.
 
@@ -226,22 +226,56 @@ git tag v3.0.0
 git push && git push origin v3.0.0
 ```
 
-### Creating a maintenance branch for an old MAJOR
+### Maintenance branches
 
-When a MAJOR version needs a backport bug fix after a newer MAJOR is released:
+Old MAJOR versions are supported on long-lived branches named `maint/v<MAJOR>`.
+
+**Create a maintenance branch** from the last stable tag of that MAJOR:
 
 ```bash
-# Create maintenance branch from the last v1.x.x tag
 git checkout -b maint/v1 v1.2.3
 git push -u origin maint/v1
 ```
 
-Backport patches are tagged `v1.x.y` from the `maint/v1` branch:
+**Switch to the maintenance branch** for ongoing work:
 
 ```bash
 git checkout maint/v1
-# apply fix
-git commit -m "fix: backport — description"
+git pull origin maint/v1
+```
+
+**Apply a bug fix (PATCH bump) on the maintenance branch:**
+
+```bash
+git checkout maint/v1
+# fix the data or schema file
+# update schema_version in affected data file (e.g. "1.2.3" → "1.2.4")
+git add tf_manager/regions_v1.json
+git commit -m "fix: (maint/v1) correct CIDR block in regions_v1"
+git tag v1.2.4
+git push && git push origin v1.2.4
+```
+
+**Apply a backward-compatible addition (MINOR bump) on the maintenance branch:**
+
+```bash
+git checkout maint/v1
+# add the new entry or field
+# update schema_version (e.g. "1.2.4" → "1.3.0")
+git add tf_manager/regions_v1.json tf_manager/regions_v1.schema.json
+git commit -m "feat: (maint/v1) add af-johannesburg-1 to regions_v1"
+git tag v1.3.0
+git push && git push origin v1.3.0
+```
+
+**No MAJOR bumps on a maintenance branch.** A MAJOR bump means a new domain version and a new DAL — that work always goes on `main`.
+
+**Backport a fix from `main` to `maint/v1`** using cherry-pick:
+
+```bash
+git checkout maint/v1
+git cherry-pick <commit-sha-from-main>
+# resolve any conflicts, then:
 git tag v1.2.4
 git push && git push origin v1.2.4
 ```
