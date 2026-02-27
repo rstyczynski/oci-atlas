@@ -21,7 +21,7 @@ Global directory is the equivalent of `jq data.json` — except the data file li
   - [Node.js](#nodejs)
   - [Terraform](#terraform)
 - [Testing](#testing)
-- [References](#referenes)
+- [References](#references)
 
 ## Quick start
 
@@ -40,12 +40,12 @@ cd ..
 
 ```bash
 cd cli_client
-REGION_KEY=eu-zurich-1 bash examples/region.sh       # region-only (v2)
-bash examples/regions.sh                             # list regions/realms (v2)
+REGION_KEY=eu-zurich-1 bash examples/region.sh
+
+bash examples/regions.sh
+
 TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 bash examples/tenancy.sh
 REALM_KEY=oc1 bash examples/realms.sh
-# override bucket if not default:
-# GDIR_BUCKET=my_other_bucket REGION_KEY=... bash examples/region.sh
 cd ..
 ```
 
@@ -54,9 +54,14 @@ cd ..
 ```bash
 cd node_client
 npm install
+
+npm run example:region
 REGION_KEY=eu-zurich-1 npm run example:region
 npm run example:regions
+
 TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 npm run example:tenancy
+
+npm run example:realms
 REALM_KEY=oc1 npm run example:realm
 cd ..
 ```
@@ -86,7 +91,6 @@ cd tenancy
 terraform init
 terraform apply -auto-approve
 terraform output
-cd ..
 cd ..
 
 cd realms
@@ -192,7 +196,6 @@ When a schema changes incompatibly, a new version (`v2`) is introduced alongside
 
 When a new domain is added (e.g. `realms`), a parallel set of DAL artefacts is created — `gdir_realms_v1` class, `gdir_realms_v1.sh`, `tf_client/gdir_realms_v1/` — without touching any existing code.
 
-## Data structures
 
 
 ## Client libraries
@@ -204,10 +207,11 @@ Each client ships a DAL per domain/version:
 
 ## Testing
 
-- Node: `npm --prefix node_client test -- --runInBand`
-- CLI: `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh`
-- Terraform: `terraform init && terraform validate` in `tf_client/examples/{region,regions,tenancy,realm,realms}`
+- **Node:** `npm --prefix node_client test -- --runInBand`
+- **CLI:** `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh` (unset TEST_DATA_DIR to hit OCI)
+- **Terraform:** `terraform init && terraform validate` in each example under `tf_client/examples/{region,regions,tenancy,realm,realms}` (requires provider access)
 
+## Data structures
 
 ### `realms/v1` schema
 
