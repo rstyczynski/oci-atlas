@@ -2,7 +2,7 @@
 
 ## GD-2. Establish versioning strategy for data and access layer
 
-Status: Proposed
+Status: Accepted
 
 ### Requirement Summary
 
@@ -33,22 +33,28 @@ No external API required. All changes are to local JSON files, schema files, and
 
 #### Area 1: Data Objects — `schema_version` field
 
-**Decision:** Add `schema_version` as a top-level field in all data objects, alongside `last_updated_timestamp`. Format: `"MAJOR.MINOR"` string (e.g., `"1.0"`). PATCH is not tracked in the field — PATCH changes are transparent (bug fixes only; data structure unchanged).
+**Decision:** Add `schema_version` as a top-level field in all data objects, alongside `last_updated_timestamp`. Format: full semver `"MAJOR.MINOR.PATCH"` string (e.g., `"1.0.0"`).
 
-**Rationale:** Top-level placement mirrors `last_updated_timestamp` convention. String `"MAJOR.MINOR"` is human-readable and machine-parsable without a semver library. PATCH omitted because it is applied to the data value, not the structure, and is tracked by Object Storage native versioning.
+**Rationale:** Top-level placement mirrors `last_updated_timestamp` convention. Full semver string is human-readable, standard, and allows consumers to detect stale cached data without a separate Object Storage API call. All three parts are meaningful:
+
+| Version part | Change | Example |
+| ------------ | ------ | ------- |
+| MAJOR | Breaking — field removed, renamed, or type changed | Remove `realm` from `regions_v2` |
+| MINOR | Any backward-compatible addition — new schema field, or new catalog entry | Add `api_endpoint` field to schema; add `eu-paris-1` to `regions_v2.json` |
+| PATCH | Bug fix — wrong data value corrected, wrong schema constraint fixed | Fix a wrong CIDR block; fix a wrong regex pattern in schema |
 
 **Schema change (all 4 schema files):** Add to top-level `properties`:
 
 ```json
 "schema_version": {
   "type": "string",
-  "description": "Schema version this data object conforms to, format MAJOR.MINOR (e.g. \"1.0\")"
+  "description": "Semver version of this data object, format MAJOR.MINOR.PATCH (e.g. \"1.0.0\")"
 }
 ```
 
-Add `"schema_version"` to the top-level implicit required list. Since the root object uses `additionalProperties` to define entries, `schema_version` must appear in `properties` at the top level alongside `last_updated_timestamp`. Both `last_updated_timestamp` and `schema_version` are top-level reserved keys.
+Since the root object uses `additionalProperties` to define per-domain entries, `schema_version` must appear in `properties` at the top level alongside `last_updated_timestamp`. Both are top-level reserved keys.
 
-**Data file change (all 4 data files):** Add `"schema_version": "1.0"` after `last_updated_timestamp`.
+**Data file change (all 4 data files):** Add `"schema_version": "X.0.0"` after `last_updated_timestamp`.
 
 **Affected files:**
 
@@ -58,10 +64,10 @@ Add `"schema_version"` to the top-level implicit required list. Since the root o
 | `tf_manager/realms_v1.schema.json` | Add `schema_version` to top-level properties |
 | `tf_manager/regions_v2.schema.json` | Add `schema_version` to top-level properties |
 | `tf_manager/tenancies_v1.schema.json` | Add `schema_version` to top-level properties |
-| `tf_manager/regions_v1.json` | Add `"schema_version": "1.0"` |
-| `tf_manager/realms_v1.json` | Add `"schema_version": "1.0"` |
-| `tf_manager/regions_v2.json` | Add `"schema_version": "2.0"` |
-| `tf_manager/tenancies_v1.json` | Add `"schema_version": "1.0"` |
+| `tf_manager/regions_v1.json` | Add `"schema_version": "1.0.0"` |
+| `tf_manager/realms_v1.json` | Add `"schema_version": "1.0.0"` |
+| `tf_manager/regions_v2.json` | Add `"schema_version": "2.0.0"` |
+| `tf_manager/tenancies_v1.json` | Add `"schema_version": "1.0.0"` |
 
 ---
 
@@ -148,9 +154,9 @@ All 13 tests pass. `schema_version` field present and validated in all 4 data fi
 
 ### Design Decisions
 
-**Decision 1:** `schema_version` format `"MAJOR.MINOR"` string
-**Rationale:** Human-readable, parsable with simple string split. PATCH excluded as it doesn't change schema structure.
-**Alternatives Considered:** `"MAJOR.MINOR.PATCH"` full semver — rejected (PATCH is infrastructure concern, not schema concern); integer MAJOR only — rejected (MINOR changes need consumer visibility).
+**Decision 1:** `schema_version` format `"MAJOR.MINOR.PATCH"` full semver string
+**Rationale:** Standard semver; consumers can detect stale cached data without a separate Object Storage API call. All three parts are meaningful to consumers.
+**Alternatives Considered:** `"MAJOR.MINOR"` only — rejected (PATCH is also useful to consumers for cache invalidation); integer MAJOR only — rejected (MINOR/PATCH changes need consumer visibility).
 
 **Decision 2:** Object Storage drops `v` prefix in new convention
 **Rationale:** Aligns with semver standard (`1.0` not `v1.0`). Existing `v`-prefixed paths remain untouched.
@@ -172,7 +178,7 @@ None — all four areas resolved. PO approval requested.
 
 Four-area versioning strategy established:
 
-- **Data**: `schema_version` field (`"MAJOR.MINOR"`) in all data objects
+- **Data**: `schema_version` field (`"MAJOR.MINOR.PATCH"` semver) in all data objects
 - **DAL**: `_v<MAJOR>` filename convention retained; version-neutral alias deferred to DAL sprint
 - **Distribution**: npm git-source with `prepare` script; git tags `v<MAJOR>.<MINOR>.<PATCH>`
 - **Object Storage**: Target convention `<domain>/<MAJOR>/<domain>-<MAJOR>.<MINOR>.json`; migration in GD-3
