@@ -20,7 +20,8 @@ locals {
   regions                = { for k, v in local._raw : k => v if !(k == "last_updated_timestamp" || k == "schema_version") }
 
   region = try(local.regions[local.region_key], null)
-
+  realm = try(local.region.realm, null)
+  
   realm_regions = {
     for k, v in local.regions : k => v
     if v.realm == try(local.region.realm, null)

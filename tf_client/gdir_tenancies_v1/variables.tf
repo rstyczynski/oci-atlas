@@ -1,9 +1,12 @@
 variable "bucket_name" {
   type    = string
-  default = "v1/tenancies"
+  default = "gdir_info"
 }
 
-variable "object_name" { type = string }
+variable "object_name" { 
+  type = string
+  default = "tenancies/v1"
+}
 
 variable "tenancy_key" {
   type    = string

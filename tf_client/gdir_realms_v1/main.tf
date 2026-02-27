@@ -1,8 +1,14 @@
 # v1 schema — tied to v1 field structure:
 # { [realmKey]: { geo-region, name, description, api_domain } }
 
+data "oci_objectstorage_namespace" "ns" {}
+
+data "oci_objectstorage_bucket" "info" {
+  namespace = data.oci_objectstorage_namespace.ns.namespace
+  name      = var.bucket_name
+}
 data "oci_objectstorage_object" "realms_v1" {
-  namespace = var.namespace
+  namespace = data.oci_objectstorage_namespace.ns.namespace
   bucket    = var.bucket_name
   object    = var.object_name
 }

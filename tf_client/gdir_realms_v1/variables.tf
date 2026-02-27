@@ -1,11 +1,8 @@
-variable "namespace" {
-  description = "OCI Object Storage namespace (from core gdir_core module)"
-  type        = string
-}
 
 variable "bucket_name" {
   description = "Object Storage bucket name (from core gdir_core module)"
   type        = string
+  default     = "gdir_info"
 }
 
 variable "object_name" {

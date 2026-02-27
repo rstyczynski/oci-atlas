@@ -2,6 +2,7 @@ output "last_updated_timestamp" { value = local.last_updated_timestamp }
 output "schema_version"         { value = local.schema_version }
 output "regions"                { value = local.regions }
 output "region"                 { value = local.region }
+output "realm"                  { value = local.realm }
 output "region_keys"            { value = keys(local.regions) }
 output "realm_regions"          { value = local.realm_regions }
 output "realm_region_keys"      { value = local.realm_region_keys }
