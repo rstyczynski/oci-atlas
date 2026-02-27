@@ -24,16 +24,22 @@ gdir_v1_realms_get_last_updated_timestamp() {
   echo "$_GDIR_CACHE" | jq -r '.last_updated_timestamp // empty'
 }
 
+# Semver version of this data object
+gdir_v1_realms_get_schema_version() {
+  _gdir_fetch
+  echo "$_GDIR_CACHE" | jq -r '.schema_version // empty'
+}
+
 # All realms (pretty JSON), metadata fields excluded
 gdir_v1_realms_get_realms() {
   _gdir_fetch
-  echo "$_GDIR_CACHE" | jq 'del(.last_updated_timestamp)'
+  echo "$_GDIR_CACHE" | jq 'del(.last_updated_timestamp, .schema_version)'
 }
 
 # List of realm keys (metadata keys excluded)
 gdir_v1_realms_get_realm_keys() {
   _gdir_fetch
-  echo "$_GDIR_CACHE" | jq -r 'keys[] | select(. != "last_updated_timestamp")'
+  echo "$_GDIR_CACHE" | jq -r 'keys[] | select(. != "last_updated_timestamp" and . != "schema_version")'
 }
 
 # Full realm object for REALM_KEY

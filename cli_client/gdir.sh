@@ -24,6 +24,15 @@ _GDIR_CACHED_REALM_FOR=""   # region key for which _GDIR_CACHED_REALM was resolv
 # Fetch raw JSON from bucket; cached for the shell session.
 _gdir_fetch() {
   if [[ -n "$_GDIR_CACHE" ]]; then return; fi
+  if [[ -n "${TEST_DATA_DIR:-}" ]]; then
+    local fname
+    fname=$(echo "$GDIR_OBJECT" | tr '/' '_').json
+    local path="$TEST_DATA_DIR/$fname"
+    if [[ -f "$path" ]]; then
+      _GDIR_CACHE=$(cat "$path")
+      return
+    fi
+  fi
   _GDIR_CACHE=$(oci os object get \
     --bucket-name "$GDIR_BUCKET" \
     --name        "$GDIR_OBJECT" \

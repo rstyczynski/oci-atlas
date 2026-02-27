@@ -4,12 +4,12 @@
  * Without REALM_KEY the realm is auto-discovered from the active region's
  * `realm` field (same discovery chain as `region` → OCI bucket OCID).
  */
-import { gdir_regions_v1, gdir_realms_v1 } from "../src";
+import { gdir_regions_v2, gdir_realms_v1 } from "../src";
 
 (async () => {
   // --- resolve realm key -------------------------------------------------------
   // Explicit env override, or discover from the active region's realm field.
-  const realmKey = process.env.REALM_KEY ?? await new gdir_regions_v1().getRegionRealm();
+  const realmKey = process.env.REALM_KEY ?? await new gdir_regions_v2().getRegionRealm();
 
   console.log("=== Realm key ===");
   console.log(realmKey);

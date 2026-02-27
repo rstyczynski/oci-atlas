@@ -1,6 +1,6 @@
 /**
  * Jest tests — no OCI connectivity required.
- * MockRegions / MockRealms override fetchObject() to read local JSON test data.
+ * Mock subclasses override fetchObject() to read local JSON test data.
  *
  * Run: npm run test:jest
  *      TEST_DATA_DIR=/path/to/tf_manager npm run test:jest
@@ -8,9 +8,10 @@
 import * as fs   from "fs";
 import * as path from "path";
 
-import { gdir_config }                       from "../src/config";
-import { gdir_regions_v1 }                   from "../src/gdir_regions_v1";
-import { gdir_realms_v1, gdir_realms_config } from "../src/gdir_realms_v1";
+import { gdir_config }                              from "../src/config";
+import { gdir_regions_v2 }                          from "../src/gdir_regions_v2";
+import { gdir_tenancies_v1, gdir_tenancies_config } from "../src/gdir_tenancies_v1";
+import { gdir_realms_v1, gdir_realms_config }       from "../src/gdir_realms_v1";
 
 const TEST_DATA_DIR = process.env.TEST_DATA_DIR
   ?? path.resolve(__dirname, "../../tf_manager");
@@ -19,10 +20,17 @@ const TEST_DATA_DIR = process.env.TEST_DATA_DIR
 // Mock subclasses
 // ---------------------------------------------------------------------------
 
-class MockRegions extends gdir_regions_v1 {
+class MockRegionsV2 extends gdir_regions_v2 {
   constructor(config: gdir_config = {}) { super(config); }
   protected override async fetchObject(): Promise<string> {
-    return fs.readFileSync(path.join(TEST_DATA_DIR, "regions_v1.json"), "utf8");
+    return fs.readFileSync(path.join(TEST_DATA_DIR, "regions_v2.json"), "utf8");
+  }
+}
+
+class MockTenancies extends gdir_tenancies_v1 {
+  constructor(config: gdir_tenancies_config = {}) { super(config); }
+  protected override async fetchObject(): Promise<string> {
+    return fs.readFileSync(path.join(TEST_DATA_DIR, "tenancies_v1.json"), "utf8");
   }
 }
 
@@ -34,36 +42,41 @@ class MockRealms extends gdir_realms_v1 {
 }
 
 // ---------------------------------------------------------------------------
-// regions/v1
+// regions/v2
 // ---------------------------------------------------------------------------
 
-describe("regions/v1", () => {
+describe("regions/v2", () => {
   const REGION_KEY = "tst-region-1";
-  const client     = new MockRegions({ regionKey: REGION_KEY });
-  // second region in same realm — needed for "other regions" tests
-  const client2    = new MockRegions({ regionKey: "tst-region-2" });
+  const client     = new MockRegionsV2({ regionKey: REGION_KEY });
+  const client2    = new MockRegionsV2({ regionKey: "tst-region-2" });
 
   // --- document metadata ---------------------------------------------------
 
-  it("getLastUpdatedTimestamp — undefined when not uploaded via tf_manager", async () => {
-    expect(await client.getLastUpdatedTimestamp()).toBeUndefined();
+  it("getLastUpdatedTimestamp — returns timestamp", async () => {
+    expect(await client.getLastUpdatedTimestamp()).toBe("2026-02-25T12:00:00Z");
+  });
+
+  it("getSchemaVersion — returns 1.0.0", async () => {
+    expect(await client.getSchemaVersion()).toBe("1.0.0");
   });
 
   // --- map-level ------------------------------------------------------------
 
-  it("getRegions — map contains test region", async () => {
+  it("getRegions — map contains test region, excludes metadata", async () => {
     const regions = await client.getRegions();
     expect(regions).toHaveProperty(REGION_KEY);
     expect(regions).not.toHaveProperty("last_updated_timestamp");
+    expect(regions).not.toHaveProperty("schema_version");
   });
 
   it("getRegionKeys — includes test region, excludes metadata", async () => {
     const keys = await client.getRegionKeys();
     expect(keys).toContain(REGION_KEY);
     expect(keys).not.toContain("last_updated_timestamp");
+    expect(keys).not.toContain("schema_version");
   });
 
-  it("getRealms — returns distinct realm list", async () => {
+  it("getRealms — returns distinct realm list including tst01", async () => {
     const realms = await client.getRealms();
     expect(realms).toContain("tst01");
   });
@@ -107,13 +120,6 @@ describe("regions/v1", () => {
 
   // --- network / CIDR ------------------------------------------------------
 
-  it("getRegionNetwork — has public, internal, proxy", async () => {
-    const net = await client.getRegionNetwork();
-    expect(net).toHaveProperty("public");
-    expect(net).toHaveProperty("internal");
-    expect(net).toHaveProperty("proxy");
-  });
-
   it("getRegionCidrPublic — returns array with CIDR entries", async () => {
     const cidrs = await client.getRegionCidrPublic();
     expect(cidrs.length).toBeGreaterThan(0);
@@ -121,107 +127,172 @@ describe("regions/v1", () => {
     expect(cidrs[0].tags).toContain("public");
   });
 
-  it("getRegionCidrInternal — returns array with CIDR entries", async () => {
-    const cidrs = await client.getRegionCidrInternal();
-    expect(cidrs.length).toBeGreaterThan(0);
-  });
-
   it("getRegionCidrByTag — filters by tag correctly", async () => {
     const cidrs = await client.getRegionCidrByTag("public");
     expect(cidrs.length).toBeGreaterThan(0);
     cidrs.forEach(c => expect(c.tags).toContain("public"));
   });
+});
 
-  // --- proxy ---------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// tenancies/v1
+// ---------------------------------------------------------------------------
 
-  it("getRegionProxy — has url, ip, port, noproxy", async () => {
-    const proxy = await client.getRegionProxy();
+describe("tenancies/v1", () => {
+  const TENANCY_KEY = "acme_prod";
+  const REGION_KEY  = "eu-zurich-1";
+  const client      = new MockTenancies({ tenancyKey: TENANCY_KEY, regionKey: REGION_KEY });
+
+  // --- document metadata ---------------------------------------------------
+
+  it("getLastUpdatedTimestamp — returns timestamp", async () => {
+    expect(await client.getLastUpdatedTimestamp()).toBe("2026-02-25T12:00:00Z");
+  });
+
+  it("getSchemaVersion — returns 1.0.0", async () => {
+    expect(await client.getSchemaVersion()).toBe("1.0.0");
+  });
+
+  // --- catalog -------------------------------------------------------------
+
+  it("getTenancies — map contains acme_prod, excludes metadata", async () => {
+    const tenancies = await client.getTenancies();
+    expect(tenancies).toHaveProperty(TENANCY_KEY);
+    expect(tenancies).not.toHaveProperty("last_updated_timestamp");
+    expect(tenancies).not.toHaveProperty("schema_version");
+  });
+
+  it("getTenancyKeys — includes acme_prod", async () => {
+    const keys = await client.getTenancyKeys();
+    expect(keys).toContain(TENANCY_KEY);
+  });
+
+  it("getTenancy — returns tenancy object", async () => {
+    const tenancy = await client.getTenancy();
+    expect(tenancy).toHaveProperty("realm", "oc1");
+    expect(tenancy).toHaveProperty("regions");
+  });
+
+  it("getTenancyRealm — returns oc1", async () => {
+    expect(await client.getTenancyRealm()).toBe("oc1");
+  });
+
+  // --- per-region ----------------------------------------------------------
+
+  it("getTenancyRegionKeys — includes eu-zurich-1", async () => {
+    const keys = await client.getTenancyRegionKeys();
+    expect(keys).toContain(REGION_KEY);
+  });
+
+  it("getTenancyRegion — returns region object", async () => {
+    const region = await client.getTenancyRegion();
+    expect(region).toHaveProperty("network");
+    expect(region).toHaveProperty("security");
+    expect(region).toHaveProperty("toolchain");
+    expect(region).toHaveProperty("observability");
+  });
+
+  // --- network -------------------------------------------------------------
+
+  it("getPrivateCidrs — returns array with CIDR entries", async () => {
+    const cidrs = await client.getPrivateCidrs();
+    expect(cidrs.length).toBeGreaterThan(0);
+    expect(cidrs[0]).toHaveProperty("cidr", "10.0.0.0/16");
+  });
+
+  it("getPrivateCidrsByTag — filters by vcn tag", async () => {
+    const cidrs = await client.getPrivateCidrsByTag("vcn");
+    expect(cidrs.length).toBeGreaterThan(0);
+    cidrs.forEach(c => expect(c.tags).toContain("vcn"));
+  });
+
+  it("getProxy — has url, ip, port, noproxy", async () => {
+    const proxy = await client.getProxy();
     expect(proxy).toHaveProperty("url");
     expect(proxy).toHaveProperty("ip");
     expect(proxy).toHaveProperty("port");
     expect(proxy).toHaveProperty("noproxy");
   });
 
-  it("getRegionProxyUrl — correct URL", async () => {
-    expect(await client.getRegionProxyUrl()).toBe("http://proxy.tst-region-1.example.com:8081");
+  it("getProxyUrl — correct URL", async () => {
+    expect(await client.getProxyUrl()).toBe("http://proxy.eu-zurich-1.example.com:8080");
   });
 
-  it("getRegionProxyIp — correct IP", async () => {
-    expect(await client.getRegionProxyIp()).toBe("10.1.1.1");
+  it("getProxyIp — correct IP", async () => {
+    expect(await client.getProxyIp()).toBe("10.0.1.100");
   });
 
-  it("getRegionProxyPort — correct port", async () => {
-    expect(await client.getRegionProxyPort()).toBe("8081");
+  it("getProxyPort — correct port", async () => {
+    expect(await client.getProxyPort()).toBe("8080");
   });
 
-  it("getRegionProxyNoproxy — returns array", async () => {
-    const list = await client.getRegionProxyNoproxy();
-    expect(list).toContain("10.1.0.0/16");
-    expect(list).toContain("*.tst-region-1.example.com");
+  it("getProxyNoproxy — returns array", async () => {
+    const list = await client.getProxyNoproxy();
+    expect(list).toContain("10.0.0.0/8");
+    expect(list).toContain("*.eu-zurich-1.oraclecloud.com");
   });
 
-  it("getRegionProxyNoproxyString — comma-separated", async () => {
-    const s = await client.getRegionProxyNoproxyString();
+  it("getProxyNoproxyString — comma-separated", async () => {
+    const s = await client.getProxyNoproxyString();
     expect(s).toContain(",");
-    expect(s).toContain("10.1.0.0/16");
+    expect(s).toContain("10.0.0.0/8");
   });
 
-  // --- vault ---------------------------------------------------------------
+  // --- security ------------------------------------------------------------
 
-  it("getRegionVault — has ocid, crypto_endpoint, management_endpoint", async () => {
-    const vault = await client.getRegionVault();
+  it("getVault — has ocid, crypto_endpoint, management_endpoint", async () => {
+    const vault = await client.getVault();
     expect(vault).toHaveProperty("ocid");
     expect(vault).toHaveProperty("crypto_endpoint");
     expect(vault).toHaveProperty("management_endpoint");
   });
 
-  it("getRegionVaultOcid — starts with ocid1.vault", async () => {
-    const ocid = await client.getRegionVaultOcid();
-    expect(ocid).toMatch(/^ocid1\.vault\./);
+  it("getVaultOcid — starts with ocid1.vault", async () => {
+    expect(await client.getVaultOcid()).toMatch(/^ocid1\.vault\./);
   });
 
-  it("getRegionVaultCryptoEndpoint — non-empty string", async () => {
-    expect(await client.getRegionVaultCryptoEndpoint()).toBeTruthy();
+  it("getVaultCryptoEndpoint — non-empty string", async () => {
+    expect(await client.getVaultCryptoEndpoint()).toBeTruthy();
   });
 
-  it("getRegionVaultManagementEndpoint — non-empty string", async () => {
-    expect(await client.getRegionVaultManagementEndpoint()).toBeTruthy();
+  it("getVaultManagementEndpoint — non-empty string", async () => {
+    expect(await client.getVaultManagementEndpoint()).toBeTruthy();
   });
 
   // --- toolchain -----------------------------------------------------------
 
-  it("getRegionGitHubRunner — has labels and image", async () => {
-    const runner = await client.getRegionGitHubRunner();
+  it("getGitHubRunner — has labels and image", async () => {
+    const runner = await client.getGitHubRunner();
     expect(runner).toHaveProperty("labels");
     expect(runner).toHaveProperty("image");
   });
 
-  it("getRegionGitHubRunnerLabels — contains region and realm", async () => {
-    const labels = await client.getRegionGitHubRunnerLabels();
+  it("getGitHubRunnerLabels — contains region and realm", async () => {
+    const labels = await client.getGitHubRunnerLabels();
     expect(labels).toContain(REGION_KEY);
-    expect(labels).toContain("tst01");
+    expect(labels).toContain("oc1");
     expect(labels).toContain("self-hosted");
   });
 
-  it("getRegionGitHubRunnerImage — starts with ocid1.image", async () => {
-    expect(await client.getRegionGitHubRunnerImage()).toMatch(/^ocid1\.image\./);
+  it("getGitHubRunnerImage — starts with ocid1.image", async () => {
+    expect(await client.getGitHubRunnerImage()).toMatch(/^ocid1\.image\./);
   });
 
   // --- observability -------------------------------------------------------
 
-  it("getRegionObservability — has all three fields", async () => {
-    const obs = await client.getRegionObservability();
+  it("getObservability — has all three fields", async () => {
+    const obs = await client.getObservability();
     expect(obs).toHaveProperty("prometheus_scraping_cidr");
     expect(obs).toHaveProperty("loki_destination_cidr");
     expect(obs).toHaveProperty("loki_fqdn");
   });
 
-  it("getRegionPromScrapingCidr — valid CIDR", async () => {
-    expect(await client.getRegionPromScrapingCidr()).toBe("10.1.1.0/24");
+  it("getPromScrapingCidr — valid CIDR", async () => {
+    expect(await client.getPromScrapingCidr()).toBe("10.0.1.0/24");
   });
 
-  it("getRegionLokiFqdn — contains region name", async () => {
-    expect(await client.getRegionLokiFqdn()).toContain(REGION_KEY);
+  it("getLokiFqdn — contains region name", async () => {
+    expect(await client.getLokiFqdn()).toContain(REGION_KEY);
   });
 });
 
@@ -232,8 +303,12 @@ describe("regions/v1", () => {
 describe("realms/v1", () => {
   const client = new MockRealms({ realmKey: "oc1" });
 
-  it("getLastUpdatedTimestamp — undefined when not uploaded via tf_manager", async () => {
-    expect(await client.getLastUpdatedTimestamp()).toBeUndefined();
+  it("getLastUpdatedTimestamp — returns timestamp", async () => {
+    expect(await client.getLastUpdatedTimestamp()).toBe("2026-02-25T12:00:00Z");
+  });
+
+  it("getSchemaVersion — returns 1.0.0", async () => {
+    expect(await client.getSchemaVersion()).toBe("1.0.0");
   });
 
   it("getRealms — map contains oc1 and oc19, excludes metadata", async () => {
@@ -241,6 +316,7 @@ describe("realms/v1", () => {
     expect(realms).toHaveProperty("oc1");
     expect(realms).toHaveProperty("oc19");
     expect(realms).not.toHaveProperty("last_updated_timestamp");
+    expect(realms).not.toHaveProperty("schema_version");
   });
 
   it("getRealmKeys — includes oc1, oc19, tst01", async () => {

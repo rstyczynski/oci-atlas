@@ -1,19 +1,3 @@
-output "last_updated_timestamp" {
-  description = "Timestamp when the data was last uploaded by tf_manager"
-  value       = local.last_updated_timestamp
-}
-
-output "regions" {
-  description = "All regions (v1 schema)"
-  value       = local.regions
-}
-
-output "region_keys" {
-  description = "All region keys (v1 schema)"
-  value       = local.region_keys
-}
-
-output "realms" {
-  description = "All distinct realms (v1 schema)"
-  value       = local.realms
-}
+output "region_keys" { value = module.regions_v2.region_keys }
+output "realms"      { value = module.regions_v2.realm_region_keys }
+output "tenancy_keys" { value = module.tenancies_v1.tenancy_region_keys }

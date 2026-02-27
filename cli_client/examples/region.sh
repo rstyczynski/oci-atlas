@@ -1,133 +1,37 @@
 #!/usr/bin/env bash
-# Mirrors node_client/examples/client_region.ts
-# Usage: REGION_KEY=eu-zurich-1 bash examples/region.sh
-#        Without REGION_KEY the active OCI region from ~/.oci/config is used.
+# Usage: REGION_KEY=eu-zurich-1 TENANCY_KEY=acme_prod bash examples/region.sh
+# Shows region (v2) metadata and tenancy-specific details for a region.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../gdir_regions_v1.sh"
+source "$SCRIPT_DIR/../gdir_regions_v2.sh"
+source "$SCRIPT_DIR/../gdir_tenancies_v1.sh"
 
 RESOLVED_KEY=$(_gdir_region_key)
 
-# --- short key ---------------------------------------------------------------
-echo "=== Short key ==="
-gdir_v1_regions_get_region_short_key
+echo "=== Region metadata (v2) ==="
+gdir_v2_regions_get_region
 
-# --- realm -------------------------------------------------------------------
-echo ""
-echo "=== Realm ==="
-gdir_v1_regions_get_region_realm
+echo "\n=== Region short key ==="
+gdir_v2_regions_get_region_short_key
 
-echo ""
-echo "=== Realm region keys ==="
-gdir_v1_regions_get_realm_region_keys
+echo "\n=== Region realm ==="
+gdir_v2_regions_get_region_realm
 
-echo ""
-echo "=== Realm regions ==="
-gdir_v1_regions_get_realm_regions
+echo "\n=== Public CIDRs ==="
+gdir_v2_regions_get_region_cidr_public
 
-echo ""
-echo "=== Realm other region keys (excluding $RESOLVED_KEY) ==="
-gdir_v1_regions_get_realm_other_region_keys
+echo "\n=== Tenancy realm ==="
+gdir_v1_tenancies_get_tenancy_realm
 
-echo ""
-echo "=== Realm other regions (excluding $RESOLVED_KEY) ==="
-gdir_v1_regions_get_realm_other_regions
+echo "\n=== Tenancy region network ==="
+gdir_v1_tenancies_get_tenancy_region_network
 
-# --- region ------------------------------------------------------------------
-echo ""
-echo "=== Region: $RESOLVED_KEY ==="
-gdir_v1_regions_get_region
+echo "\n=== Proxy URL ==="
+gdir_v1_tenancies_get_tenancy_region_proxy_url
 
-# --- CIDR --------------------------------------------------------------------
-echo ""
-echo "=== CIDR — public ==="
-gdir_v1_regions_get_region_cidr_public
+echo "\n=== GitHub runner labels ==="
+gdir_v1_tenancies_get_tenancy_region_github_runner_labels
 
-echo ""
-echo "=== CIDR — internal ==="
-gdir_v1_regions_get_region_cidr_internal
-
-echo ""
-echo "=== CIDR — by tag: OCI ==="
-gdir_v1_regions_get_region_cidr_by_tag OCI
-
-echo ""
-echo "=== CIDR — by tag: OSN ==="
-gdir_v1_regions_get_region_cidr_by_tag OSN
-
-echo ""
-echo "=== CIDR — by tag: vcn ==="
-gdir_v1_regions_get_region_cidr_by_tag vcn
-
-# --- proxy -------------------------------------------------------------------
-echo ""
-echo "=== Proxy ==="
-gdir_v1_regions_get_region_proxy
-
-echo ""
-echo "=== Proxy URL ==="
-gdir_v1_regions_get_region_proxy_url
-
-echo ""
-echo "=== Proxy IP ==="
-gdir_v1_regions_get_region_proxy_ip
-
-echo ""
-echo "=== Proxy port ==="
-gdir_v1_regions_get_region_proxy_port
-
-echo ""
-echo "=== Proxy noproxy (list) ==="
-gdir_v1_regions_get_region_proxy_noproxy
-
-echo ""
-echo "=== Proxy noproxy (NO_PROXY string) ==="
-gdir_v1_regions_get_region_proxy_noproxy_string
-
-# --- vault -------------------------------------------------------------------
-echo ""
-echo "=== Vault ==="
-gdir_v1_regions_get_region_vault
-
-echo ""
-echo "=== Vault OCID ==="
-gdir_v1_regions_get_region_vault_ocid
-
-echo ""
-echo "=== Vault crypto endpoint ==="
-gdir_v1_regions_get_region_vault_crypto_endpoint
-
-echo ""
-echo "=== Vault management endpoint ==="
-gdir_v1_regions_get_region_vault_management_endpoint
-
-# --- GitHub ------------------------------------------------------------------
-echo ""
-echo "=== GitHub runner ==="
-gdir_v1_regions_get_region_github_runner
-
-echo ""
-echo "=== GitHub runner labels ==="
-gdir_v1_regions_get_region_github_runner_labels
-
-echo ""
-echo "=== GitHub runner image ==="
-gdir_v1_regions_get_region_github_runner_image
-
-# --- observability -----------------------------------------------------------
-echo ""
-echo "=== Observability ==="
-gdir_v1_regions_get_region_observability
-
-echo ""
-echo "=== Prometheus scraping CIDR ==="
-gdir_v1_regions_get_region_prom_scraping_cidr
-
-echo ""
-echo "=== Loki destination CIDR ==="
-gdir_v1_regions_get_region_loki_dest_cidr
-
-echo ""
-echo "=== Loki FQDN ==="
-gdir_v1_regions_get_region_loki_fqdn
+echo "\n=== Prometheus scraping CIDR ==="
+gdir_v1_tenancies_get_tenancy_region_prom_scraping_cidr

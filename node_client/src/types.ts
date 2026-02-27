@@ -72,3 +72,20 @@ export interface Realm {
 export interface RealmsMap {
   [realmKey: string]: Realm;
 }
+
+// regions/v2
+export interface RegionV2Network { public: CidrEntry[]; }
+export interface RegionV2 { key: string; realm: string; network: RegionV2Network; }
+export interface RegionsV2Map { [regionKey: string]: RegionV2; }
+
+// tenancies/v1
+export interface TenancyNetwork { private: CidrEntry[]; proxy: Proxy; }
+export interface TenancyRegion {
+  network: TenancyNetwork;
+  security: Security;
+  toolchain: Toolchain;
+  observability: Observability;
+}
+export interface TenancyRegionsMap { [regionKey: string]: TenancyRegion; }
+export interface Tenancy { realm: string; regions: TenancyRegionsMap; }
+export interface TenanciesMap { [tenancyKey: string]: Tenancy; }

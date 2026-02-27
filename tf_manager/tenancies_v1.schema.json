@@ -1,129 +1,211 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "tenancies/v1",
-  "title": "tenancies/v1",
-  "description": "OCI tenancy attributes — realm membership and per-region subscription attributes (network, security, toolchain, observability). Region keys in the regions sub-map must correspond to keys in regions/v2 (enforced by data governance, not schema).",
-  "type": "object",
-  "properties": {
-    "last_updated_timestamp": {
-      "type": "string",
-      "description": "ISO 8601 UTC timestamp injected by tf_manager at upload time"
+  "$defs": {
+    "cidr_entry": {
+      "additionalProperties": false,
+      "properties": {
+        "cidr": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "cidr",
+        "description",
+        "tags"
+      ],
+      "type": "object"
     }
   },
+  "$id": "tenancies/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": {
-    "type": "object",
-    "required": ["realm", "regions"],
     "additionalProperties": false,
     "properties": {
       "realm": {
-        "type": "string",
-        "description": "Realm this tenancy belongs to, e.g. oc1"
+        "description": "Realm this tenancy belongs to, e.g. oc1",
+        "type": "string"
       },
       "regions": {
-        "type": "object",
-        "description": "Per-region subscription attributes, keyed by OCI region identifier (e.g. eu-zurich-1)",
         "$comment": "Region keys reference regions/v2 map keys. Cross-document referential integrity is validated by tooling outside JSON Schema.",
-        "propertyNames": {
-          "pattern": "^[a-z]+-[a-z]+-[0-9]+$",
-          "description": "OCI region identifier format, e.g. eu-zurich-1"
-        },
         "additionalProperties": {
-          "type": "object",
-          "required": ["network", "security", "toolchain", "observability"],
           "additionalProperties": false,
           "properties": {
             "network": {
-              "type": "object",
-              "required": ["private", "proxy"],
               "additionalProperties": false,
               "properties": {
                 "private": {
-                  "type": "array",
                   "description": "Private/internal CIDR blocks for this tenancy in this region",
-                  "items": { "$ref": "#/$defs/cidr_entry" }
+                  "items": {
+                    "$ref": "#/$defs/cidr_entry"
+                  },
+                  "type": "array"
                 },
                 "proxy": {
-                  "type": "object",
-                  "required": ["url", "ip", "port", "noproxy"],
                   "additionalProperties": false,
                   "properties": {
-                    "url":     { "type": "string" },
-                    "ip":      { "type": "string" },
-                    "port":    { "type": "string" },
-                    "noproxy": { "type": "array", "items": { "type": "string" } }
-                  }
+                    "ip": {
+                      "type": "string"
+                    },
+                    "noproxy": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "port": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "url",
+                    "ip",
+                    "port",
+                    "noproxy"
+                  ],
+                  "type": "object"
                 }
-              }
+              },
+              "required": [
+                "private",
+                "proxy"
+              ],
+              "type": "object"
+            },
+            "observability": {
+              "additionalProperties": false,
+              "properties": {
+                "loki_destination_cidr": {
+                  "type": "string"
+                },
+                "loki_fqdn": {
+                  "type": "string"
+                },
+                "prometheus_scraping_cidr": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "prometheus_scraping_cidr",
+                "loki_destination_cidr",
+                "loki_fqdn"
+              ],
+              "type": "object"
             },
             "security": {
-              "type": "object",
-              "required": ["vault"],
               "additionalProperties": false,
               "properties": {
                 "vault": {
-                  "type": "object",
-                  "required": ["ocid", "crypto_endpoint", "management_endpoint"],
                   "additionalProperties": false,
                   "properties": {
-                    "ocid":                { "type": "string" },
-                    "crypto_endpoint":     { "type": "string" },
-                    "management_endpoint": { "type": "string" }
-                  }
+                    "crypto_endpoint": {
+                      "type": "string"
+                    },
+                    "management_endpoint": {
+                      "type": "string"
+                    },
+                    "ocid": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ocid",
+                    "crypto_endpoint",
+                    "management_endpoint"
+                  ],
+                  "type": "object"
                 }
-              }
+              },
+              "required": [
+                "vault"
+              ],
+              "type": "object"
             },
             "toolchain": {
-              "type": "object",
-              "required": ["github"],
               "additionalProperties": false,
               "properties": {
                 "github": {
-                  "type": "object",
-                  "required": ["runner"],
                   "additionalProperties": false,
                   "properties": {
                     "runner": {
-                      "type": "object",
-                      "required": ["labels", "image"],
                       "additionalProperties": false,
                       "properties": {
-                        "labels": {
-                          "type": "array",
-                          "minItems": 1,
-                          "items": { "type": "string" }
+                        "image": {
+                          "type": "string"
                         },
-                        "image": { "type": "string" }
-                      }
+                        "labels": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 1,
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "labels",
+                        "image"
+                      ],
+                      "type": "object"
                     }
-                  }
+                  },
+                  "required": [
+                    "runner"
+                  ],
+                  "type": "object"
                 }
-              }
-            },
-            "observability": {
-              "type": "object",
-              "required": ["prometheus_scraping_cidr", "loki_destination_cidr", "loki_fqdn"],
-              "additionalProperties": false,
-              "properties": {
-                "prometheus_scraping_cidr": { "type": "string" },
-                "loki_destination_cidr":    { "type": "string" },
-                "loki_fqdn":                { "type": "string" }
-              }
+              },
+              "required": [
+                "github"
+              ],
+              "type": "object"
             }
-          }
-        }
+          },
+          "required": [
+            "network",
+            "security",
+            "toolchain",
+            "observability"
+          ],
+          "type": "object"
+        },
+        "description": "Per-region subscription attributes, keyed by OCI region identifier (e.g. eu-zurich-1)",
+        "propertyNames": {
+          "description": "OCI region identifier format, e.g. eu-zurich-1",
+          "pattern": "^[a-z]+-[a-z]+-[0-9]+$"
+        },
+        "type": "object"
       }
+    },
+    "required": [
+      "realm",
+      "regions"
+    ],
+    "type": "object"
+  },
+  "description": "OCI tenancy attributes \u2014 realm membership and per-region subscription attributes (network, security, toolchain, observability). Region keys in the regions sub-map must correspond to keys in regions/v2 (enforced by data governance, not schema).",
+  "properties": {
+    "last_updated_timestamp": {
+      "description": "ISO 8601 UTC timestamp injected by tf_manager at upload time",
+      "type": "string"
+    },
+    "schema_version": {
+      "description": "Semver version of this data object, format MAJOR.MINOR.PATCH (e.g. \"1.0.0\")",
+      "type": "string"
     }
   },
-  "$defs": {
-    "cidr_entry": {
-      "type": "object",
-      "required": ["cidr", "description", "tags"],
-      "additionalProperties": false,
-      "properties": {
-        "cidr":        { "type": "string" },
-        "description": { "type": "string" },
-        "tags":        { "type": "array", "items": { "type": "string" } }
-      }
-    }
-  }
+  "required": [
+    "schema_version"
+  ],
+  "title": "tenancies/v1",
+  "type": "object"
 }

@@ -36,6 +36,11 @@ export class gdir_realms_v1 extends gdir {
     return this.getDoc().then(d => d["last_updated_timestamp"] as string | undefined);
   }
 
+  /** Semver version of this data object */
+  async getSchemaVersion(): Promise<string | undefined> {
+    return this.getDoc().then(d => d["schema_version"] as string | undefined);
+  }
+
   // ---------------------------------------------------------------------------
   // Realm map
   // ---------------------------------------------------------------------------
@@ -43,7 +48,7 @@ export class gdir_realms_v1 extends gdir {
   /** All realms (v1 schema) — metadata fields excluded. */
   async getRealms(): Promise<RealmsMap> {
     const doc = await this.getDoc();
-    const { last_updated_timestamp, ...realms } = doc;
+    const { last_updated_timestamp, schema_version, ...realms } = doc;
     return realms as RealmsMap;
   }
 

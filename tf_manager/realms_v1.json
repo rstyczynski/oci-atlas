@@ -1,23 +1,25 @@
 {
-    "oc1": {
-        "type": "public",
-        "geo-region": "global",
-        "name": "OCI Public",
-        "description": "Standard commercial OCI realm (oraclecloud.com)",
-        "api_domain": "oraclecloud.com"
-    },
-    "oc19": {
-        "type": "sovereign",
-        "geo-region": "eu",
-        "name": "OCI EU Sovereign",
-        "description": "EU Sovereign Cloud — data residency and operational sovereignty within the European Union (oraclecloud.eu)",
-        "api_domain": "oraclecloud.eu"
-    },
-    "tst01": {
-        "type": "public",
-        "geo-region": "test",
-        "name": "Test dataset",
-        "description": "Non existing test dataset",
-        "api_domain": "test.oraclecloud.com"
-    }
+  "last_updated_timestamp": "2026-02-25T12:00:00Z",
+  "oc1": {
+    "api_domain": "oraclecloud.com",
+    "description": "Standard commercial OCI realm (oraclecloud.com)",
+    "geo-region": "global",
+    "name": "OCI Public",
+    "type": "public"
+  },
+  "oc19": {
+    "api_domain": "oraclecloud.eu",
+    "description": "EU Sovereign Cloud \u2014 data residency and operational sovereignty within the European Union (oraclecloud.eu)",
+    "geo-region": "eu",
+    "name": "OCI EU Sovereign",
+    "type": "sovereign"
+  },
+  "schema_version": "1.0.0",
+  "tst01": {
+    "api_domain": "test.oraclecloud.com",
+    "description": "Non existing test dataset",
+    "geo-region": "test",
+    "name": "Test dataset",
+    "type": "public"
+  }
 }
