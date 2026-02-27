@@ -33,6 +33,15 @@ Backlog Items:
 
 * GD-2. Establish versioning strategy for data and access layer
 
+## Sprint 4 - Apply versioning strategy for data and access layer
+
+Status: Progress
+Mode: managed
+
+Backlog Items:
+
+* GD-4. Apply versioning strategy for data and access layer as documented in VERSIONING.md (Sprint 3 product)
+
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 
 ## Sprint 1 - <Sprint Name>
