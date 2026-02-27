@@ -105,9 +105,9 @@ cd ../..
 
 Common environment knobs:
 
-| Var | Purpose | Default |
+| Var | Purpose | Default (all clients) |
 | --- | ------- | ------- |
-| `GDIR_BUCKET` | Bucket containing catalog objects | `gdir_info` |
+| `GDIR_BUCKET` | Bucket containing catalog objects | `gdir_info` (CLI `gdir.sh`, Node `DEFAULT_BUCKET`, Terraform `bucket_name` variable) |
 | `REGION_KEY`  | Region key for region/tenancy lookups | auto-resolved from bucket OCID |
 | `TENANCY_KEY` | Tenancy key for tenancy examples/tests | none (must set for tenancy flows) |
 | `REALM_KEY`   | Realm key for realm example | auto-resolved via regions unless set |
