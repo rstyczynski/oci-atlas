@@ -160,6 +160,25 @@ Existing paths (`regions/v1`, `regions/v2`) use the legacy `v`-prefixed conventi
 
 ## Git Operations
 
+### Commit message convention
+
+Commit messages follow the **Conventional Commits** specification: <https://www.conventionalcommits.org>
+
+| Prefix | Meaning | Maps to semver |
+| ------ | ------- | -------------- |
+| `fix:` | Bug fix — wrong data value, wrong constraint | PATCH bump |
+| `feat:` | New feature or new catalog entry | MINOR bump |
+| `feat!:` | Breaking change (with `!` suffix) | MAJOR bump |
+| `chore:` | Maintenance — no functional change | No version bump |
+| `docs:` | Documentation only | No version bump |
+| `refactor:` | Code restructure without behavior change | No version bump |
+
+The `!` suffix on any type (e.g. `feat!:`, `fix!:`) signals a breaking change regardless of type.
+
+A scope may be added in parentheses: `feat(regions): add eu-paris-1`.
+
+In this project commits also carry the sprint label: `feat: (sprint-3) description`.
+
 ### Tagging a release
 
 Create and push a version tag after updating `schema_version` in data files:
