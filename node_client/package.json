@@ -11,7 +11,8 @@
     "example:region": "ts-node examples/region.ts",
     "example:realms": "ts-node examples/realms.ts",
     "example:realm": "ts-node examples/realm.ts",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "example:tenancy": "ts-node examples/tenancy.ts"
   },
   "dependencies": {
     "oci-common": "^2.125.1",
