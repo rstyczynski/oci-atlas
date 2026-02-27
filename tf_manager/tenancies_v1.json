@@ -1,4 +1,6 @@
 {
+  "schema_version": "1.0.0",
+  "last_updated_timestamp": "2026-02-25T12:00:00Z",
   "acme_prod": {
     "realm": "oc1",
     "regions": {
@@ -194,7 +196,5 @@
         }
       }
     }
-  },
-  "last_updated_timestamp": "2026-02-25T12:00:00Z",
-  "schema_version": "1.0.0"
+  }
 }

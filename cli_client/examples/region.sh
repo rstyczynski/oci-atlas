@@ -3,9 +3,9 @@
 # Shows region (v2) metadata and tenancy-specific details for a region.
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../gdir_regions_v2.sh"
-source "$SCRIPT_DIR/../gdir_tenancies_v1.sh"
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$BASE_DIR/gdir_regions_v2.sh"
+source "$BASE_DIR/gdir_tenancies_v1.sh"
 
 RESOLVED_KEY=$(_gdir_region_key)
 
