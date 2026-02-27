@@ -1,6 +1,6 @@
 # Sprint 4 - Inception
 
-Status: Complete
+Status: Complete (revalidated after sprint restart)
 
 ## What Was Analyzed
 
@@ -12,7 +12,7 @@ GD-4: Apply versioning strategy from VERSIONING.md to all project artefacts.
 2. `regions_v1` is the old mixed model superseded by `regions_v2 + tenancies_v1`. Backlog says "get rid of old versions" — implies full removal of `regions_v1.json`, `regions_v1.schema.json`, and `node_client/src/gdir_regions_v1.ts`.
 3. `realms_v1.json` also lacks `last_updated_timestamp` — needs to be added alongside `schema_version`.
 4. `node_client/package.json` lacks the `prepare` script required for npm git-source install to work.
-5. Two open questions require design-phase decision: confirm `regions_v1` removal scope; confirm `realms_v1.json` timestamp value.
+5. Managed-mode confirmations: removal of `regions_v1` artefacts is aligned with BACKLOG note “get rid of old versions”; use consistent timestamp `"2026-02-25T12:00:00Z"` for `realms_v1.json` metadata.
 
 ## Confirmed Work Scope
 
@@ -30,4 +30,4 @@ Full analysis: `progress/sprint_4/sprint_4_analysis.md`
 
 ## Readiness
 
-Confirmed Ready — proceeding to Elaboration.
+Confirmed Ready — proceed to Elaboration (no open questions).
