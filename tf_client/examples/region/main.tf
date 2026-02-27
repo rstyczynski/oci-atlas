@@ -1,5 +1,5 @@
 module "regions_v2" {
-  source       = "../gdir_regions_v2"
+  source       = "../../gdir_regions_v2"
   namespace    = var.namespace
   bucket_name  = var.bucket_name
   object_name  = var.regions_object
@@ -7,7 +7,7 @@ module "regions_v2" {
 }
 
 module "tenancies_v1" {
-  source       = "../gdir_tenancies_v1"
+  source       = "../../gdir_tenancies_v1"
   namespace    = var.namespace
   bucket_name  = var.bucket_name
   object_name  = var.tenancies_object

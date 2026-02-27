@@ -8,7 +8,7 @@ Status: In Progress
 
 ## Pending
 - AJV schema compile: `npx ajv-cli@5 compile --spec=draft2020 -s realms_v1.schema.json -s regions_v2.schema.json -s tenancies_v1.schema.json` (timed out during npx download; rerun after install)
-- Terraform validate: `terraform -chdir=tf_client/examples/region validate` and `terraform -chdir=tf_client/examples/regions validate` (requires `terraform init` in examples dirs)
+- Terraform validate: `terraform -chdir=tf_client/examples/region validate` and `terraform -chdir=tf_client/examples/regions validate` — init blocked by offline provider registry access in sandbox
 
 ## Data Points
 - regions_v2.json schema_version: 1.0.0
