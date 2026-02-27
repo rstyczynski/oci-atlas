@@ -207,7 +207,8 @@ Each client ships a DAL per domain/version:
 
 ## Testing
 
-- **Node (OCI)**: `npm --prefix node_client test -- --runInBand`
+- **Node (OCI)**: `npm --prefix node_client test -- --runInBand` (uses OCI Object Storage; ensure env/OCI config is set)
+- **Node (offline fixtures)**: `TEST_DATA_DIR=$PWD/tf_manager npm --prefix node_client test -- --runInBand`
 - **CLI (OCI)**: `bash cli_client/test/run_tests.sh`
 - **CLI (offline fixtures)**: `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh`
 - **Terraform**: in each example under `tf_client/examples/{region,regions,tenancy,realm,realms}` run:
