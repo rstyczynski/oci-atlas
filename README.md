@@ -13,14 +13,15 @@ Global directory is the equivalent of `jq data.json` — except the data file li
   - [Data definition](#data-definition)
   - [Auto-discovery](#auto-discovery)
   - [Data Access Layer (DAL)](#data-access-layer-dal)
-- [Data structures](#data-structures)
-  - [`realms/v1` schema](#realmsv1-schema)
-  - [`regions/v1` schema](#regionsv1-schema)
 - [Client libraries](#client-libraries)
   - [Shell (CLI)](#shell-cli)
   - [Node.js](#nodejs)
   - [Terraform](#terraform)
 - [Testing](#testing)
+- [Data structures](#data-structures)
+  - [`realms/v1` schema](#realmsv1-schema)
+  - [`regions/v2` schema](#regionsv2-schema)
+  - [`tenancies/v1` schema](#tenanciesv1-schema)
 - [References](#references)
 
 ## Quick start
@@ -56,6 +57,7 @@ cd node_client
 npm install
 
 npm run example:region
+
 REGION_KEY=eu-zurich-1 npm run example:region
 npm run example:regions
 
@@ -137,7 +139,7 @@ Common environment knobs:
 
 ## Data domains
 
-The catalog is organised into **data domains** — independent datasets stored as separate JSON objects in the bucket. Each domain has its own schema,data validator program, evolves independently, and is accessed through a dedicated **Data Access Layer (DAL)** in  client libraries provided for node.js, shell, and terraform.
+The catalog is organised into **data domains** — independent datasets stored as separate JSON objects in the bucket. Each domain has its own schema and data validator program, evolves independently, and is accessed through a dedicated **Data Access Layer (DAL)** in client libraries provided for Node.js, shell, and Terraform.
 
 ### Object path convention
 
@@ -166,7 +168,7 @@ Each domain ships four co-located artefacts in `tf_manager/`:
 | Validator | `<domain>_<version>.schema.json` + `validate.sh` | Thin shell wrapper around `ajv-cli` (JSON Schema draft 2020-12); run by Terraform before upload; also runnable standalone: `bash validate.sh <schema> <data>` |
 | Provisioning | `<domain>_<version>.tf` | Uploads the data object; depends on validator passing |
 
-The schema in README is derived from the `.schema.json` file.
+The schema in this README is derived from the `.schema.json` file.
 
 ### Auto-discovery
 
@@ -200,10 +202,34 @@ When a new domain is added (e.g. `realms`), a parallel set of DAL artefacts is c
 
 ## Client libraries
 
-Each client ships a DAL per domain/version:
-- CLI: bash scripts under `cli_client/` (`gdir_regions_v2.sh`, `gdir_tenancies_v1.sh`, `gdir_realms_v1.sh`).
-- Node: TypeScript classes in `node_client/src/` (`gdir_regions_v2.ts`, `gdir_tenancies_v1.ts`, `gdir_realms_v1.ts`).
-- Terraform: modules in `tf_client/` (`gdir_regions_v2`, `gdir_tenancies_v1`, `gdir_realms_v1`).
+Each client ships a DAL per domain/version.
+
+### Shell (CLI)
+
+- Location: `cli_client/`
+- DAL scripts:
+  - `gdir_regions_v2.sh`
+  - `gdir_tenancies_v1.sh`
+  - `gdir_realms_v1.sh`
+- Typical usage: called from small wrapper scripts in `cli_client/examples/` (see Quick start).
+
+### Node.js
+
+- Location: `node_client/`
+- DAL classes (TypeScript, compiled to Node.js):
+  - `src/gdir_regions_v2.ts`
+  - `src/gdir_tenancies_v1.ts`
+  - `src/gdir_realms_v1.ts`
+- Typical usage: create the corresponding `gdir_<domain>_<version>` class and call its methods; examples are wired via `npm run example:*` (see Quick start).
+
+### Terraform
+
+- Location: `tf_client/`
+- DAL modules:
+  - `gdir_regions_v2/`
+  - `gdir_tenancies_v1/`
+  - `gdir_realms_v1/`
+- Typical usage: consume the modules from `tf_client/examples/{region,regions,tenancy,realm,realms}`.
 
 ## Testing
 
@@ -308,4 +334,4 @@ Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-
 
 ## References
 
-Oracle public cloud CIDR informaton, (https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json)[https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json]
+Oracle public cloud CIDR information: [public_ip_ranges.json](https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json)
