@@ -194,6 +194,21 @@ When a new domain is added (e.g. `realms`), a parallel set of DAL artefacts is c
 
 ## Data structures
 
+
+## Client libraries
+
+Each client ships a DAL per domain/version:
+- CLI: bash scripts under `cli_client/` (`gdir_regions_v2.sh`, `gdir_tenancies_v1.sh`, `gdir_realms_v1.sh`).
+- Node: TypeScript classes in `node_client/src/` (`gdir_regions_v2.ts`, `gdir_tenancies_v1.ts`, `gdir_realms_v1.ts`).
+- Terraform: modules in `tf_client/` (`gdir_regions_v2`, `gdir_tenancies_v1`, `gdir_realms_v1`).
+
+## Testing
+
+- Node: `npm --prefix node_client test -- --runInBand`
+- CLI: `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh`
+- Terraform: `terraform init && terraform validate` in `tf_client/examples/{region,regions,tenancy,realm,realms}`
+
+
 ### `realms/v1` schema
 
 Top-level keys are realm identifiers (e.g. `oc1`, `tst01`). Metadata fields (`schema_version`, `last_updated_timestamp`) are top-level; DALs strip them from the realm map.
