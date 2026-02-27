@@ -5,4 +5,4 @@ Progress board is a table showing sprint, and backlog items state. It's the only
 | Sprint   | Sprint Status  | Backlog Item | Item Status    |
 | -------- | -------------- | ------------ | -------------- |
 | Sprint 1 | done           | GD-1         | done           |
-| Sprint 2 | under_analysis | GD-1-fix1    | under_analysis |
+| Sprint 2 | under_design   | GD-1-fix1    | under_design   |
