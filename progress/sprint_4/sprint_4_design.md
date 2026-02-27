@@ -2,7 +2,7 @@
 
 ## GD-4. Apply versioning strategy for data and access layer
 
-Status: Proposed
+Status: Accepted
 
 ### Requirement Summary
 
@@ -213,4 +213,4 @@ Medium — `regions_v1` removal is irreversible; covered by git history.
 
 ## Design Approval Status
 
-Awaiting Review
+Accepted
