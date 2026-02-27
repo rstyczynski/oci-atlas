@@ -87,6 +87,7 @@ terraform init
 terraform apply -auto-approve
 terraform output
 cd ..
+cd ..
 
 cd realms
 terraform init
@@ -105,8 +106,6 @@ cd ..
 
 cd ../..
 ```
-
-> Note: `terraform init` requires access to registry.terraform.io to download providers. In restricted/offline environments, use a pre-populated `TF_PLUGIN_CACHE_DIR` or provider mirror; otherwise validation will fail even though the modules are correct.
 
 ### Online vs offline data for examples/tests
 
