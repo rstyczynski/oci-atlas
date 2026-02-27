@@ -2,7 +2,7 @@
 
 ## GD-1-fix1. Remove `realm` attribute from tenancies json data file
 
-Status: Accepted
+Status: Rejected
 
 ### Requirement Summary
 
@@ -132,4 +132,4 @@ Low — isolated change, no consumers.
 
 ## Design Approval Status
 
-Accepted
+Rejected — Product Owner decision during construction: `realm` must remain in `tenancies/v1`.
