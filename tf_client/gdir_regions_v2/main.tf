@@ -1,16 +1,12 @@
 data "oci_objectstorage_namespace" "ns" {}
 
-locals {
-  namespace = coalesce(var.namespace, data.oci_objectstorage_namespace.ns.namespace)
-}
-
 data "oci_objectstorage_bucket" "info" {
-  namespace = local.namespace
+  namespace = data.oci_objectstorage_namespace.ns.namespace
   name      = var.bucket_name
 }
 
 data "oci_objectstorage_object" "regions_v2" {
-  namespace = local.namespace
+  namespace = data.oci_objectstorage_namespace.ns.namespace
   bucket    = var.bucket_name
   object    = var.object_name
 }

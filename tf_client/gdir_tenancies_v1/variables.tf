@@ -1,6 +1,6 @@
 variable "bucket_name" {
   type    = string
-  default = "gdir_info"
+  default = "v1/tenancies"
 }
 
 variable "object_name" { type = string }

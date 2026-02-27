@@ -1,4 +1,7 @@
-variable "bucket_name" { type = string }
+variable "bucket_name" {
+  type    = string
+  default = "v2/regions"
+}
 variable "object_name" { type = string }
 variable "region_key"  { type = string, default = null }
 variable "cidr_tag_filter" {
