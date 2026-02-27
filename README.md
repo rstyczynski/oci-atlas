@@ -82,6 +82,12 @@ TF_VAR_region_key=tst-region-3 terraform apply -auto-approve
 terraform output
 cd ..
 
+cd tenancy
+terraform init
+terraform apply -auto-approve
+terraform output
+cd ..
+
 cd realms
 terraform init
 terraform apply -auto-approve
