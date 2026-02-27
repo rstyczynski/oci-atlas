@@ -40,10 +40,12 @@ cd ..
 
 ```bash
 cd cli_client
-GDIR_BUCKET=gdir_info REGION_KEY=eu-zurich-1 bash examples/region.sh       # region-only (v2)
-GDIR_BUCKET=gdir_info bash examples/regions.sh                             # list regions/realms (v2)
-GDIR_BUCKET=gdir_info TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 bash examples/tenancy.sh
-GDIR_BUCKET=gdir_info REALM_KEY=oc1 bash examples/realms.sh
+REGION_KEY=eu-zurich-1 bash examples/region.sh       # region-only (v2)
+bash examples/regions.sh                             # list regions/realms (v2)
+TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 bash examples/tenancy.sh
+REALM_KEY=oc1 bash examples/realms.sh
+# override bucket if not default:
+# GDIR_BUCKET=my_other_bucket REGION_KEY=... bash examples/region.sh
 cd ..
 ```
 
