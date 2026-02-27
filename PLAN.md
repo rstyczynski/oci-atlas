@@ -17,12 +17,21 @@ Backlog Items:
 
 ## Sprint 2 - sprint 1 bug fix
 
-Status: Progress
+Status: Rejected
 Mode: managed
 
 Backlog Items:
 
 * GD-1-fix1. Remove `realm` attribute from tenancies json data file
+
+## Sprint 3 - Establish versioning strategy for data and access layer
+
+Status: Done
+Mode: managed
+
+Backlog Items:
+
+* GD-2. Establish versioning strategy for data and access layer
 
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 
