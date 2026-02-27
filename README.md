@@ -196,13 +196,14 @@ When a new domain is added (e.g. `realms`), a parallel set of DAL artefacts is c
 
 ### `realms/v1` schema
 
-Top-level keys are realm identifiers (e.g. `oc1`, `tst01`). Each entry carries the realm's display name, geographic scope, and base API domain.
+Top-level keys are realm identifiers (e.g. `oc1`, `tst01`). Metadata fields (`schema_version`, `last_updated_timestamp`) are top-level; DALs strip them from the realm map.
 
 ```json
 {
+  "schema_version": "1.0.0",
   "last_updated_timestamp": "<ISO-8601-UTC>",
   "<realm-key>": {
-    "type": "<realm-type>",
+    "type": "public | government | sovereign | drcc | alloy | airgapped",
     "geo-region": "<geo>",
     "name": "<display-name>",
     "description": "<description>",
@@ -211,195 +212,71 @@ Top-level keys are realm identifiers (e.g. `oc1`, `tst01`). Each entry carries t
 }
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `last_updated_timestamp` | string | ISO 8601 UTC timestamp injected by `tf_manager` at upload time |
-| `<realm-key>` | string (map key) | Unique realm identifier, e.g. `oc1`, `tst01` |
-| `type` | enum | Deployment model — `public` · `government` · `sovereign` · `drcc` · `alloy` · `airgapped` |
-| `geo-region` | string | Geographic scope, e.g. `global`, `eu` |
-| `name` | string | Human-readable realm name, e.g. `OCI Public` |
-| `description` | string | Longer description of the realm |
-| `api_domain` | string | Second-level domain for OCI API endpoints in this realm, e.g. `oraclecloud.com`, `oraclecloud.eu` |
+### `regions/v2` schema
 
-**Type reference (based on OCI TypeScript SDK realm registry):**
-
-| Type | Oracle product | Example realms |
-|------|---------------|----------------|
-| `public` | OCI Commercial | OC1 (`oraclecloud.com`) |
-| `government` | OCI Government Cloud | OC2/OC3 (`oraclegovcloud.com`), OC4 (`oraclegovcloud.uk`) |
-| `sovereign` | OCI Sovereign Cloud | OC19 (`oraclecloud.eu` — EU Sovereign) |
-| `drcc` | Dedicated Region Cloud@Customer | OC8–OC15, OC23–OC35 |
-| `alloy` | Oracle Alloy (partner-operated) | OC20, OC21, OC42 |
-| `airgapped` | Air-gapped Dedicated Region | fully isolated customer DC deployments |
-
-### `regions/v1` schema
-
-Top-level keys are OCI region identifiers. Each entry carries realm membership, network ranges, proxy settings, vault coordinates, toolchain config, and observability endpoints.
+Top-level keys are region identifiers (e.g. `eu-zurich-1`). Each entry includes realm and public CIDRs; tenancy-scoped data is in `tenancies/v1`. Metadata is top-level and removed by DALs before returning maps.
 
 ```json
 {
+  "schema_version": "1.0.0",
   "last_updated_timestamp": "<ISO-8601-UTC>",
   "<region-key>": {
-    "key": "<short-code>",
-    "realm": "<realm-id>",
+    "key": "<short-key>",
+    "realm": "<realm-key>",
     "network": {
       "public": [
-        {
-          "cidr": "<cidr-block>",
-          "description": "<description>",
-          "tags": ["<tag>"]
-        }
-      ],
-      "internal": [
-        {
-          "cidr": "<cidr-block>",
-          "description": "<description>",
-          "tags": ["<tag>"]
-        }
-      ],
-      "proxy": {
-        "url": "<scheme>://<host>:<port>",
-        "ip": "<proxy-ip>",
-        "port": "<port>",
-        "noproxy": ["<ip>", "<fqdn>"]
-      }
-    },
-    "security": {
-      "vault": {
-        "ocid": "<ocid>",
-        "crypto_endpoint": "https://<host>:<port>",
-        "management_endpoint": "https://<host>:<port>"
-      }
-    },
-    "toolchain": {
-      "github": {
-        "runner": {
-          "labels": ["<label>"],
-          "image": "<ocid>"
-        }
-      }
-    },
-    "observability": {
-      "prometheus_scraping_cidr": "<cidr-block>",
-      "loki_destination_cidr": "<cidr-block>",
-      "loki_fqdn": "<fqdn>"
+        { "cidr": "<CIDR>", "description": "<desc>", "tags": ["OCI"] }
+      ]
     }
   }
 }
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `last_updated_timestamp` | string | ISO 8601 UTC timestamp injected by `tf_manager` at upload time |
-| `<region-key>` | string (map key) | Unique region identifier, e.g. `eu-zurich-1` |
-| `key` | string | Short region code, e.g. `ZRH`, `FRA` |
-| `realm` | string | Realm the region belongs to, e.g. `oc1`, `tst01` |
-| `network.public` | `{cidr, description, tags[]}[]` | Public-facing CIDR blocks |
-| `network.internal` | `{cidr, description, tags[]}[]` | Internal/private CIDR blocks |
-| `network.proxy.url` | string | Full proxy URL |
-| `network.proxy.ip` | string | Proxy IP address |
-| `network.proxy.port` | string | Proxy port |
-| `network.proxy.noproxy` | string[] | IPs/FQDNs that bypass the proxy |
-| `security.vault.ocid` | string | OCI Vault OCID |
-| `security.vault.crypto_endpoint` | string | Vault cryptographic operations endpoint |
-| `security.vault.management_endpoint` | string | Vault management endpoint |
-| `toolchain.github.runner.labels` | string[] | GitHub Actions runner labels for this region |
-| `toolchain.github.runner.image` | string | Compute image OCID used for GitHub runner instances |
-| `observability.prometheus_scraping_cidr` | string | CIDR allowed to scrape Prometheus |
-| `observability.loki_destination_cidr` | string | CIDR of the Loki destination |
-| `observability.loki_fqdn` | string | FQDN of the Loki endpoint |
+### `tenancies/v1` schema
 
-## Client libraries
+Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-region attributes: private CIDRs, proxy, vault, toolchain, observability. Metadata is top-level.
 
-Each client library contains a dedicated **Data Access Layer (DAL)** per domain and schema version. The DAL encodes the field structure of a specific schema version, exposes typed getter methods, and handles all OCI Object Storage interaction — callers never parse raw JSON directly.
-
-All three libraries share the same DAL naming convention (`gdir_<domain>_<version>`) and the same auto-discovery chain (region → realm → tenancy from the active OCI connection). They are fully independent and can be used individually.
-
-### Shell (CLI)
-
-Bash functions sourced from `cli_client/gdir_<domain>_<version>.sh`. No compilation step; requires only `bash`, `jq`, and the OCI CLI.
-
-→ See [`cli_client/README.md`](cli_client/README.md) for function reference, env-var overrides, and usage examples.
-
-### Node.js
-
-TypeScript classes in `node_client/src/gdir_<domain>_<version>.ts`, compiled with `tsc` and consumed via the package entry point. Async getter methods return typed interfaces defined in `types.ts`.
-
-→ See [`node_client/README.md`](node_client/README.md) for API reference, constructor config, and example scripts.
-
-### Terraform
-
-Reusable modules under `tf_client/gdir_<domain>_<version>/`. Each module exposes typed `output` blocks and is consumed by example configurations under `tf_client/examples/`.
-
-→ See [`tf_client/README.md`](tf_client/README.md) for module inputs, outputs, and example usage.
-
-## Testing
-
-Client logic (JSON parsing, field access, DAL methods) is validated without any OCI connection. Tests override the data-fetch layer to read from the local JSON files in `tf_manager/` instead of calling OCI Object Storage. Both test suites can be run on macOS or inside a Linux container via Podman.
-
-**Shell client:**
-```bash
-# macOS
-bash cli_client/test/run_tests.sh
-
-# Linux via Podman (Ubuntu 24.04 default; override with IMAGE=oraclelinux:8)
-bash cli_client/test/validate_linux.sh
+```json
+{
+  "schema_version": "1.0.0",
+  "last_updated_timestamp": "<ISO-8601-UTC>",
+  "<tenancy-key>": {
+    "realm": "<realm-key>",
+    "regions": {
+      "<region-key>": {
+        "network": {
+          "private": [
+            { "cidr": "<CIDR>", "description": "<desc>", "tags": ["vcn"] }
+          ],
+          "proxy": {
+            "url": "<http://proxy>",
+            "ip": "<ip>",
+            "port": "<port>",
+            "noproxy": ["<cidr-or-host>", "..."]
+          }
+        },
+        "security": {
+          "vault": {
+            "ocid": "<ocid1.vault...>",
+            "crypto_endpoint": "<url>",
+            "management_endpoint": "<url>"
+          }
+        },
+        "toolchain": {
+          "github": {
+            "runner": {
+              "labels": ["<label>"],
+              "image": "<ocid1.image...>"
+            }
+          }
+        },
+        "observability": {
+          "prometheus_scraping_cidr": "<CIDR>",
+          "loki_destination_cidr": "<CIDR>",
+          "loki_fqdn": "<fqdn>"
+        }
+      }
+    }
+  }
+}
 ```
-
-**Node.js client (Jest):**
-```bash
-# macOS
-cd node_client
-npm test
-cd ..
-
-# Linux via Podman (node:20-slim)
-bash node_client/test/validate_linux.sh
-```
-
-Tests use `ts-jest` with value-level assertions (`expect(...).toBe`, `toContain`, `toHaveProperty`, etc.) grouped in `describe` blocks. Both client test suites exit non-zero on any failure, making them suitable for CI pipelines.
-
-## Recent Updates
-
-### Sprint 2 - Sprint 1 Bug Fix
-
-**Status:** failed
-
-**Backlog Items:**
-
-- **GD-1-fix1**: Remove `realm` attribute from tenancies json data file — **Rejected** (Product Owner decision: `realm` must remain in `tenancies/v1`)
-
-**Outcome:** GD-1-fix1 was analyzed, designed, and partially implemented, then rolled back upon explicit Product Owner rejection during construction. No net change to any production file.
-
-**Documentation:**
-
-- Design: `progress/sprint_2/sprint_2_design.md`
-- Decision log: `progress/sprint_2/sprint_2_openquestions.md`
-
----
-
-### Sprint 1 - Foundation Data Model
-
-**Status:** done
-
-**Backlog Items Implemented:**
-
-- **GD-1**: Build foundation data model — done
-
-**Key Features Added:**
-
-- `regions/v2` schema (`tf_manager/regions_v2.schema.json`) — physical region attributes only (public CIDRs)
-- `tenancies/v1` schema (`tf_manager/tenancies_v1.schema.json`) — tenancy realm membership + per-region attributes (network, proxy, vault, toolchain, observability)
-- Example data files: `regions_v2.json`, `tenancies_v1.json`
-
-**Documentation:**
-
-- Implementation: `progress/sprint_1/sprint_1_implementation.md`
-- Tests: `progress/sprint_1/sprint_1_tests.md`
-- Design: `progress/sprint_1/sprint_1_design.md`
-
----
-
-## References
-
-Oracle public cloud CIDR informaton, (https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json)[https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json]
