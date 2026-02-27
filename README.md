@@ -338,6 +338,47 @@ bash node_client/test/validate_linux.sh
 
 Tests use `ts-jest` with value-level assertions (`expect(...).toBe`, `toContain`, `toHaveProperty`, etc.) grouped in `describe` blocks. Both client test suites exit non-zero on any failure, making them suitable for CI pipelines.
 
+## Recent Updates
+
+### Sprint 2 - Sprint 1 Bug Fix
+
+**Status:** failed
+
+**Backlog Items:**
+
+- **GD-1-fix1**: Remove `realm` attribute from tenancies json data file — **Rejected** (Product Owner decision: `realm` must remain in `tenancies/v1`)
+
+**Outcome:** GD-1-fix1 was analyzed, designed, and partially implemented, then rolled back upon explicit Product Owner rejection during construction. No net change to any production file.
+
+**Documentation:**
+
+- Design: `progress/sprint_2/sprint_2_design.md`
+- Decision log: `progress/sprint_2/sprint_2_openquestions.md`
+
+---
+
+### Sprint 1 - Foundation Data Model
+
+**Status:** done
+
+**Backlog Items Implemented:**
+
+- **GD-1**: Build foundation data model — done
+
+**Key Features Added:**
+
+- `regions/v2` schema (`tf_manager/regions_v2.schema.json`) — physical region attributes only (public CIDRs)
+- `tenancies/v1` schema (`tf_manager/tenancies_v1.schema.json`) — tenancy realm membership + per-region attributes (network, proxy, vault, toolchain, observability)
+- Example data files: `regions_v2.json`, `tenancies_v1.json`
+
+**Documentation:**
+
+- Implementation: `progress/sprint_1/sprint_1_implementation.md`
+- Tests: `progress/sprint_1/sprint_1_tests.md`
+- Design: `progress/sprint_1/sprint_1_design.md`
+
+---
+
 ## References
 
 Oracle public cloud CIDR informaton, (https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json)[https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json]
