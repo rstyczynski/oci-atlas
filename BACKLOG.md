@@ -39,3 +39,28 @@ This task defines data model for realm, region, and tenancy to be used by client
 Note that region_v1 data set combines real regions and tenancies, what should be divided into proper data domains.
 
 Product of this task is to produce data model v2 reflecting tuple: realm, region, tenancy. It's just a model w/o provisioning add w/o DAL.
+
+### GD-1-fix1. Remove `realm` attribute from tenancies json data file
+
+### GD-2. Establish versioning strategy for data and access layer
+
+Data and code is tracked by a [semantic versioning](https://semver.org) e.g. 1.5.12
+
+MAJOR - indicating breaking change. Previous version cannot use current version data or logic
+MINOR - indicating new feature. Previous version may use current version w/o access to new features
+PATCH - bug fix adjusting data / code to state required by given MAJOR.MINOR
+
+Areas for analysis:
+
+1.Object Storage
+
+* clients in given version have access to their data in the bucket
+* MAJOR versions are under ${data}/${MAJOR} directory
+* MINOR are indicated by filename i.e. ${data}/${MAJOR}/${data}-${MAJOR}.${MINOR}.json. Latest MINOR is always accessible via ${data}/${MAJOR}/${data}-latest.json
+* PATCH is just applied to data files - version here is tracked by object storage versioning for historical purposes
+
+2.Data Access Layer
+
+Code version is described in dependency description or other way defined by DAL technology and installed. DAL code is bound to a MAJOR.MINOR version, thus data version is hardcoded.
+
+### GD-3. tf_manager handles upload of latest version of a data file to the bucket

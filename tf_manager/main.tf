@@ -2,6 +2,7 @@ data "oci_objectstorage_namespace" "ns" {}
 
 // the only way to get tenancy ocid from current connection
 // requires TF to work with process' OCI SDK credentials
+// raw: oci os ns get-metadata --query '{compartment_id: data."default-s3-compartment-id"}'
 data "external" "tenancy" {
   program = ["bash", "-c", "oci os ns get-metadata --query '{compartment_id: data.\"default-s3-compartment-id\"}'"]
 }

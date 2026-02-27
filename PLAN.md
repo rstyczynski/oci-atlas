@@ -8,13 +8,21 @@ Instruction for the implementor: keep analysis, design and implementation as sim
 
 ## Sprint 1 - Foundation Data Model
 
-Status: Progress
+Status: Done
 Mode: managed
 
 Backlog Items:
 
 * GD-1. Build foundation data model
 
+## Sprint 2 - sprint 1 bug fix
+
+Status: Progress
+Mode: managed
+
+Backlog Items:
+
+* GD-1-fix1. Remove `realm` attribute from tenancies json data file
 
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 
