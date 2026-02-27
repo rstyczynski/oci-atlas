@@ -64,3 +64,14 @@ Areas for analysis:
 Code version is described in dependency description or other way defined by DAL technology and installed. DAL code is bound to a MAJOR.MINOR version, thus data version is hardcoded.
 
 ### GD-3. tf_manager handles upload of latest version of a data file to the bucket
+
+### GD-4. Apply versioning strategy for data and access layer as documented in VERSIONING.md (Sprint 3 product)
+
+### GD-5. Tenancy name is auto-discovered
+
+Tenancy name variable in tenancy client is optional. When not provided name is discovered from OCI API (for a given access DAL) using already known tenancy_ocid. Works in similar way to auto-discovery of region from active connection.
+
+Update tenancy DAL for shell, node, terraform.
+Extend examples in README.
+
+Bump minor version for DAL.

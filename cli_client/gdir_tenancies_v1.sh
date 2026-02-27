@@ -6,7 +6,7 @@ set -euo pipefail
 
 : "${GDIR_TENANCIES_OBJECT:=tenancies/v1}"
 _gdir_tenancies_v1_set_object() { GDIR_OBJECT="$GDIR_TENANCIES_OBJECT"; }
-: "${TENANCY_KEY:=${TENANCY_KEY:-}}"
+TENANCY_KEY="${TENANCY_KEY:-}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/gdir.sh"
@@ -34,8 +34,37 @@ _gdir_v1_tenancies_get_tenancies_json() {
 }
 
 _gdir_v1_tenancies_resolved_key() {
-  if [[ -z "${TENANCY_KEY:-}" ]]; then
-    echo "TENANCY_KEY must be set" >&2; exit 1; fi
+  # Explicit override wins
+  if [[ -n "${TENANCY_KEY:-}" ]]; then
+    echo "$TENANCY_KEY"
+    return 0
+  fi
+
+  # Discover tenancy OCID from namespace metadata (current connection)
+  local tenancy_ocid
+  tenancy_ocid="$(oci os ns get-metadata --query 'data."default-s3-compartment-id"' --raw-output 2>/dev/null || true)"
+  if [[ -z "$tenancy_ocid" || "$tenancy_ocid" == "null" ]]; then
+    echo "TENANCY_KEY not set and automatic discovery of tenancy OCID via 'oci os ns get-metadata' failed (check OCI CLI config/permissions)" >&2
+    exit 1
+  fi
+
+  # Map tenancy OCID → tenancy key via IAM tenancy name
+  local discovered_key
+  discovered_key="$(oci iam tenancy get --tenancy-id "$tenancy_ocid" --query 'data.name' --raw-output 2>/dev/null || true)"
+  if [[ -z "$discovered_key" || "$discovered_key" == "null" ]]; then
+    echo "TENANCY_KEY not set and failed to derive tenancy key from IAM tenancy name for OCID $tenancy_ocid" >&2
+    exit 1
+  fi
+
+  # Ensure derived key exists in tenancies map
+  local exists
+  exists="$(_gdir_v1_tenancies_get_tenancies_json | jq -r --arg k "$discovered_key" 'has($k)')"
+  if [[ "$exists" != "true" ]]; then
+    echo "Derived tenancy key '$discovered_key' (from IAM) is not present in tenancies/v1 data; either add it to the dataset or set TENANCY_KEY explicitly" >&2
+    exit 1
+  fi
+
+  TENANCY_KEY="$discovered_key"
   echo "$TENANCY_KEY"
 }
 

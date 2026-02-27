@@ -1,9 +1,12 @@
 /** Tenancy-focused example (tenancies/v1)
- * Usage: TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 npm run example:tenancy
+ * Usage:
+ *   npm run example:tenancy                                        # vanilla — tenancy key auto-discovered from OCI
+ *   TENANCY_KEY=acme_prod npm run example:tenancy                  # explicit tenancy key
+ *   TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 npm run example:tenancy
  */
 import { gdir_tenancies_v1 } from "../src";
 
-const TENANCY_KEY = process.env.TENANCY_KEY ?? "acme_prod";
+const TENANCY_KEY = process.env.TENANCY_KEY;
 const REGION_KEY  = process.env.REGION_KEY;
 
 const client = new gdir_tenancies_v1({ tenancyKey: TENANCY_KEY, regionKey: REGION_KEY });

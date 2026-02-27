@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "oci-common": "^2.125.1",
-    "oci-objectstorage": "^2.125.1"
+    "oci-objectstorage": "^2.125.1",
+    "oci-identity": "^2.125.1"
   },
   "jest": {
     "testEnvironment": "node",

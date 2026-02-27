@@ -169,12 +169,12 @@ describe("tenancies/v1", () => {
 
   it("getTenancy — returns tenancy object", async () => {
     const tenancy = await client.getTenancy();
-    expect(tenancy).toHaveProperty("realm", "oc1");
+    expect(tenancy).toHaveProperty("realm", "oc19");
     expect(tenancy).toHaveProperty("regions");
   });
 
-  it("getTenancyRealm — returns oc1", async () => {
-    expect(await client.getTenancyRealm()).toBe("oc1");
+  it("getTenancyRealm — returns oc19", async () => {
+    expect(await client.getTenancyRealm()).toBe("oc19");
   });
 
   // --- per-region ----------------------------------------------------------

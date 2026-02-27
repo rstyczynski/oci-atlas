@@ -5,8 +5,8 @@ set -euo pipefail
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$BASE_DIR/gdir_tenancies_v1.sh"
 
-: "${TENANCY_KEY:?TENANCY_KEY required}"
-: "${REGION_KEY:=}" # optional; auto-resolves if unset
+TENANCY_KEY="${TENANCY_KEY:-}" # optional; auto-resolved from OCI context when unset
+: "${REGION_KEY:=}"            # optional; auto-resolves if unset
 
 echo "=== Tenancy keys ==="
 gdir_v1_tenancies_get_tenancy_keys

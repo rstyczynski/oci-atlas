@@ -11,14 +11,23 @@ data "oci_objectstorage_object" "tenancies_v1" {
   object    = var.object_name
 }
 
+data "external" "tenancy" {
+  program = ["bash", "-c", "oci os ns get-metadata --query '{compartment_id: data.\"default-s3-compartment-id\"}'"]
+}
+
+data "oci_identity_tenancy" "current" {
+  tenancy_id = data.external.tenancy.result["compartment_id"]
+}
+
 locals {
-  active_region         = try(split(".", data.oci_objectstorage_bucket.info.bucket_id)[3], null)
-  tenancy_key           = var.tenancy_key
-  region_key            = coalesce(var.region_key, local.active_region)
-  _raw                  = jsondecode(data.oci_objectstorage_object.tenancies_v1.content)
+  active_region          = try(split(".", data.oci_objectstorage_bucket.info.bucket_id)[3], null)
+  discovered_tenancy_key = try(data.oci_identity_tenancy.current.name, null)
+  tenancy_key            = coalesce(var.tenancy_key, local.discovered_tenancy_key)
+  region_key             = coalesce(var.region_key, local.active_region)
+  _raw                   = jsondecode(data.oci_objectstorage_object.tenancies_v1.content)
   last_updated_timestamp = try(local._raw.last_updated_timestamp, null)
   schema_version         = try(local._raw.schema_version, null)
-  tenancies             = { for k, v in local._raw : k => v if !(k == "last_updated_timestamp" || k == "schema_version") }
+  tenancies              = { for k, v in local._raw : k => v if !(k == "last_updated_timestamp" || k == "schema_version") }
 
   tenancy = try(local.tenancies[local.tenancy_key], null)
   realm   = try(local.tenancy.realm, null)

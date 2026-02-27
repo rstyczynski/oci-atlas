@@ -35,12 +35,22 @@ Backlog Items:
 
 ## Sprint 4 - Apply versioning strategy for data and access layer
 
-Status: Progress
+Status: Done
 Mode: managed
 
 Backlog Items:
 
 * GD-4. Apply versioning strategy for data and access layer as documented in VERSIONING.md (Sprint 3 product)
+
+## Sprint 5 - Tenancy name is auto-discovered
+
+Status: Done
+Mode: managed
+
+Backlog Items:
+
+* GD-4. Tenancy name is auto-discovered
+
 
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 

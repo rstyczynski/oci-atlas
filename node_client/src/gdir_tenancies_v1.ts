@@ -1,4 +1,6 @@
 import { gdir } from "./gdir";
+import * as identity from "oci-identity";
+import * as common from "oci-common";
 import { gdir_config } from "./config";
 import {
   CidrEntry, GitHub, GitHubRunner, Observability, Proxy,
@@ -19,11 +21,12 @@ const DEFAULT_TENANCIES_V1_OBJECT = process.env.GDIR_TENANCIES_V1_OBJECT ?? "ten
 
 export class gdir_tenancies_v1 extends gdir {
   private cachedDoc: Record<string, unknown> | null = null;
-  private readonly tenancyKey: string | undefined;
+  private readonly explicitTenancyKey: string | undefined;
+  private cachedTenancyKey: string | null = null;
 
   constructor(config: gdir_tenancies_config = {}) {
     super(config, DEFAULT_TENANCIES_V1_OBJECT);
-    this.tenancyKey = config.tenancyKey ?? process.env.TENANCY_KEY;
+    this.explicitTenancyKey = config.tenancyKey ?? process.env.TENANCY_KEY;
   }
 
   private async getDoc(): Promise<Record<string, unknown>> {
@@ -31,9 +34,44 @@ export class gdir_tenancies_v1 extends gdir {
     return this.cachedDoc!;
   }
 
-  private resolvedTenancyKey(): string {
-    if (!this.tenancyKey) throw new Error("tenancyKey not set — pass via constructor config or TENANCY_KEY env var");
-    return this.tenancyKey;
+  private async resolveTenancyKey(): Promise<string> {
+    // Explicit override wins
+    if (this.explicitTenancyKey) return this.explicitTenancyKey;
+    if (this.cachedTenancyKey) return this.cachedTenancyKey;
+
+    // Discover tenancy OCID from namespace metadata (current connection)
+    const namespace = await this.getNamespace();
+    // getNamespaceMetadata returns default S3 compartment OCID which is the tenancy OCID
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nsMeta: any = await (this as any).client.getNamespaceMetadata({ namespaceName: namespace });
+    const tenancyOcid: string | undefined =
+      nsMeta?.namespaceMetadata?.defaultS3CompartmentId ?? nsMeta?.defaultS3CompartmentId;
+    if (!tenancyOcid) {
+      throw new Error("TENANCY_KEY not set and could not derive tenancy OCID from getNamespaceMetadata; set TENANCY_KEY explicitly");
+    }
+
+    // Use IAM to get tenancy name for this OCID
+    const provider = new common.ConfigFileAuthenticationDetailsProvider(
+      (this as any).ociConfig?.ociConfigFile,
+      (this as any).ociConfig?.ociProfile
+    );
+    const iamClient = new identity.IdentityClient({ authenticationDetailsProvider: provider });
+    const tenancy = await iamClient.getTenancy({ tenancyId: tenancyOcid });
+    const derivedKey = tenancy?.tenancy?.name;
+    if (!derivedKey) {
+      throw new Error(`TENANCY_KEY not set and failed to derive tenancy key from IAM tenancy name for OCID ${tenancyOcid}`);
+    }
+
+    // Ensure derived key exists in tenancies map
+    const tenancies = await this.getTenancies();
+    if (!Object.prototype.hasOwnProperty.call(tenancies, derivedKey)) {
+      throw new Error(
+        `Derived tenancy key '${derivedKey}' (from IAM) is not present in tenancies/v1 data; either add it to the dataset or set TENANCY_KEY explicitly`
+      );
+    }
+
+    this.cachedTenancyKey = derivedKey;
+    return derivedKey;
   }
 
   // ---------------------------------------------------------------------------
@@ -68,7 +106,7 @@ export class gdir_tenancies_v1 extends gdir {
 
   /** Full tenancy object for the configured tenancy key */
   async getTenancy(tenancyKey?: string): Promise<Tenancy> {
-    const key = tenancyKey ?? this.resolvedTenancyKey();
+    const key = tenancyKey ?? (await this.resolveTenancyKey());
     const tenancies = await this.getTenancies();
     const tenancy = tenancies[key];
     if (!tenancy) throw new Error(`Tenancy not found: ${key}`);
@@ -94,7 +132,10 @@ export class gdir_tenancies_v1 extends gdir {
     const tenancy = await this.getTenancy();
     const regionKey = await this.resolveRegionKey();
     const region = tenancy.regions[regionKey];
-    if (!region) throw new Error(`Region '${regionKey}' not found in tenancy '${this.resolvedTenancyKey()}'`);
+    if (!region) {
+      const tenancyKey = await this.resolveTenancyKey();
+      throw new Error(`Region '${regionKey}' not found in tenancy '${tenancyKey}'`);
+    }
     return region;
   }
 

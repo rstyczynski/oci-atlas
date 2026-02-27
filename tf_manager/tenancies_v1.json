@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "last_updated_timestamp": "2026-02-25T12:00:00Z",
   "acme_prod": {
-    "realm": "oc1",
+    "realm": "oc19",
     "regions": {
       "af-region-1": {
         "network": {
@@ -190,6 +190,58 @@
                 "eu-zurich-1",
                 "oc1",
                 "self-hosted"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "avq3": {
+    "realm": "oc1",
+    "regions": {
+      "eu-zurich-1": {
+        "network": {
+          "private": [
+            {
+              "cidr": "10.0.0.0/16",
+              "description": "VCN region range (avq3)",
+              "tags": [
+                "vcn"
+              ]
+            }
+          ],
+          "proxy": {
+            "ip": "10.0.1.100",
+            "noproxy": [
+              "10.0.0.0/8",
+              "*.eu-zurich-1.oraclecloud.com"
+            ],
+            "port": "8080",
+            "url": "http://proxy.eu-zurich-1.example.com:8080"
+          }
+        },
+        "observability": {
+          "loki_destination_cidr": "10.0.2.0/24",
+          "loki_fqdn": "loki.eu-zurich-1.avq3.example.com",
+          "prometheus_scraping_cidr": "10.0.1.0/24"
+        },
+        "security": {
+          "vault": {
+            "crypto_endpoint": "https://crypto.vault.eu-zurich-1.oraclecloud.com",
+            "management_endpoint": "https://mgmt.vault.eu-zurich-1.oraclecloud.com",
+            "ocid": "ocid1.vault.oc1.eu-zurich-1.avq3.aaaaaa001"
+          }
+        },
+        "toolchain": {
+          "github": {
+            "runner": {
+              "image": "ocid1.image.oc1.eu-zurich-1.avq3.aaaaaa001",
+              "labels": [
+                "eu-zurich-1",
+                "oc1",
+                "self-hosted",
+                "avq3"
               ]
             }
           }

@@ -41,11 +41,15 @@ cd ..
 
 ```bash
 cd cli_client
-REGION_KEY=eu-zurich-1 bash examples/region.sh
 
 bash examples/regions.sh
+REGION_KEY=eu-zurich-1 bash examples/region.sh
 
-TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 bash examples/tenancy.sh
+bash examples/tenancy.sh
+TENANCY_KEY=acme_prod bash examples/tenancy.sh
+TENANCY_KEY=acme_prod REGION_KEY=eu-region-1 bash examples/tenancy.sh
+
+bash examples/realms.sh
 REALM_KEY=oc1 bash examples/realms.sh
 cd ..
 ```
@@ -56,13 +60,17 @@ cd ..
 cd node_client
 npm install
 
+# Regions
 npm run example:region
-
 REGION_KEY=eu-zurich-1 npm run example:region
 npm run example:regions
 
-TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 npm run example:tenancy
+# Tenancy (1) vanilla – discover tenancy key and region from OCI context where supported
+npm run example:tenancy
+TENANCY_KEY=acme_prod npm run example:tenancy
+TENANCY_KEY=acme_prod REGION_KEY=eu-region-1 npm run example:tenancy
 
+# Realms
 npm run example:realms
 REALM_KEY=oc1 npm run example:realm
 cd ..
@@ -91,7 +99,17 @@ cd ..
 
 cd tenancy
 terraform init
+
+# Tenancy (1) vanilla – use module defaults / discovery
 terraform apply -auto-approve
+terraform output
+
+# Tenancy (2) explicit tenancy key only
+TF_VAR_tenancy_key=acme_prod terraform apply -auto-approve
+terraform output
+
+# Tenancy (3) explicit tenancy key and region key
+TF_VAR_tenancy_key=acme_prod TF_VAR_region_key=eu-zurich-1 terraform apply -auto-approve
 terraform output
 cd ..
 
@@ -122,11 +140,11 @@ Common environment knobs:
 
 | Var | Purpose | Default (all clients) |
 | --- | ------- | ------- |
-| `GDIR_BUCKET` | Bucket containing catalog objects | `gdir_info` — baked into every DAL (CLI core `gdir.sh`, Node `DEFAULT_BUCKET`, Terraform `bucket_name` default) |
-| `REGION_KEY`  | Region key for region/tenancy lookups | auto-resolved from bucket OCID |
-| `TENANCY_KEY` | Tenancy key for tenancy examples/tests | none (must set for tenancy flows) |
-| `REALM_KEY`   | Realm key for realm example | auto-resolved via regions unless set |
-| `TEST_DATA_DIR` | Path to local JSON fixtures (CLI tests/examples) | unset (use OCI) |
+| `GDIR_BUCKET`  | Bucket containing catalog objects | `gdir_info` — baked into every DAL (CLI core `gdir.sh`, Node `DEFAULT_BUCKET`, Terraform `bucket_name` default) |
+| `REGION_KEY`   | Region key for region/tenancy lookups | auto-resolved from bucket OCID |
+| `TENANCY_KEY`  | Tenancy key for tenancy examples/tests | none (must set for tenancy flows) |
+| `REALM_KEY`    | Realm key for realm example | auto-resolved via regions unless set |
+| `TEST_DATA_DIR`| Path to local JSON fixtures (CLI tests/examples) | unset (use OCI) |
 
 ## Repository structure
 
@@ -179,8 +197,9 @@ The catalog avoids requiring hardcoded identifiers by deriving them from the act
 | **Tenancy / compartment** (`tf_manager`) | `oci os ns get-metadata` returns the tenancy root compartment OCID | `var.compartment_id` / `TF_VAR_compartment_id` |
 | **Region key** (all clients) | Bucket OCID encodes the region: `ocid1.bucket.<realm>.<region>.<hash>` → field `[3]` | `TF_VAR_region_key` · `REGION_KEY` env · `regionKey` constructor config |
 | **Realm key** (`tf_client/examples/realm`) | Active region is resolved first, then its `realm` field is read from `regions/v2` | `TF_VAR_realm_key` |
+| **Tenancy key** (`tenancies/v1` clients) | Derived from OCI tenancy context (for example using `oci os ns get-metadata --query 'data.\"default-s3-compartment-id\"'` or SDK/provider equivalent) when `TENANCY_KEY` is unset | `TENANCY_KEY` env · per-client config fields |
 
-All three discoveries cascade from a single source: the OCI SDK credentials in `~/.oci/config`. No region, realm, or tenancy identifier needs to be hardcoded anywhere.
+All discoveries cascade from the OCI SDK/CLI credentials in `~/.oci/config` (or instance principal). No region, realm, or tenancy identifier needs to be hardcoded anywhere; tenancy key and region key can always be overridden explicitly when needed.
 
 ### Data Access Layer (DAL)
 
