@@ -299,7 +299,4 @@ Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-
 
 ## References
 
-- Terraform OCI provider docs: https://registry.terraform.io/providers/oracle/oci/latest
-- OCI Object Storage: https://docs.oracle.com/en-us/iaas/Content/Object/home.htm
-- AJV JSON Schema validator: https://ajv.js.org/
-- OCI CLI: https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm
+Oracle public cloud CIDR informaton, (https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json)[https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json]
