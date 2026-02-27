@@ -4,6 +4,11 @@ locals {
   namespace = coalesce(var.namespace, data.oci_objectstorage_namespace.ns.namespace)
 }
 
+data "oci_objectstorage_bucket" "info" {
+  namespace = local.namespace
+  name      = var.bucket_name
+}
+
 data "oci_objectstorage_object" "regions_v2" {
   namespace = local.namespace
   bucket    = var.bucket_name
@@ -11,7 +16,8 @@ data "oci_objectstorage_object" "regions_v2" {
 }
 
 locals {
-  region_key             = var.region_key
+  active_region          = try(split(".", data.oci_objectstorage_bucket.info.bucket_id)[3], null)
+  region_key             = coalesce(var.region_key, local.active_region)
   _raw                   = jsondecode(data.oci_objectstorage_object.regions_v2.content)
   last_updated_timestamp = try(local._raw.last_updated_timestamp, null)
   schema_version         = try(local._raw.schema_version, null)

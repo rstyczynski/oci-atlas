@@ -1,18 +1,20 @@
 data "oci_objectstorage_namespace" "ns" {}
 
-locals {
-  namespace = coalesce(var.namespace, data.oci_objectstorage_namespace.ns.namespace)
+data "oci_objectstorage_bucket" "info" {
+  namespace = data.oci_objectstorage_namespace.ns.namespace
+  name      = var.bucket_name
 }
 
 data "oci_objectstorage_object" "tenancies_v1" {
-  namespace = local.namespace
+  namespace = data.oci_objectstorage_namespace.ns.namespace
   bucket    = var.bucket_name
   object    = var.object_name
 }
 
 locals {
+  active_region         = try(split(".", data.oci_objectstorage_bucket.info.bucket_id)[3], null)
   tenancy_key           = var.tenancy_key
-  region_key            = var.region_key
+  region_key            = coalesce(var.region_key, local.active_region)
   _raw                  = jsondecode(data.oci_objectstorage_object.tenancies_v1.content)
   last_updated_timestamp = try(local._raw.last_updated_timestamp, null)
   schema_version         = try(local._raw.schema_version, null)
