@@ -1,11 +1,6 @@
-variable "namespace" {
-  type    = string
-  default = "dummy_ns"
-}
-
 variable "bucket_name" {
   type    = string
-  default = "dummy_bucket"
+  default = "gdir_info"
 }
 
 variable "regions_object" {

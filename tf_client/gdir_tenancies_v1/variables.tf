@@ -1,4 +1,4 @@
-variable "namespace"   { type = string }
+variable "namespace"   { type = string, default = null }
 variable "bucket_name" { type = string }
 variable "object_name" { type = string }
 variable "tenancy_key" { type = string }

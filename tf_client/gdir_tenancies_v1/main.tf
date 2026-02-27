@@ -1,5 +1,11 @@
+data "oci_objectstorage_namespace" "ns" {}
+
+locals {
+  namespace = coalesce(var.namespace, data.oci_objectstorage_namespace.ns.namespace)
+}
+
 data "oci_objectstorage_object" "tenancies_v1" {
-  namespace = var.namespace
+  namespace = local.namespace
   bucket    = var.bucket_name
   object    = var.object_name
 }
