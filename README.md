@@ -296,6 +296,18 @@ Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-
 }
 ```
 
+## Client libraries
+
+- **Shell (CLI):** `cli_client/` — DAL scripts `gdir_regions_v2.sh`, `gdir_tenancies_v1.sh`, `gdir_realms_v1.sh`; examples under `cli_client/examples/`; tests in `cli_client/test/`.
+- **Node.js:** `node_client/` — DAL classes `gdir_regions_v2`, `gdir_tenancies_v1`, `gdir_realms_v1`; examples in `node_client/examples/`; tests in `node_client/test/`.
+- **Terraform:** `tf_client/` — modules `gdir_regions_v2`, `gdir_tenancies_v1`, `gdir_realms_v1`; runnable examples in `tf_client/examples/`.
+
+## Testing
+
+- **Node:** `npm --prefix node_client test -- --runInBand`
+- **CLI:** `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh`
+- **Terraform:** `terraform init && terraform validate` in each example directory under `tf_client/examples/{region,regions,tenancy,realm,realms}`
+
 
 ## References
 
