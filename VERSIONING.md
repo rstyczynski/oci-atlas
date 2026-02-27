@@ -158,6 +158,77 @@ Existing paths (`regions/v1`, `regions/v2`) use the legacy `v`-prefixed conventi
 
 ---
 
+## Git Operations
+
+### Tagging a release
+
+Create and push a version tag after updating `schema_version` in data files:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Tags follow `v<MAJOR>.<MINOR>.<PATCH>`. The tag marks the commit that consumers reference for npm git-source install.
+
+### Version bump workflow
+
+**PATCH bump** — bug fix in data or schema constraint:
+
+```bash
+# 1. Fix the data or schema file
+# 2. Update schema_version in the affected data file (e.g. "1.0.0" → "1.0.1")
+git add tf_manager/regions_v2.json
+git commit -m "fix: correct CIDR block in regions_v2"
+git tag v2.0.1
+git push && git push origin v2.0.1
+```
+
+**MINOR bump** — new catalog entry or new schema field:
+
+```bash
+# 1. Add the new region/field to data and schema files
+# 2. Update schema_version (e.g. "2.0.0" → "2.1.0")
+git add tf_manager/regions_v2.json tf_manager/regions_v2.schema.json
+git commit -m "feat: add eu-paris-1 to regions_v2"
+git tag v2.1.0
+git push && git push origin v2.1.0
+```
+
+**MAJOR bump** — breaking schema change:
+
+```bash
+# 1. Make breaking change; create new schema version file (e.g. regions_v3.schema.json)
+# 2. Update schema_version to "3.0.0" in data file
+# 3. Create new DAL file gdir_regions_v3.ts
+git add tf_manager/ node_client/src/gdir_regions_v3.ts
+git commit -m "feat!: regions/v3 — breaking change description"
+git tag v3.0.0
+git push && git push origin v3.0.0
+```
+
+### Creating a maintenance branch for an old MAJOR
+
+When a MAJOR version needs a backport bug fix after a newer MAJOR is released:
+
+```bash
+# Create maintenance branch from the last v1.x.x tag
+git checkout -b maint/v1 v1.2.3
+git push -u origin maint/v1
+```
+
+Backport patches are tagged `v1.x.y` from the `maint/v1` branch:
+
+```bash
+git checkout maint/v1
+# apply fix
+git commit -m "fix: backport — description"
+git tag v1.2.4
+git push && git push origin v1.2.4
+```
+
+---
+
 ## Version history
 
 | Domain | Version | Notes |
