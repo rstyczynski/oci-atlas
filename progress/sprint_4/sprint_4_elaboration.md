@@ -14,7 +14,7 @@ All changes are local file edits/deletions; validated via ajv-cli (schemas/data)
 
 ## Design Iterations
 - Iteration 1 (pre-restart): Proposed design captured in `sprint_4_design.md`.
-- Iteration 2 (current): Revalidated scope post-rollback; no changes to design content, still Proposed awaiting PO acceptance.
+- Iteration 2 (post-restart): PO directives applied — `schema_version` mandatory (in `required`), new DALs for regions_v2/tenancies_v1 across Node, Bash, Terraform, removal of regions_v1 everywhere. Status remains Proposed pending PO acceptance.
 
 ## Open Questions Resolved
 None remaining; removal scope and timestamp agreed per backlog note and inception revalidation.
@@ -24,7 +24,7 @@ None remaining; removal scope and timestamp agreed per backlog note and inceptio
 - This summary file.
 
 ## Status
-Design Proposed — awaiting Product Owner acceptance to proceed to Construction.
+Accepted
 
 ## Next Steps
 - PO to set design Status to Accepted in `sprint_4_design.md`.
