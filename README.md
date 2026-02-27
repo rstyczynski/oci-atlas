@@ -192,6 +192,7 @@ When a schema changes incompatibly, a new version (`v2`) is introduced alongside
 
 When a new domain is added (e.g. `realms`), a parallel set of DAL artefacts is created — `gdir_realms_v1` class, `gdir_realms_v1.sh`, `tf_client/gdir_realms_v1/` — without touching any existing code.
 
+## Data structures
 
 
 ## Client libraries
@@ -201,8 +202,12 @@ Each client ships a DAL per domain/version:
 - Node: TypeScript classes in `node_client/src/` (`gdir_regions_v2.ts`, `gdir_tenancies_v1.ts`, `gdir_realms_v1.ts`).
 - Terraform: modules in `tf_client/` (`gdir_regions_v2`, `gdir_tenancies_v1`, `gdir_realms_v1`).
 
+## Testing
 
-## Data structures
+- Node: `npm --prefix node_client test -- --runInBand`
+- CLI: `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh`
+- Terraform: `terraform init && terraform validate` in `tf_client/examples/{region,regions,tenancy,realm,realms}`
+
 
 ### `realms/v1` schema
 
@@ -294,9 +299,3 @@ Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-
 ## References
 
 Oracle public cloud CIDR informaton, (https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json)[https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json]
-## Testing
-
-- Node: `npm --prefix node_client test -- --runInBand`
-- CLI: `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh`
-- Terraform: `terraform init && terraform validate` in each example under `tf_client/examples/{region,regions,tenancy,realm,realms}` (requires provider access)
-
