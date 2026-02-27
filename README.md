@@ -40,11 +40,10 @@ cd ..
 
 ```bash
 cd cli_client
-bash examples/regions.sh
-REGION_KEY=tst-region-1 bash examples/region.sh
-
-bash examples/realms.sh
-REALM_KEY=oc1 bash examples/realms.sh
+GDIR_BUCKET=gdir_info REGION_KEY=eu-zurich-1 bash examples/region.sh       # region-only (v2)
+GDIR_BUCKET=gdir_info bash examples/regions.sh                             # list regions/realms (v2)
+GDIR_BUCKET=gdir_info TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 bash examples/tenancy.sh
+GDIR_BUCKET=gdir_info REALM_KEY=oc1 bash examples/realms.sh
 cd ..
 ```
 
@@ -53,13 +52,10 @@ cd ..
 ```bash
 cd node_client
 npm install
+REGION_KEY=eu-zurich-1 npm run example:region
 npm run example:regions
-npm run example:region
-REGION_KEY=tst-region-2 npm run example:region
-
-npm run example:realms
-npm run example:realm
-REALM_KEY=oc19 npm run example:realm
+TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 npm run example:tenancy
+REALM_KEY=oc1 npm run example:realm
 cd ..
 ```
 
@@ -101,6 +97,21 @@ cd ..
 
 cd ../..
 ```
+
+### Online vs offline data for examples/tests
+
+- Online (live bucket): leave `TEST_DATA_DIR` unset; set `GDIR_BUCKET` if not `gdir_info`; ensure OCI CLI/SDK auth works (instance principal, config profile, etc.).
+- Offline (local fixtures): set `TEST_DATA_DIR=$PWD/tf_manager` to force CLI scripts to read local JSON files instead of Object Storage.
+
+Common environment knobs:
+
+| Var | Purpose | Default |
+| --- | ------- | ------- |
+| `GDIR_BUCKET` | Bucket containing catalog objects | `gdir_info` |
+| `REGION_KEY`  | Region key for region/tenancy lookups | auto-resolved from bucket OCID |
+| `TENANCY_KEY` | Tenancy key for tenancy examples/tests | none (must set for tenancy flows) |
+| `REALM_KEY`   | Realm key for realm example | auto-resolved via regions unless set |
+| `TEST_DATA_DIR` | Path to local JSON fixtures (CLI tests/examples) | unset (use OCI) |
 
 ## Repository structure
 
