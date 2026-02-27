@@ -207,9 +207,14 @@ Each client ships a DAL per domain/version:
 
 ## Testing
 
-- **Node:** `npm --prefix node_client test -- --runInBand`
-- **CLI:** `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh` (unset TEST_DATA_DIR to hit OCI)
-- **Terraform:** `terraform init && terraform validate` in each example under `tf_client/examples/{region,regions,tenancy,realm,realms}` (requires provider access)
+- **Node (OCI)**: `npm --prefix node_client test -- --runInBand`
+- **CLI (OCI)**: `bash cli_client/test/run_tests.sh`
+- **CLI (offline fixtures)**: `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh`
+- **Terraform**: in each example under `tf_client/examples/{region,regions,tenancy,realm,realms}` run:
+  - `terraform init`
+  - `terraform validate`
+  - optionally `terraform plan` against your bucket (requires provider access)
+
 
 ## Data structures
 
