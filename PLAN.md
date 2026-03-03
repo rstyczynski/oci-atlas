@@ -53,7 +53,7 @@ Backlog Items:
 
 ## Sprint 6 - Synthetic data sets review
 
-Status: Progress
+Status: Fixed
 Mode: managed
 
 Backlog Items:
