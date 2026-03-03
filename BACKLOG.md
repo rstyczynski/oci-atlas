@@ -67,9 +67,9 @@ Code version is described in dependency description or other way defined by DAL 
 
 ### GD-4. Apply versioning strategy for data and access layer as documented in VERSIONING.md (Sprint 3 product)
 
-### GD-5. Tenancy name is auto-discovered
+### GD-5. Tenancy key is auto-discovered
 
-Tenancy name variable in tenancy client is optional. When not provided name is discovered from OCI API (for a given access DAL) using already known tenancy_ocid. Works in similar way to auto-discovery of region from active connection.
+Tenancy key variable in tenancy client is optional. When not provided, key is discovered from OCI API (for a given access DAL) using already known tenancy_ocid and tenancy metadata. Works in similar way to auto-discovery of region from active connection.
 
 Update tenancy DAL for shell, node, terraform.
 Extend examples in README.

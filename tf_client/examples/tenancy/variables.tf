@@ -10,10 +10,10 @@ variable "tenancies_object" {
 
 variable "tenancy_key" {
   type    = string
-  default = "acme_prod"
+  default = null
 }
 
 variable "region_key" {
   type    = string
-  default = "eu-zurich-1"
+  default = null
 }
