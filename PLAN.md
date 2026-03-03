@@ -60,6 +60,15 @@ Backlog Items:
 
 * GD-6. Synthetic data sets review
 
+Bug fixes:
+
+* GD-6-1. make sure all synthetic OCID follows Oracle' pattern. Fields and field lengths should be as for regular keys.
+* GD-6-2. make sure private network CIDR are belongs to CIDR reserved for the tenancy
+* GD-6-3. make sure all regions for demo tenancy belongs to given realm. REalm may be synthetic, but when used the real one - region should be existing ones. Prefer using real exiting realms / regions.
+* GD-6-4. I do not see demo_mapping.sh to be used in exemplary code. Should come before autodiscovery tenancy
+* GD-6-5. demo_mapping.sh must auto discover active tenancy key, realm and at least home region.*  Move demo_mapping.sh to bin directory.
+* GD-6-6. demo_mapping.sh must inject data into the bucket to make data available for shell, node, and terraform clients. tf_manager must have not git traceable file source used to sync with bucket. This file is build by demo_mapping.sh (demo mode) or copy real source if not in demo mode. demo_mapping.sh is a part of tf_manager. Visible information about mapping of synthetic data to a bucket one is presented when working in this mode.
+
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 
 ## Sprint 1 - <Sprint Name>

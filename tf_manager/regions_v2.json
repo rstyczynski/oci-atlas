@@ -17,13 +17,13 @@
     },
     "realm": "oc1"
   },
-  "af-region-2": {
-    "key": "AF2",
+  "eu-frankfurt-1": {
+    "key": "FRA",
     "network": {
       "public": [
         {
           "cidr": "140.91.0.0/16",
-          "description": "OCI public region2",
+          "description": "OCI public eu-frankfurt-1",
           "tags": [
             "public",
             "oci"
@@ -31,7 +31,7 @@
         }
       ]
     },
-    "realm": "oc19"
+    "realm": "oc1"
   },
   "eu-region-1": {
     "key": "EU1",
@@ -49,13 +49,13 @@
     },
     "realm": "oc1"
   },
-  "eu-region-2": {
-    "key": "EU2",
+  "eu-amsterdam-1": {
+    "key": "AMS",
     "network": {
       "public": [
         {
           "cidr": "140.91.10.0/24",
-          "description": "OCI public eu-region2",
+          "description": "OCI public eu-amsterdam-1",
           "tags": [
             "public",
             "oci"
@@ -63,7 +63,7 @@
         }
       ]
     },
-    "realm": "oc19"
+    "realm": "oc1"
   },
   "eu-region-3": {
     "key": "EU3",

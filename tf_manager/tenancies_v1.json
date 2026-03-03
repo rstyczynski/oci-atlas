@@ -2,9 +2,9 @@
   "schema_version": "1.0.0",
   "last_updated_timestamp": "2026-03-03T12:00:00Z",
   "acme_prod": {
-    "realm": "oc19",
+    "realm": "oc1",
     "regions": {
-      "af-region-2": {
+      "eu-frankfurt-1": {
         "network": {
           "private": [
             {
@@ -16,41 +16,41 @@
             }
           ],
           "proxy": {
-            "ip": "10.0.1.100",
+            "ip": "10.2.0.100",
             "noproxy": [
               "10.0.0.0/8",
-              "*.af-region-2.oraclecloud.eu"
+              "*.eu-frankfurt-1.oraclecloud.com"
             ],
             "port": "8080",
-            "url": "http://proxy.af-region-2.acme.example.com:8080"
+            "url": "http://proxy.eu-frankfurt-1.acme.example.com:8080"
           }
         },
         "observability": {
-          "loki_destination_cidr": "10.0.10.0/24",
-          "loki_fqdn": "loki.af-region-2.acme.example.com",
-          "prometheus_scraping_cidr": "10.0.10.0/24"
+          "loki_destination_cidr": "10.2.10.0/24",
+          "loki_fqdn": "loki.eu-frankfurt-1.acme.example.com",
+          "prometheus_scraping_cidr": "10.2.10.0/24"
         },
         "security": {
           "vault": {
-            "crypto_endpoint": "https://crypto.vault.af-region-2.oraclecloud.eu",
-            "management_endpoint": "https://mgmt.vault.af-region-2.oraclecloud.eu",
-            "ocid": "ocid1.vault.oc19.af-region-2.acme0000000001"
+            "crypto_endpoint": "https://crypto.vault.eu-frankfurt-1.oraclecloud.com",
+            "management_endpoint": "https://mgmt.vault.eu-frankfurt-1.oraclecloud.com",
+            "ocid": "ocid1.vault.oc1.eu-frankfurt-1.acmeprod0000000000000000000000000000000000000000000000000000"
           }
         },
         "toolchain": {
           "github": {
             "runner": {
-              "image": "ocid1.image.oc19.af-region-2.acme0000000001",
+              "image": "ocid1.image.oc1.eu-frankfurt-1.acmeprod0000000000000000000000000000000000000000000000000000",
               "labels": [
-                "af-region-2",
-                "oc19",
+                "eu-frankfurt-1",
+                "oc1",
                 "self-hosted"
               ]
             }
           }
         }
       },
-      "eu-region-2": {
+      "eu-amsterdam-1": {
         "network": {
           "private": [
             {
@@ -62,34 +62,34 @@
             }
           ],
           "proxy": {
-            "ip": "10.0.2.100",
+            "ip": "10.3.0.100",
             "noproxy": [
               "10.0.0.0/8",
-              "*.eu-region-2.oraclecloud.eu"
+              "*.eu-amsterdam-1.oraclecloud.com"
             ],
             "port": "3128",
-            "url": "http://proxy.eu-region-2.acme.example.com:3128"
+            "url": "http://proxy.eu-amsterdam-1.acme.example.com:3128"
           }
         },
         "observability": {
-          "loki_destination_cidr": "10.0.22.0/24",
-          "loki_fqdn": "loki.eu-region-2.acme.example.com",
-          "prometheus_scraping_cidr": "10.0.22.0/24"
+          "loki_destination_cidr": "10.3.22.0/24",
+          "loki_fqdn": "loki.eu-amsterdam-1.acme.example.com",
+          "prometheus_scraping_cidr": "10.3.22.0/24"
         },
         "security": {
           "vault": {
-            "crypto_endpoint": "https://crypto.vault.eu-region-2.oraclecloud.eu",
-            "management_endpoint": "https://mgmt.vault.eu-region-2.oraclecloud.eu",
-            "ocid": "ocid1.vault.oc19.eu-region-2.acme0000000001"
+            "crypto_endpoint": "https://crypto.vault.eu-amsterdam-1.oraclecloud.com",
+            "management_endpoint": "https://mgmt.vault.eu-amsterdam-1.oraclecloud.com",
+            "ocid": "ocid1.vault.oc1.eu-amsterdam-1.acmeprod0000000000000000000000000000000000000000000000000000"
           }
         },
         "toolchain": {
           "github": {
             "runner": {
-              "image": "ocid1.image.oc19.eu-region-2.acme0000000001",
+              "image": "ocid1.image.oc1.eu-amsterdam-1.acmeprod0000000000000000000000000000000000000000000000000000",
               "labels": [
-                "eu-region-2",
-                "oc19",
+                "eu-amsterdam-1",
+                "oc1",
                 "self-hosted"
               ]
             }
@@ -131,13 +131,13 @@
           "vault": {
             "crypto_endpoint": "https://crypto.vault.eu-zurich-1.oraclecloud.com",
             "management_endpoint": "https://mgmt.vault.eu-zurich-1.oraclecloud.com",
-            "ocid": "ocid1.vault.oc1.eu-zurich-1.demo0000000001"
+            "ocid": "ocid1.vault.oc1.eu-zurich-1.democorp0000000000000000000000000000000000000000000000000000"
           }
         },
         "toolchain": {
           "github": {
             "runner": {
-              "image": "ocid1.image.oc1.eu-zurich-1.demo0000000001",
+              "image": "ocid1.image.oc1.eu-zurich-1.democorp0000000000000000000000000000000000000000000000000000",
               "labels": [
                 "eu-zurich-1",
                 "oc1",

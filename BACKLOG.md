@@ -79,3 +79,5 @@ Bump minor version for DAL.
 ### GD-6. Synthetic data sets review
 
 Let's take a look at realm, region, and tenancy json exemplary data. I need to review and rationalize this dataset towards useful demo data set. Currently avq3 tenancy key is hardcoded, which is a real tenancy active at my connection. I'd like test procedure (exemplary code, maybe client code) to map one of test data sets to  tenancy key, discovered at current OCI connection. This code should map with valid subscribed regions - possibly to the given limit e.g. 4 regions. Mapping to synthetic data is done in demo mode only, as in real situation must be supplied by data owner.
+
+* GD-7. Add tenancy level field - list of private network CIDR associated with tenancy

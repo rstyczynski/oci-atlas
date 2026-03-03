@@ -28,12 +28,23 @@ Global directory is the equivalent of `jq data.json` — except the data file li
 
 **Data** — edit `tf_manager/regions_v2.json`, `tf_manager/tenancies_v1.json`, and/or `tf_manager/realms_v1.json`, then provision.
 
-**Provision:**
+**Provision (normal mode):**
 
 ```bash
 cd tf_manager
+bash demo_mapping.sh          # builds tenancies_v1.demo.json from static source
 terraform init
-terraform apply -auto-approve 
+terraform apply -auto-approve
+cd ..
+```
+
+**Provision (demo mode — maps real tenancy key to synthetic template data):**
+
+```bash
+cd tf_manager
+# demo mode means that your current tenancy is not registered in data file, and oci-atlas uses demo set to map its synthetic data to describe your tenancy. Look into tenancies_v1.demo.json
+GDIR_DEMO_MODE=true bash demo_mapping.sh
+terraform apply -auto-approve
 cd ..
 ```
 
@@ -43,11 +54,12 @@ cd ..
 cd cli_client
 
 bash examples/regions.sh
+bash examples/region.sh
 REGION_KEY=eu-zurich-1 bash examples/region.sh
 
 bash examples/tenancy.sh
 TENANCY_KEY=acme_prod bash examples/tenancy.sh
-TENANCY_KEY=acme_prod REGION_KEY=eu-region-1 bash examples/tenancy.sh
+TENANCY_KEY=acme_prod REGION_KEY=eu-frankfurt-1 bash examples/tenancy.sh
 
 bash examples/realms.sh
 REALM_KEY=oc1 bash examples/realms.sh
@@ -68,7 +80,7 @@ npm run example:regions
 # Tenancy (1) vanilla – discover tenancy key and region from OCI context where supported
 npm run example:tenancy
 TENANCY_KEY=acme_prod npm run example:tenancy
-TENANCY_KEY=acme_prod REGION_KEY=eu-region-1 npm run example:tenancy
+TENANCY_KEY=acme_prod REGION_KEY=eu-frankfurt-1 npm run example:tenancy
 
 # Realms
 npm run example:realms
@@ -364,21 +376,21 @@ Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-
 **Key Features Added:**
 
 - Rationalized demo data: removed real tenancy key `avq3`, replaced with synthetic `demo_corp`
-- Fixed realm consistency: `acme_prod` now only references `oc19`-realm regions (`af-region-2`, `eu-region-2`)
+- Fixed realm consistency: `acme_prod` now uses real `oc1`-realm regions (`eu-frankfurt-1`, `eu-amsterdam-1`)
 - Fixed referential integrity: added missing `tst02` realm to `realms_v1.json`
-- New demo mapping script: `cli_client/examples/demo_mapping.sh` maps auto-discovered real tenancy key to synthetic template data in demo mode
+- New demo mapping script: `cli_client/bin/demo_mapping.sh` maps auto-discovered real tenancy key, region, and realm to synthetic template data in demo mode
 
 **Demo Mode Usage:**
 
 ```bash
 # Map real tenancy key to synthetic template data (offline, local fixtures)
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
-  bash cli_client/examples/demo_mapping.sh
+TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=eu-zurich-1 \
+  bash cli_client/bin/demo_mapping.sh
 
 # Custom template and region limit
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
+TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=eu-zurich-1 \
   GDIR_DEMO_TENANT=acme_prod GDIR_DEMO_MAX_REGIONS=2 \
-  bash cli_client/examples/demo_mapping.sh
+  bash cli_client/bin/demo_mapping.sh
 ```
 
 **Documentation:**
