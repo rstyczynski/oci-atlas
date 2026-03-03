@@ -101,7 +101,7 @@
   "demo_corp": {
     "realm": "oc1",
     "regions": {
-      "eu-zurich-1": {
+      "tst-region-1": {
         "network": {
           "private": [
             {
@@ -116,7 +116,7 @@
             "ip": "10.100.0.100",
             "noproxy": [
               "10.0.0.0/8",
-              "*.eu-zurich-1.oraclecloud.com"
+              "*.tst-region-1.oraclecloud.com"
             ],
             "port": "8080",
             "url": "http://proxy.demo-corp.example.com:8080"
@@ -124,22 +124,69 @@
         },
         "observability": {
           "loki_destination_cidr": "10.100.2.0/24",
-          "loki_fqdn": "loki.eu-zurich-1.demo-corp.example.com",
+          "loki_fqdn": "loki.tst-region-1.demo-corp.example.com",
           "prometheus_scraping_cidr": "10.100.1.0/24"
         },
         "security": {
           "vault": {
-            "crypto_endpoint": "https://crypto.vault.eu-zurich-1.oraclecloud.com",
-            "management_endpoint": "https://mgmt.vault.eu-zurich-1.oraclecloud.com",
-            "ocid": "ocid1.vault.oc1.eu-zurich-1.democorp0000000000000000000000000000000000000000000000000000"
+            "crypto_endpoint": "https://crypto.vault.tst-region-1.oraclecloud.com",
+            "management_endpoint": "https://mgmt.vault.tst-region-1.oraclecloud.com",
+            "ocid": "ocid1.vault.oc1.tst-region-1.democorp0000000000000000000000000000000000000000000000000000"
           }
         },
         "toolchain": {
           "github": {
             "runner": {
-              "image": "ocid1.image.oc1.eu-zurich-1.democorp0000000000000000000000000000000000000000000000000000",
+              "image": "ocid1.image.oc1.tst-region-1.democorp0000000000000000000000000000000000000000000000000000",
               "labels": [
-                "eu-zurich-1",
+                "tst-region-1",
+                "oc1",
+                "self-hosted",
+                "demo_corp"
+              ]
+            }
+          }
+        }
+      },
+      "tst-region-2": {
+        "network": {
+          "private": [
+            {
+              "cidr": "10.100.0.0/16",
+              "description": "VCN region range (demo_corp)",
+              "tags": [
+                "vcn"
+              ]
+            }
+          ],
+          "proxy": {
+            "ip": "10.100.0.100",
+            "noproxy": [
+              "10.0.0.0/8",
+              "*.tst-region-2.oraclecloud.com"
+            ],
+            "port": "8080",
+            "url": "http://proxy.demo-corp.example.com:8080"
+          }
+        },
+        "observability": {
+          "loki_destination_cidr": "10.100.2.0/24",
+          "loki_fqdn": "loki.tst-region-2.demo-corp.example.com",
+          "prometheus_scraping_cidr": "10.100.1.0/24"
+        },
+        "security": {
+          "vault": {
+            "crypto_endpoint": "https://crypto.vault.tst-region-2.oraclecloud.com",
+            "management_endpoint": "https://mgmt.vault.tst-region-2.oraclecloud.com",
+            "ocid": "ocid1.vault.oc1.tst-region-2.democorp0000000000000000000000000000000000000000000000000000"
+          }
+        },
+        "toolchain": {
+          "github": {
+            "runner": {
+              "image": "ocid1.image.oc1.tst-region-2.democorp0000000000000000000000000000000000000000000000000000",
+              "labels": [
+                "tst-region-2",
                 "oc1",
                 "self-hosted",
                 "demo_corp"

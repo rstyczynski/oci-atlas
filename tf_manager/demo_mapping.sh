@@ -72,6 +72,7 @@ if [[ "${GDIR_DEMO_MODE:-}" == "true" ]]; then
 
   # --- Build live.json: real tenancy key + real region key → template region data ---
   schema_version="$(jq -r '.schema_version' "$SOURCE_FILE")"
+  demo_corp_data="$(jq '.demo_corp // null' "$SOURCE_FILE")"
   now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
   jq -n \
@@ -81,6 +82,7 @@ if [[ "${GDIR_DEMO_MODE:-}" == "true" ]]; then
     --arg realm      "$_realm" \
     --arg region_key "$real_region_key" \
     --argjson region_data "$_tmpl_region_data" \
+    --argjson demo_corp "$demo_corp_data" \
     '{
       schema_version:          $sv,
       last_updated_timestamp:  $ts,
@@ -88,13 +90,22 @@ if [[ "${GDIR_DEMO_MODE:-}" == "true" ]]; then
         realm:   $realm,
         regions: { ($region_key): $region_data }
       }
-    }' > "$OUTPUT_FILE"
+    }
+    + (
+      if ($tenant_key != "demo_corp" and $demo_corp != null)
+      then { "demo_corp": $demo_corp }
+      else {}
+      end
+    )' > "$OUTPUT_FILE"
 
   echo "=== Demo Mode — Tenancy Data Mapping ==="
   echo "Real tenancy key  : $real_tenancy_key"
   echo "Real region key   : $real_region_key"
   echo "Template tenant   : $GDIR_DEMO_TENANT (region: $_tmpl_region)"
   echo "Mapped realm      : $_realm"
+  if [[ "$demo_corp_data" != "null" && "$real_tenancy_key" != "demo_corp" ]]; then
+    echo "Retained tenant   : demo_corp"
+  fi
   echo "Output file       : $OUTPUT_FILE"
   echo ""
   echo "NOTICE: Synthetic data only. Not for production use."

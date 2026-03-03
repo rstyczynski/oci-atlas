@@ -58,8 +58,7 @@ bash examples/region.sh
 REGION_KEY=eu-zurich-1 bash examples/region.sh
 
 bash examples/tenancy.sh
-TENANCY_KEY=acme_prod bash examples/tenancy.sh
-TENANCY_KEY=acme_prod REGION_KEY=eu-frankfurt-1 bash examples/tenancy.sh
+TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 bash examples/tenancy.sh
 
 bash examples/realms.sh
 REALM_KEY=oc1 bash examples/realms.sh
@@ -79,8 +78,7 @@ npm run example:regions
 
 # Tenancy (1) vanilla – discover tenancy key and region from OCI context where supported
 npm run example:tenancy
-TENANCY_KEY=acme_prod npm run example:tenancy
-TENANCY_KEY=acme_prod REGION_KEY=eu-frankfurt-1 npm run example:tenancy
+TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 npm run example:tenancy
 
 # Realms
 npm run example:realms
@@ -116,12 +114,8 @@ terraform init
 terraform apply -auto-approve
 terraform output
 
-# Tenancy (2) explicit tenancy key only
-TF_VAR_tenancy_key=acme_prod terraform apply -auto-approve
-terraform output
-
 # Tenancy (3) explicit tenancy key and region key
-TF_VAR_tenancy_key=acme_prod TF_VAR_region_key=eu-zurich-1 terraform apply -auto-approve
+TF_VAR_tenancy_key=demo_corp TF_VAR_region_key=tst-region-1 terraform apply -auto-approve
 terraform output
 cd ..
 
