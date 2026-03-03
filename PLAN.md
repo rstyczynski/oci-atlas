@@ -51,6 +51,14 @@ Backlog Items:
 
 * GD-5. Tenancy key is auto-discovered
 
+## Sprint 6 - Synthetic data sets review
+
+Status: Progress
+Mode: managed
+
+Backlog Items:
+
+* GD-6. Synthetic data sets review
 
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 
