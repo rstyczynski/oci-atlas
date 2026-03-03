@@ -351,6 +351,44 @@ Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-
 }
 ```
 
+## Recent Updates
+
+### Sprint 6 - Synthetic Data Sets Review
+
+**Status:** implemented
+
+**Backlog Items Implemented:**
+
+- **GD-6**: Synthetic data sets review — tested
+
+**Key Features Added:**
+
+- Rationalized demo data: removed real tenancy key `avq3`, replaced with synthetic `demo_corp`
+- Fixed realm consistency: `acme_prod` now only references `oc19`-realm regions (`af-region-2`, `eu-region-2`)
+- Fixed referential integrity: added missing `tst02` realm to `realms_v1.json`
+- New demo mapping script: `cli_client/examples/demo_mapping.sh` maps auto-discovered real tenancy key to synthetic template data in demo mode
+
+**Demo Mode Usage:**
+
+```bash
+# Map real tenancy key to synthetic template data (offline, local fixtures)
+TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
+  bash cli_client/examples/demo_mapping.sh
+
+# Custom template and region limit
+TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
+  GDIR_DEMO_TENANT=acme_prod GDIR_DEMO_MAX_REGIONS=2 \
+  bash cli_client/examples/demo_mapping.sh
+```
+
+**Documentation:**
+
+- Implementation: `progress/sprint_6/sprint_6_implementation.md`
+- Tests: `progress/sprint_6/sprint_6_tests.md`
+- Design: `progress/sprint_6/sprint_6_design.md`
+
+---
+
 ## References
 
 Oracle public cloud CIDR information: [public_ip_ranges.json](https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json)
