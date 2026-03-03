@@ -21,5 +21,12 @@
     "geo-region": "test",
     "name": "Test dataset",
     "type": "public"
+  },
+  "tst02": {
+    "api_domain": "test2.oraclecloud.com",
+    "description": "Non existing test dataset realm 2",
+    "geo-region": "test",
+    "name": "Test dataset realm 2",
+    "type": "public"
   }
 }

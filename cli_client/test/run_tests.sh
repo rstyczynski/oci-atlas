@@ -28,7 +28,7 @@ export REGION_KEY="tst-region-1"
 # tenancies/v1
 echo "\n=== tenancies/v1 ==="
 export TENANCY_KEY="acme_prod"
-export REGION_KEY="eu-zurich-1"
+export REGION_KEY="eu-region-2"
 [[ "$(gdir_v1_tenancies_get_schema_version)" == "1.0.0" ]] && pass "get_schema_version" || fail "get_schema_version (tenancies)"
 [[ -n "$(gdir_v1_tenancies_get_last_updated_timestamp)" ]] && pass "get_last_updated_timestamp" || fail "get_last_updated_timestamp (tenancies)"
 [[ "$(gdir_v1_tenancies_get_tenancy_realm)" == "oc19" ]] && pass "get_tenancy_realm" || fail "get_tenancy_realm"
