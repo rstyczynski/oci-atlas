@@ -22,7 +22,7 @@ Shell client for OCI Atlas global directory data in Object Storage.
 ```bash
 # Region-level calls
 source clients/shell/gdir_regions_v2.sh
-export REGION_KEY=eu-zurich-1 
+export REGION_KEY=tst-region-1
 gdir_v2_regions_get_region_short_key
 gdir_v2_regions_get_region_cidr_public
 

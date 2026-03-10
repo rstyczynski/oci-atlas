@@ -62,7 +62,7 @@ cd ..
 # Region (single) — same data as clients/shell: scalar region_short_key, list of scalars region_cidr_public
 cd region
 terraform init
-TF_VAR_region_key=eu-zurich-1 terraform apply -auto-approve >/dev/null
+TF_VAR_region_key=tst-region-1 terraform apply -auto-approve >/dev/null
 terraform output region_short_key
 terraform output region_cidr_public
 cd ..

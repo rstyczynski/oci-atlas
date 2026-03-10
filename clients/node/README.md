@@ -26,7 +26,7 @@ All DALs extend the core `gdir` class, which handles:
 cd clients/node
 npm install
 npm run example:region
-REGION_KEY=eu-zurich-1 npm run example:region
+REGION_KEY=tst-region-1 npm run example:region
 npm run example:regions
 
 # Tenancies (tenancies/v1)
