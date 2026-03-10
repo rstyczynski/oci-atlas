@@ -1,4 +1,4 @@
-# node_client — Node/TypeScript client
+# clients/node — Node/TypeScript client
 
 Node.js/TypeScript client for OCI Atlas global directory data in Object Storage.
 
@@ -23,7 +23,7 @@ All DALs extend the core `gdir` class, which handles:
 
 ```bash
 # Regions
-cd node_client
+cd clients/node
 npm install
 npm run example:region
 REGION_KEY=eu-zurich-1 npm run example:region

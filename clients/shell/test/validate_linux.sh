@@ -3,8 +3,8 @@
 # Runs run_tests.sh inside a Linux container — no OCI credentials needed.
 #
 # Usage:
-#   bash cli_client/test/validate_linux.sh                      # Ubuntu 24.04 (default)
-#   IMAGE=oraclelinux:8 bash cli_client/test/validate_linux.sh  # Oracle Linux 8
+#   bash clients/shell/test/validate_linux.sh                      # Ubuntu 24.04 (default)
+#   IMAGE=oraclelinux:8 bash clients/shell/test/validate_linux.sh  # Oracle Linux 8
 
 set -euo pipefail
 
@@ -35,7 +35,7 @@ esac
 
 podman run --rm \
   --volume "$PROJECT_ROOT:/workspace:ro" \
-  --env "GDIR_DATA_DIR=/workspace/tf_manager" \
+  --env "GDIR_DATA_DIR=/workspace/manager" \
   --workdir "/workspace" \
   "$IMAGE" \
-  bash -c "$INSTALL_JQ && bash cli_client/test/run_tests.sh"
+  bash -c "$INSTALL_JQ && bash clients/shell/test/run_tests.sh"

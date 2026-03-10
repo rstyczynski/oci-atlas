@@ -71,6 +71,15 @@ Bug fixes:
 * GD-6-7. demo_mapping.sh must retain demo_corp tenancy information. acme_corp is mapped to current live tenancy in demo mode, and demo_corp must be available in data source.
 * GD-6-8. (done manually) demo_corp must define more than one region. Add one more region to demo dataset. demo_corp use test synthetic regions.
 
+## Sprint 7 - Restructure directories
+
+Status: Progress
+Mode: YOLO
+
+Backlog Items:
+
+* GD-10. Restructure client directories
+
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 
 ## Sprint 1 - <Sprint Name>

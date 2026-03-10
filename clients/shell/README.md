@@ -1,4 +1,4 @@
-# cli_client — OCI CLI/jq client
+# clients/shell — OCI CLI/jq client
 
 Shell client for OCI Atlas global directory data in Object Storage.
 
@@ -21,13 +21,13 @@ Shell client for OCI Atlas global directory data in Object Storage.
 
 ```bash
 # Region-level calls
-source cli_client/gdir_regions_v2.sh
+source clients/shell/gdir_regions_v2.sh
 export REGION_KEY=eu-zurich-1 
 gdir_v2_regions_get_region_short_key
 gdir_v2_regions_get_region_cidr_public
 
 # Tenancy-level calls
-source cli_client/gdir_tenancies_v1.sh
+source clients/shell/gdir_tenancies_v1.sh
 export TENANCY_KEY=demo_corp 
 export REGION_KEY=tst-region-1 
 gdir_v1_tenancies_get_tenancy_region_proxy_url
@@ -37,7 +37,7 @@ gdir_v1_tenancies_get_tenancy_region_proxy_noproxy
 gdir_v1_tenancies_get_tenancy_region_proxy_noproxy_string
 
 # Realm-level calls
-source cli_client/gdir_realms_v1.sh
+source clients/shell/gdir_realms_v1.sh
 export REALM_KEY=oc1
 gdir_v1_realms_get_realm_api_domain
 ```

@@ -1,4 +1,4 @@
-# tf_client — Terraform clients for OCI Atlas
+# clients/terraform — Terraform clients for OCI Atlas
 
 Terraform modules for reading OCI Atlas global directory data from OCI Object Storage.
 
@@ -26,19 +26,19 @@ From a Terraform configuration:
 
 ```hcl
 module "gdir_core" {
-  source      = "./tf_client"
+  source      = "./clients/terraform"
   bucket_name = "gdir_info"
 }
 
 module "gdir_regions" {
-  source      = "./tf_client/gdir_regions_v2"
+  source      = "./clients/terraform/gdir_regions_v2"
   bucket_name = module.gdir_core.bucket_name
   object_name = "regions/v2"
   region_key  = module.gdir_core.region_key
 }
 
 module "gdir_tenancies" {
-  source      = "./tf_client/gdir_tenancies_v1"
+  source      = "./clients/terraform/gdir_tenancies_v1"
   bucket_name = module.gdir_core.bucket_name
   object_name = "tenancies/v1"
   tenancy_key = null        # discover from OCI, or set explicitly
@@ -49,9 +49,9 @@ module "gdir_tenancies" {
 Run the Terraform examples from the repo root:
 
 ```bash
-cd tf_client/examples
+cd clients/terraform/examples
 
-# Regions (all regions) — same data as cli_client: region keys, realms
+# Regions (all regions) — same data as clients/shell: region keys, realms
 cd regions
 terraform init
 terraform apply -auto-approve
@@ -59,7 +59,7 @@ terraform output region_keys
 terraform output realms
 cd ..
 
-# Region (single) — same data as cli_client: scalar region_short_key, list of scalars region_cidr_public
+# Region (single) — same data as clients/shell: scalar region_short_key, list of scalars region_cidr_public
 cd region
 terraform init
 TF_VAR_region_key=eu-zurich-1 terraform apply -auto-approve >/dev/null
@@ -77,14 +77,14 @@ terraform output tenancy_region_proxy_noproxy
 terraform output tenancy_region_proxy_noproxy_string
 cd ..
 
-# Realms (all) — same data as cli_client: realm keys, full realms
+# Realms (all) — same data as clients/shell: realm keys, full realms
 cd realms
 terraform init
 terraform apply -auto-approve >/dev/null
 terraform output realm_keys
 cd ..
 
-# Realm (single) — same data as cli_client: REALM_KEY=oc1 → scalar realm_api_domain
+# Realm (single) — same data as clients/shell: REALM_KEY=oc1 → scalar realm_api_domain
 cd realm
 terraform init
 TF_VAR_realm_key=oc1 terraform apply -auto-approve >/dev/null
@@ -94,9 +94,9 @@ cd ..
 
 ## Arguments
 
-Variable names and defaults match the CLI client where applicable: `REGION_KEY` → `TF_VAR_region_key`, `TENANCY_KEY` → `TF_VAR_tenancy_key`, `REALM_KEY` → `TF_VAR_realm_key`, `GDIR_BUCKET` → `bucket_name` (`gdir_info`). Example values in this README use the same as in `cli_client` (e.g. `eu-zurich-1`, `demo_corp`, `tst-region-1`, `oc1`).
+Variable names and defaults match the CLI client where applicable: `REGION_KEY` → `TF_VAR_region_key`, `TENANCY_KEY` → `TF_VAR_tenancy_key`, `REALM_KEY` → `TF_VAR_realm_key`, `GDIR_BUCKET` → `bucket_name` (`gdir_info`). Example values in this README use the same as in `clients/shell` (e.g. `eu-zurich-1`, `demo_corp`, `tst-region-1`, `oc1`).
 
-Top-level `tf_client` module (region discovery + bucket wiring):
+Top-level `clients/terraform` module (region discovery + bucket wiring):
 
 | Var | Default | Description |
 | --- | --- | --- |
@@ -237,10 +237,10 @@ In all modules, if a resolved key does not exist in the catalog data, downstream
 
 ## Example Commands
 
-Use the ready-made examples under `tf_client/examples`. Each block shows the same data as the corresponding CLI example (`cli_client/examples/*.sh`):
+Use the ready-made examples under `clients/terraform/examples`. Each block shows the same data as the corresponding CLI example (`clients/shell/examples/*.sh`):
 
 ```bash
-cd tf_client/examples
+cd clients/terraform/examples
 
 # Regions — same as bash examples/regions.sh
 cd regions && terraform init && terraform apply -auto-approve && terraform output region_keys && terraform output realms && cd ..
@@ -261,7 +261,7 @@ cd realm && terraform init && TF_VAR_realm_key=oc1 terraform apply -auto-approve
 Same variables as CLI (`TENANCY_KEY=demo_corp`, `REGION_KEY=tst-region-1`). Same data — run:
 
 ```bash
-cd tf_client/examples/tenancy
+cd clients/terraform/examples/tenancy
 terraform init
 TF_VAR_tenancy_key=demo_corp TF_VAR_region_key=tst-region-1 terraform apply -auto-approve
 terraform output tenancy_region_proxy_url

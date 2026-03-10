@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Mirrors node_client/examples/client_realms.ts
+# Mirrors clients/node/examples/client_realms.ts
 # Usage: REALM_KEY=oc1 bash examples/realms.sh
 #        REALM_KEY is required for single-realm functions.
 set -euo pipefail

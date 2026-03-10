@@ -11,16 +11,16 @@
 # (demo mode) or supplied externally by the data owner (production).
 #
 # Usage (demo mode — live OCI connection, tenancy key auto-discovered):
-#   GDIR_DEMO_MODE=true bash tf_manager/demo_mapping.sh
+#   GDIR_DEMO_MODE=true bash manager/demo_mapping.sh
 #
 # Usage (demo mode — offline, explicit tenancy and region keys):
-#   GDIR_DEMO_MODE=true TENANCY_KEY=my_corp REGION_KEY=eu-zurich-1 bash tf_manager/demo_mapping.sh
+#   GDIR_DEMO_MODE=true TENANCY_KEY=my_corp REGION_KEY=eu-zurich-1 bash manager/demo_mapping.sh
 #
 # Usage (normal mode — copies static tenancies_v1.json):
-#   bash tf_manager/demo_mapping.sh
+#   bash manager/demo_mapping.sh
 #
 # After running, upload to the bucket:
-#   cd tf_manager && terraform apply
+#   cd manager && terraform apply
 #
 # Environment Variables:
 #   GDIR_DEMO_MODE    "true" to enable demo mapping (default: copies static data).
@@ -109,13 +109,13 @@ if [[ "${GDIR_DEMO_MODE:-}" == "true" ]]; then
   echo "Output file       : $OUTPUT_FILE"
   echo ""
   echo "NOTICE: Synthetic data only. Not for production use."
-  echo "Next step: cd tf_manager && terraform apply"
+  echo "Next step: cd manager && terraform apply"
 
 else
 
   # --- Normal mode: use static source as-is ---
   cp "$SOURCE_FILE" "$OUTPUT_FILE"
   echo "Copied tenancies_v1.json → tenancies_v1.demo.json"
-  echo "Next step: cd tf_manager && terraform apply"
+  echo "Next step: cd manager && terraform apply"
 
 fi

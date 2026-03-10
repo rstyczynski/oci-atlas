@@ -47,8 +47,8 @@ Data files are owned by Terraform module, which validates json data files agains
 >>The package comes with demo datasets. To demonstrate automatic detection of tenancy key demo data is prepared for your tenancy It's done by demo_mapping.sh script.
 
 ```bash
-cd tf_manager
-GDIR_DEMO_MODE=true bash demo_mapping.sh     
+cd manager
+GDIR_DEMO_MODE=true bash demo_mapping.sh
 terraform init
 terraform apply -auto-approve
 cd ..
@@ -58,13 +58,13 @@ cd ..
 
 ```bash
 # Region-level calls
-source cli_client/gdir_regions_v2.sh
+source clients/shell/gdir_regions_v2.sh
 export REGION_KEY=tst-region-1
 gdir_v2_regions_get_region_short_key
 gdir_v2_regions_get_region_cidr_public
 
 # Tenancy-level calls
-source cli_client/gdir_tenancies_v1.sh
+source clients/shell/gdir_tenancies_v1.sh
 export TENANCY_KEY=demo_corp
 export REGION_KEY=tst-region-1
 gdir_v1_tenancies_get_tenancy_region_proxy_url
@@ -72,7 +72,7 @@ gdir_v1_tenancies_get_tenancy_region_vault_ocid
 gdir_v1_tenancies_get_tenancy_region_cidr_private
 
 # Realm-level calls
-source cli_client/gdir_realms_v1.sh
+source clients/shell/gdir_realms_v1.sh
 export REALM_KEY=oc1
 gdir_v1_realms_get_realm_api_domain
 ```
@@ -80,7 +80,7 @@ gdir_v1_realms_get_realm_api_domain
 ### Terraform client
 
 ```bash
-cd tf_client/examples/tenancy
+cd clients/terraform/examples/tenancy
 terraform init
 TF_VAR_tenancy_key=demo_corp TF_VAR_region_key=tst-region-1 terraform apply -auto-approve >/dev/null
 terraform output tenancy_region_proxy_url
@@ -92,7 +92,7 @@ cd ../../..
 ### Node.js client
 
 ```bash
-cd node_client
+cd clients/node
 npm install
 npm run example:region
 REGION_KEY=tst-region-1 npm run example:region
@@ -110,10 +110,10 @@ cd ..
 
 | Module | Technology | Description |
 |--------|------------|-------------|
-| `tf_manager/` | Terraform | Provisions and maintains the catalog |
-| `tf_client/` | Terraform | Reads the catalog |
-| `node_client/` | Node.js | Reads the catalog |
-| `cli_client/` | Shell | Reads the catalog |
+| `manager/` | Terraform | Provisions and maintains the catalog |
+| `clients/terraform/` | Terraform | Reads the catalog |
+| `clients/node/` | Node.js | Reads the catalog |
+| `clients/shell/` | Shell | Reads the catalog |
 
 ## Data domains
 
@@ -135,7 +135,7 @@ Additional domains (e.g. `residents`) follow the same pattern.
 
 ### Data definition
 
-Each domain ships four co-located artifacts in `tf_manager/`:
+Each domain ships four co-located artifacts in `manager/`:
 
 | Artefact | Naming | Purpose |
 |----------|--------|---------|
@@ -152,9 +152,9 @@ To avoid configuration when not specified tenancy parameters are auto detected u
 
 | What | How | Override |
 |------|-----|----------|
-| **Tenancy / compartment** (`tf_manager`) | `oci os ns get-metadata` returns the tenancy root compartment OCID | `var.compartment_id` / `TF_VAR_compartment_id` |
+| **Tenancy / compartment** (`manager`) | `oci os ns get-metadata` returns the tenancy root compartment OCID | `var.compartment_id` / `TF_VAR_compartment_id` |
 | **Region key** (all clients) | Bucket OCID encodes the region: `ocid1.bucket.<realm>.<region>.<hash>` → field `[3]` | `TF_VAR_region_key` · `REGION_KEY` env · `regionKey` constructor config |
-| **Realm key** (`tf_client/examples/realm`) | Active region is resolved first, then its `realm` field is read from `regions/v2` | `TF_VAR_realm_key` |
+| **Realm key** (`clients/terraform/examples/realm`) | Active region is resolved first, then its `realm` field is read from `regions/v2` | `TF_VAR_realm_key` |
 | **Tenancy key** (`tenancies/v1` clients) | Derived from OCI tenancy context (for example using `oci os ns get-metadata --query 'data.\"default-s3-compartment-id\"'` or SDK/provider equivalent) when `TENANCY_KEY` is unset | `TENANCY_KEY` env · per-client config fields |
 
 All discoveries cascade from the OCI SDK/CLI credentials in `~/.oci/config` (or instance principal). No region, realm, or tenancy identifier needs to be hardcoded anywhere; tenancy key and region key can always be overridden explicitly when needed.
@@ -165,39 +165,39 @@ Directory data is stored in JSON files with specified schema. Data is available 
 
 Refer to individual README documents for each client to get full details and API reference:
 
-1. [Shell client (`cli_client/README.md`)](cli_client/README.md) — OCI CLI + `jq`
-2. [Terraform client (`tf_client/README.md`)](tf_client/README.md) — Terraform modules
-3. [Node.js client (`node_client/README.md`)](node_client/README.md) — Node.js/TypeScript client
+1. [Shell client (`clients/shell/README.md`)](clients/shell/README.md) — OCI CLI + `jq`
+2. [Terraform client (`clients/terraform/README.md`)](clients/terraform/README.md) — Terraform modules
+3. [Node.js client (`clients/node/README.md`)](clients/node/README.md) — Node.js/TypeScript client
 
 ## Testing
 
 ### Node (OCI)
 
 ```bash
-npm --prefix node_client test -- --runInBand
+npm --prefix clients/node test -- --runInBand
 ```
 
 ### Node (offline fixtures)
 
 ```bash
-GDIR_DATA_DIR=$PWD/tf_manager npm --prefix node_client test -- --runInBand
+GDIR_DATA_DIR=$PWD/manager npm --prefix clients/node test -- --runInBand
 ```
 
 ### CLI (OCI)
 
 ```bash
-bash cli_client/test/run_tests.sh
+bash clients/shell/test/run_tests.sh
 ```
 
 ### CLI (offline fixtures)
 
 ```bash
-GDIR_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh
+GDIR_DATA_DIR=$PWD/manager bash clients/shell/test/run_tests.sh
 ```
 
 ### Terraform
 
-Test for tf_client are not provided.
+Test for clients/terraform are not provided.
 
 ## Data structures
 
@@ -303,19 +303,19 @@ Top-level keys are tenancy identifiers (e.g. `demo_corp`). Each tenancy has per-
 - Rationalized demo data: removed real tenancy key `avq3`, replaced with synthetic `demo_corp`
 - Fixed realm consistency: `acme_prod` now uses real `oc1`-realm regions (`eu-frankfurt-1`, `eu-amsterdam-1`)
 - Fixed referential integrity: added missing `tst02` realm to `realms_v1.json`
-- New demo mapping script: `cli_client/bin/demo_mapping.sh` maps auto-discovered real tenancy key, region, and realm to synthetic template data in demo mode
+- New demo mapping script: `clients/shell/bin/demo_mapping.sh` maps auto-discovered real tenancy key, region, and realm to synthetic template data in demo mode
 
 **Demo Mode Usage:**
 
 ```bash
 # Map real tenancy key to synthetic template data (offline, local fixtures)
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 \
-  bash cli_client/bin/demo_mapping.sh
+TEST_DATA_DIR=manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 \
+  bash clients/shell/bin/demo_mapping.sh
 
 # Custom template and region limit
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 \
+TEST_DATA_DIR=manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 \
   GDIR_DEMO_TENANT=acme_prod GDIR_DEMO_MAX_REGIONS=2 \
-  bash cli_client/bin/demo_mapping.sh
+  bash clients/shell/bin/demo_mapping.sh
 ```
 
 **Documentation:**
@@ -328,7 +328,7 @@ TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=ts
 ## Online vs offline data for examples/tests
 
 - Online (live bucket): leave `GDIR_DATA_DIR` unset; set `GDIR_BUCKET` if not `gdir_info`; ensure OCI CLI/SDK auth works (instance principal, config profile, etc.).
-- Offline (local fixtures): set `GDIR_DATA_DIR=$PWD/tf_manager` to force CLI scripts to read local JSON files instead of Object Storage.
+- Offline (local fixtures): set `GDIR_DATA_DIR=$PWD/manager` to force CLI scripts to read local JSON files instead of Object Storage.
 
 Common environment knobs:
 

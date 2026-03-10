@@ -43,10 +43,10 @@ Every JSON data object carries a top-level `schema_version` field alongside `las
 
 | Data object | Current `schema_version` |
 | ----------- | ------------------------ |
-| `tf_manager/regions_v1.json` | `1.0.0` |
-| `tf_manager/realms_v1.json` | `1.0.0` |
-| `tf_manager/regions_v2.json` | `2.0.0` |
-| `tf_manager/tenancies_v1.json` | `1.0.0` |
+| `manager/regions_v1.json` | `1.0.0` |
+| `manager/realms_v1.json` | `1.0.0` |
+| `manager/regions_v2.json` | `2.0.0` |
+| `manager/tenancies_v1.json` | `1.0.0` |
 
 ### Schema files
 
@@ -108,7 +108,7 @@ The Node.js client is distributed via npm git-source install from a tagged commi
 
 Tags follow `v<MAJOR>.<MINOR>.<PATCH>` (e.g., `v1.0.0`, `v1.1.0`, `v2.0.0`).
 
-The `node_client/package.json` must include a `prepare` script so that `tsc` runs automatically on `npm install` from git source:
+The `clients/node/package.json` must include a `prepare` script so that `tsc` runs automatically on `npm install` from git source:
 
 ```json
 "scripts": {
@@ -154,7 +154,7 @@ tenancies/1/tenancies-latest.json
 
 ### Current state
 
-Existing paths (`regions/v1`, `regions/v2`) use the legacy `v`-prefixed convention from before this strategy was established. These paths will be replaced when `tf_manager` upload logic is updated (GD-3 scope). No migration period is needed — the project is in early phase with no locked production consumers.
+Existing paths (`regions/v1`, `regions/v2`) use the legacy `v`-prefixed convention from before this strategy was established. These paths will be replaced when `manager` upload logic is updated (GD-3 scope). No migration period is needed — the project is in early phase with no locked production consumers.
 
 ---
 
@@ -197,7 +197,7 @@ Tags follow `v<MAJOR>.<MINOR>.<PATCH>`. The tag marks the commit that consumers 
 ```bash
 # 1. Fix the data or schema file
 # 2. Update schema_version in the affected data file (e.g. "1.0.0" → "1.0.1")
-git add tf_manager/regions_v2.json
+git add manager/regions_v2.json
 git commit -m "fix: correct CIDR block in regions_v2"
 git tag v2.0.1
 git push && git push origin v2.0.1
@@ -208,7 +208,7 @@ git push && git push origin v2.0.1
 ```bash
 # 1. Add the new region/field to data and schema files
 # 2. Update schema_version (e.g. "2.0.0" → "2.1.0")
-git add tf_manager/regions_v2.json tf_manager/regions_v2.schema.json
+git add manager/regions_v2.json manager/regions_v2.schema.json
 git commit -m "feat: add eu-paris-1 to regions_v2"
 git tag v2.1.0
 git push && git push origin v2.1.0
@@ -220,7 +220,7 @@ git push && git push origin v2.1.0
 # 1. Make breaking change; create new schema version file (e.g. regions_v3.schema.json)
 # 2. Update schema_version to "3.0.0" in data file
 # 3. Create new DAL file gdir_regions_v3.ts
-git add tf_manager/ node_client/src/gdir_regions_v3.ts
+git add manager/ clients/node/src/gdir_regions_v3.ts
 git commit -m "feat!: regions/v3 — breaking change description"
 git tag v3.0.0
 git push && git push origin v3.0.0
@@ -250,7 +250,7 @@ git pull origin maint/v1
 git checkout maint/v1
 # fix the data or schema file
 # update schema_version in affected data file (e.g. "1.2.3" → "1.2.4")
-git add tf_manager/regions_v1.json
+git add manager/regions_v1.json
 git commit -m "fix: (maint/v1) correct CIDR block in regions_v1"
 git tag v1.2.4
 git push && git push origin v1.2.4
@@ -262,7 +262,7 @@ git push && git push origin v1.2.4
 git checkout maint/v1
 # add the new entry or field
 # update schema_version (e.g. "1.2.4" → "1.3.0")
-git add tf_manager/regions_v1.json tf_manager/regions_v1.schema.json
+git add manager/regions_v1.json manager/regions_v1.schema.json
 git commit -m "feat: (maint/v1) add af-johannesburg-1 to regions_v1"
 git tag v1.3.0
 git push && git push origin v1.3.0

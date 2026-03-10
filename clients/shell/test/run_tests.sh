@@ -3,7 +3,7 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$SCRIPT_DIR/.."
 export GDIR_CACHE_TTL=0
-export GDIR_DATA_DIR="${GDIR_DATA_DIR:-$ROOT/../tf_manager}"
+export GDIR_DATA_DIR="${GDIR_DATA_DIR:-$ROOT/../../manager}"
 
 source "$ROOT/gdir_regions_v2.sh"
 source "$ROOT/gdir_tenancies_v1.sh"

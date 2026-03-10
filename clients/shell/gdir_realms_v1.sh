@@ -16,7 +16,7 @@ source "$SCRIPT_DIR/gdir.sh"
 
 # ---------- public API realms/v1 ---------------------------------------------
 
-# ISO 8601 timestamp injected by tf_manager at upload time
+# ISO 8601 timestamp injected by manager at upload time
 gdir_v1_realms_get_last_updated_timestamp() {
   _gdir_fetch
   echo "$_GDIR_CACHE" | jq -r '.last_updated_timestamp // empty'

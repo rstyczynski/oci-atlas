@@ -93,10 +93,9 @@ types with technology names and uses inconsistent abbreviations. Restructure to 
 grouped layout:
 
     clients/
-      bash/        (was cli_client/ — shell library + examples)
+      shell/       (was cli_client/ — shell library + examples)
       node/        (was node_client/ — TypeScript/Node.js library)
       terraform/   (was tf_client/ — Terraform modules + examples)
-      ansible/     (NEW — GD-11)
     manager/       (was tf_manager/ — provisions the OCI bucket)
 
 Implementation: `git mv` each directory, update relative path references in 4 script files, update README.md and VERSIONING.md. Historical sprint docs are not updated.
@@ -158,7 +157,7 @@ A field in the data structure may hold a *reference* to an external location (e.
 }
 ```
 
-GD-15. DAL returns arrays with configurable separator
+### GD-15. DAL returns arrays with configurable separator
 
 Add configurable to control separator used by array return. now it's new line - should be an argument. Potential existence of used separator in scalar value should be escaped.
 
@@ -182,3 +181,10 @@ Adjust DAL contracts abd client APIs. Perform all the tests to validate new data
 
 **Scope:** tf_manager produces and uploads the split files (from current or future monolithic source). Moreover retains a single “catalog” object per domain/version that lists keys (e.g. for discovery). DALs and clients either adopt the new layout (fetch per-key objects or catalog + key list).
 
+### GD-17. Prepare terraform exemplary client fed by manager's outputs
+
+Terraform client by default uses `gdir_info` bucket to get data. To make even simpler terraform client may directly use manager's outputs to get data. It's required to add outputs to manager terraform module to make it possible.
+
+Exemplary code implements the same as other exemplary DAL programs.
+
+Manager takes one more responsibility to maintain outputs, which in fact are copy of terraform's DAL logic. 

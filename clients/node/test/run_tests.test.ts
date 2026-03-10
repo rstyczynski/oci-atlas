@@ -3,7 +3,7 @@
  * Mock subclasses override fetchObject() to read local JSON test data.
  *
  * Run: npm run test:jest
- *      GDIR_DATA_DIR=/path/to/tf_manager npm run test:jest
+ *      GDIR_DATA_DIR=/path/to/manager npm run test:jest
  */
 import * as fs   from "fs";
 import * as path from "path";
@@ -14,7 +14,7 @@ import { gdir_tenancies_v1, gdir_tenancies_config } from "../src/gdir_tenancies_
 import { gdir_realms_v1, gdir_realms_config }       from "../src/gdir_realms_v1";
 
 const TEST_DATA_DIR = process.env.GDIR_DATA_DIR
-  ?? path.resolve(__dirname, "../../tf_manager");
+  ?? path.resolve(__dirname, "../../../manager");
 
 // ---------------------------------------------------------------------------
 // Mock subclasses
