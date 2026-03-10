@@ -27,15 +27,15 @@ In practice, Global Directory is a managed equivalent of `jq data.json`: the dat
   - [Data definition](#data-definition)
   - [Tenancy auto-detection](#tenancy-auto-detection)
   - [Data Access Layer (DAL)](#data-access-layer-dal)
+- [Data structures](#data-structures)
+  - [`realms/v1` schema](#realmsv1-schema)
+  - [`regions/v2` schema](#regionsv2-schema)
+  - [`tenancies/v1` schema](#tenanciesv1-schema)
 - [Testing](#testing)
   - [Node (OCI)](#node-oci)
   - [Node (offline fixtures)](#node-offline-fixtures)
   - [CLI (OCI)](#cli-oci)
   - [CLI (offline fixtures)](#cli-offline-fixtures)
-- [Data structures](#data-structures)
-  - [`realms/v1` schema](#realmsv1-schema)
-  - [`regions/v2` schema](#regionsv2-schema)
-  - [`tenancies/v1` schema](#tenanciesv1-schema)
 - [Online vs offline data](#online-vs-offline-data-for-examplestests)
 - [Recent Updates](#recent-updates)
 - [References](#references)
@@ -212,36 +212,6 @@ Refer to individual README documents for each client to get full details and API
 2. [Terraform client (`clients/terraform/README.md`)](clients/terraform/README.md) — Terraform modules
 3. [Node.js client (`clients/node/README.md`)](clients/node/README.md) — Node.js/TypeScript client
 
-## Testing
-
-### Node (OCI)
-
-```bash
-npm --prefix clients/node test -- --runInBand
-```
-
-### Node (offline fixtures)
-
-```bash
-GDIR_DATA_DIR=$PWD/manager npm --prefix clients/node test -- --runInBand
-```
-
-### CLI (OCI)
-
-```bash
-bash clients/shell/test/run_tests.sh
-```
-
-### CLI (offline fixtures)
-
-```bash
-GDIR_DATA_DIR=$PWD/manager bash clients/shell/test/run_tests.sh
-```
-
-### Terraform
-
-Test for clients/terraform are not provided.
-
 ## Data structures
 
 ### `realms/v1` schema
@@ -327,6 +297,36 @@ Top-level keys are tenancy identifiers (e.g. `demo_corp`). Each tenancy has per-
   }
 }
 ```
+
+## Testing
+
+### Node (OCI)
+
+```bash
+npm --prefix clients/node test -- --runInBand
+```
+
+### Node (offline fixtures)
+
+```bash
+GDIR_DATA_DIR=$PWD/manager npm --prefix clients/node test -- --runInBand
+```
+
+### CLI (OCI)
+
+```bash
+bash clients/shell/test/run_tests.sh
+```
+
+### CLI (offline fixtures)
+
+```bash
+GDIR_DATA_DIR=$PWD/manager bash clients/shell/test/run_tests.sh
+```
+
+### Terraform
+
+Test for clients/terraform are not provided.
 
 ## Recent Updates
 
