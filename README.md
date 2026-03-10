@@ -322,6 +322,29 @@ Top-level keys are tenancy identifiers (e.g. `demo_corp`). Each tenancy has per-
 
 ## Recent Updates
 
+### Sprint 8 - Remove last_updated_timestamp field
+
+**Status:** implemented
+
+**Backlog Items Implemented:**
+
+- **GD-18**: Remove last_updated_timestamp field — tested
+
+**Key Changes:**
+
+- Removed `last_updated_timestamp` from all 3 JSON data files and 3 schema files
+- Manager TF: replaced `jsonencode(merge(..., { last_updated_timestamp = timestamp() }))` with `file(...)` direct read
+- Removed `*_get_last_updated_timestamp()` / `getLastUpdatedTimestamp()` functions from all shell, Node.js, and Terraform DALs
+- Shell: 18/18 tests pass; Node: 48/48 tests pass
+
+**Documentation:**
+
+- Implementation: `progress/sprint_8/sprint_8_implementation.md`
+- Tests: `progress/sprint_8/sprint_8_tests.md`
+- Design: `progress/sprint_8/sprint_8_design.md`
+
+---
+
 ### Sprint 7 - Restructure client directories
 
 **Status:** implemented
