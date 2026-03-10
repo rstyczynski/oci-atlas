@@ -80,12 +80,47 @@ gdir_v1_realms_get_realm_api_domain
 ### Terraform client
 
 ```bash
-cd clients/terraform/examples/tenancy
+cd clients/terraform/examples
+
+# Regions (all) — region keys, realms
+cd regions
+terraform init
+terraform apply -auto-approve >/dev/null
+terraform output region_keys
+terraform output realms
+cd ..
+
+# Region (single) — region_short_key, region_cidr_public
+cd region
+terraform init
+TF_VAR_region_key=tst-region-1 terraform apply -auto-approve >/dev/null
+terraform output region_short_key
+terraform output region_cidr_public
+cd ..
+
+# Tenancy — proxy_url, vault_ocid, cidr_private, proxy_noproxy
+cd tenancy
 terraform init
 TF_VAR_tenancy_key=demo_corp TF_VAR_region_key=tst-region-1 terraform apply -auto-approve >/dev/null
 terraform output tenancy_region_proxy_url
 terraform output tenancy_region_vault_ocid
 terraform output tenancy_region_cidr_private
+cd ..
+
+# Realms (all) — realm keys
+cd realms
+terraform init
+terraform apply -auto-approve >/dev/null
+terraform output realm_keys
+cd ..
+
+# Realm (single) — realm_api_domain
+cd realm
+terraform init
+TF_VAR_realm_key=oc1 terraform apply -auto-approve >/dev/null
+terraform output realm_api_domain
+cd ..
+
 cd ../../..
 ```
 

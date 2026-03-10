@@ -187,4 +187,4 @@ Terraform client by default uses `gdir_info` bucket to get data. To make even si
 
 Exemplary code implements the same as other exemplary DAL programs.
 
-Manager takes one more responsibility to maintain outputs, which in fact are copy of terraform's DAL logic. 
+Manager takes one more responsibility to maintain outputs, which in fact are copy of terraform's DAL logic. It should be implemented reusing DAL or combining terraform client with manager. Should be analyzed.
