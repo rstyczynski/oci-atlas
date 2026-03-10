@@ -2,17 +2,17 @@
 
 >**Note:** Work in progress. Project is in DRAFT mode.
 
-An OCI tenancy is described by many attributes that hosted systems use as configuration inputs: tenancy id, internal network properties (for example internal subnet CIDRs), proxy settings (URL, IP, port), and certificate-related metadata. Some lower-level procedures also require region short keys, realm API domains, and public network ranges.
+An OCI tenancy is described by multiple attributes that hosted systems use as configuration inputs: tenancy id, internal network properties (for example internal subnet CIDRs), proxy settings (URL, IP, port), and certificate-related metadata. Some procedures also require region short keys, realm API domains, and public network ranges. Some of these attributes are OCI-native, while others are customer-defined. Collecting them manually and keeping them configured across systems is time-consuming.
 
-Some of these attributes are OCI-native, while others are customer-defined. Collecting them manually and keeping them configured across systems is time-consuming.
+Global Directory provides a catalog of OCI realm, region, and tenancy attributes as JSON documents with strict schemas and semantic versioning.
 
-Global Directory provides a catalog of OCI realm, region, and tenancy attributes as JSON documents with strict schemas and semantic versioning. 
-
-The JSON data is available in this Git repository and in an OCI Object Storage bucket. To simplify lookups, Global Directory provides Data Access Layer (DAL) clients for Shell (CLI), Node.js, Terraform, and Ansible. You can either consume raw JSON directly or use the client libraries.
+The JSON data is available in this Git repository and in an OCI Object Storage bucket. To simplify lookups, Global Directory provides Data Access Layer (DAL) clients for Shell (CLI), Node.js, Terraform, and Ansible.
 
 ![Global Directory architecture](models/model-CA%20TF%20no.3%200.2.svg)
 
-In practice, Global Directory is a managed equivalent of `jq data.json`: the data is centralized, schema-validated before upload, versioned, and exposed through client APIs instead of ad-hoc one-off queries.
+You can either consume raw JSON directly or use the client libraries. JSON data keeps attribute descriptions as data type, encoding, digest, and a reference to a source-of-truth to enable client to directly load data in special use cases.
+
+In practice, Global Directory is a managed equivalent of `jq data.json`: the data is centralized, schema-validated, versioned, and exposed through client APIs instead of ad-hoc one-off queries.
 
 ## Contents
 
