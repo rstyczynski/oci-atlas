@@ -6,7 +6,7 @@ An OCI tenancy is described by many attributes that hosted systems use as config
 
 Some of these attributes are OCI-native, while others are customer-defined. Collecting them manually and keeping them configured across systems is time-consuming.
 
-Global Directory provides a catalog of OCI realm, region, and tenancy attributes as JSON documents with strict schemas and semantic versioning.
+Global Directory provides a catalog of OCI realm, region, and tenancy attributes as JSON documents with strict schemas and semantic versioning. 
 
 The JSON data is available in this Git repository and in an OCI Object Storage bucket. To simplify lookups, Global Directory provides Data Access Layer (DAL) clients for Shell (CLI), Node.js, Terraform, and Ansible. You can either consume raw JSON directly or use the client libraries.
 
@@ -17,9 +17,10 @@ In practice, Global Directory is a managed equivalent of `jq data.json`: the dat
 ## Contents
 
 - [Quick start](#quick-start)
+  - [Provisioning data by a terraform manager](#provisioning-data-by-a-terraform-manager)
   - [Shell (CLI)](#shell-client)
-  - [Node.js](#nodejs-client)
   - [Terraform](#terraform-client)
+  - [Node.js](#nodejs-client)
 - [Repository structure](#repository-structure)
 - [Data domains](#data-domains)
   - [Object path convention](#object-path-convention)
@@ -27,6 +28,10 @@ In practice, Global Directory is a managed equivalent of `jq data.json`: the dat
   - [Tenancy auto-detection](#tenancy-auto-detection)
   - [Data Access Layer (DAL)](#data-access-layer-dal)
 - [Testing](#testing)
+  - [Node (OCI)](#node-oci)
+  - [Node (offline fixtures)](#node-offline-fixtures)
+  - [CLI (OCI)](#cli-oci)
+  - [CLI (offline fixtures)](#cli-offline-fixtures)
 - [Data structures](#data-structures)
   - [`realms/v1` schema](#realmsv1-schema)
   - [`regions/v2` schema](#regionsv2-schema)
@@ -47,7 +52,7 @@ export TV_VAR_compartment_id=
 
 Data files are owned by Terraform module, which validates json data files against defined schema and uploads to an object storage bucket.
 
->>The package comes with demo datasets. To demonstrate automatic detection of tenancy key demo data is prepared for your tenancy It's done by demo_mapping.sh script.
+>The package comes with demo datasets. To demonstrate automatic detection of tenancy key demo data is prepared for your tenancy It's done by demo_mapping.sh script.
 
 ```bash
 cd manager
