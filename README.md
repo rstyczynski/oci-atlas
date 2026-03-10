@@ -17,21 +17,22 @@ In practice, Global Directory is a managed equivalent of `jq data.json`: the dat
 ## Contents
 
 - [Quick start](#quick-start)
+  - [Shell (CLI)](#shell-client)
+  - [Node.js](#nodejs-client)
+  - [Terraform](#terraform-client)
 - [Repository structure](#repository-structure)
 - [Data domains](#data-domains)
   - [Object path convention](#object-path-convention)
   - [Data definition](#data-definition)
-  - [Auto-discovery](#auto-discovery)
+  - [Tenancy auto-detection](#tenancy-auto-detection)
   - [Data Access Layer (DAL)](#data-access-layer-dal)
-- [Client libraries](#client-libraries)
-  - [Shell (CLI)](#shell-cli)
-  - [Node.js](#nodejs)
-  - [Terraform](#terraform)
 - [Testing](#testing)
 - [Data structures](#data-structures)
   - [`realms/v1` schema](#realmsv1-schema)
   - [`regions/v2` schema](#regionsv2-schema)
   - [`tenancies/v1` schema](#tenanciesv1-schema)
+- [Online vs offline data](#online-vs-offline-data-for-examplestests)
+- [Recent Updates](#recent-updates)
 - [References](#references)
 
 ## Quick start
