@@ -73,12 +73,21 @@ Bug fixes:
 
 ## Sprint 7 - Restructure directories
 
-Status: Progress
+Status: Done
 Mode: YOLO
 
 Backlog Items:
 
 * GD-10. Restructure client directories
+
+## Sprint 8 - Remove last_updated_timestamp field
+
+Status: Done
+Mode: YOLO
+
+Backlog Items:
+
+* GD-18. Remove last_updated_timestamp field
 
 <!-- TODO: Define your Sprints below. Each Sprint references Backlog Items from BACKLOG.md. Example format:
 
