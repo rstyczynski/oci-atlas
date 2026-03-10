@@ -15,7 +15,7 @@ Shell client for OCI Atlas global directory data in Object Storage.
 - `jq`.
 - POSIX-style utilities: `awk`, `tr`, `cat`, `head`, `wc`.
 
->>**Note** DAL scripts validate that both `oci` and `jq` are available on `PATH`. If either is missing, sourcing fails with a clear error message and the `gdir_*` functions are not registered.
+>**Note** DAL scripts validate that both `oci` and `jq` are available on `PATH`. If either is missing, sourcing fails with a clear error message and the `gdir_*` functions are not registered.
 
 ## Example usage
 
