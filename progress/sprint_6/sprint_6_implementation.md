@@ -71,7 +71,7 @@ connection context.
 - `jq` installed on the host
 - `bash` 4+
 - For demo mapping with live OCI discovery: OCI CLI configured (`~/.oci/config`)
-- For offline/local testing: set `TEST_DATA_DIR=tf_manager`
+- For offline/local testing: set `GDIR_DATA_DIR=tf_manager`
 
 #### Data Changes
 
@@ -98,7 +98,7 @@ GDIR_DEMO_MODE=true bash cli_client/examples/demo_mapping.sh
 **Offline Usage (explicit tenancy key):**
 
 ```bash
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
+GDIR_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
   bash cli_client/examples/demo_mapping.sh
 ```
 
@@ -112,7 +112,7 @@ TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
 **Example 1: Default demo mapping**
 
 ```bash
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=acme_prod \
+GDIR_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=acme_prod \
   bash cli_client/examples/demo_mapping.sh 2>/dev/null
 ```
 
@@ -132,7 +132,7 @@ Expected output:
 **Example 2: Limited regions with demo_corp as real tenancy**
 
 ```bash
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
+GDIR_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp \
   GDIR_DEMO_MAX_REGIONS=1 bash cli_client/examples/demo_mapping.sh 2>/dev/null
 ```
 
@@ -152,7 +152,7 @@ Expected output:
 **Example 3: Error — demo mode not enabled**
 
 ```bash
-TEST_DATA_DIR=tf_manager bash cli_client/examples/demo_mapping.sh
+GDIR_DATA_DIR=tf_manager bash cli_client/examples/demo_mapping.sh
 ```
 
 Expected output (stderr):

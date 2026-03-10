@@ -1,8 +1,16 @@
 # Global directory
 
-Catalog of OCI region attributes (proxy, network, realm membership, etc.), realm (domain, type, geo-region, etc.), stored as JSON in an OCI Object Storage bucket. Provides versioned data with associated Node.js, CLI, and Terraform clients for reading the data. The catalog is provisioned and maintained by a Terraform manager module supplied with data file validation.
+>**Note:** Work in progress. Project is in DRAFT mode.
 
-Global directory is the equivalent of `jq data.json` — except the data file lives centrally in OCI Object Storage, is schema-validated before every upload, versioned by domain, and consumed through structured data access layers in Node.js, CLI, and Terraform instead of ad-hoc one-off queries.
+An OCI tenancy is described by many attributes that hosted systems use as configuration inputs: tenancy id, internal network properties (for example internal subnet CIDRs), proxy settings (URL, IP, port), and certificate-related metadata. Some lower-level procedures also require region short keys, realm API domains, and public network ranges.
+
+Some of these attributes are OCI-native, while others are customer-defined. Collecting them manually and keeping them configured across systems is time-consuming.
+
+Global Directory provides a catalog of OCI realm, region, and tenancy attributes as JSON documents with strict schemas and semantic versioning.
+
+The JSON data is available in this Git repository and in an OCI Object Storage bucket. To simplify lookups, Global Directory provides Data Access Layer (DAL) clients for Shell (CLI), Node.js, Terraform, and Ansible. You can either consume raw JSON directly or use the client libraries.
+
+In practice, Global Directory is a managed equivalent of `jq data.json`: the data is centralized, schema-validated before upload, versioned, and exposed through client APIs instead of ad-hoc one-off queries.
 
 ## Contents
 
@@ -26,131 +34,77 @@ Global directory is the equivalent of `jq data.json` — except the data file li
 
 ## Quick start
 
-**Data** — edit `tf_manager/regions_v2.json`, `tf_manager/tenancies_v1.json`, and/or `tf_manager/realms_v1.json`, then provision.
+To start you need IAM privileges to compartment where data bucket will be created. If not set, tenancy level is used. Make sure you have required privileges to the target tenancy.
 
-**Provision (normal mode):**
+```bash
+export TV_VAR_compartment_id=
+```
+
+### Provisioning data by a terraform manager
+
+Data files are owned by Terraform module, which validates json data files against defined schema and uploads to an object storage bucket.
+
+>>The package comes with demo datasets. To demonstrate automatic detection of tenancy key demo data is prepared for your tenancy It's done by demo_mapping.sh script.
 
 ```bash
 cd tf_manager
-bash demo_mapping.sh          # builds tenancies_v1.demo.json from static source
+GDIR_DEMO_MODE=true bash demo_mapping.sh     
 terraform init
 terraform apply -auto-approve
 cd ..
 ```
 
-**Provision (demo mode — maps real tenancy key to synthetic template data):**
+### Shell client
 
 ```bash
-cd tf_manager
-# demo mode means that your current tenancy is not registered in data file, and oci-atlas uses demo set to map its synthetic data to describe your tenancy. Look into tenancies_v1.demo.json
-GDIR_DEMO_MODE=true bash demo_mapping.sh
-terraform apply -auto-approve
-cd ..
+# Region-level calls
+source cli_client/gdir_regions_v2.sh
+export REGION_KEY=tst-region-1
+gdir_v2_regions_get_region_short_key
+gdir_v2_regions_get_region_cidr_public
+
+# Tenancy-level calls
+source cli_client/gdir_tenancies_v1.sh
+export TENANCY_KEY=demo_corp
+export REGION_KEY=tst-region-1
+gdir_v1_tenancies_get_tenancy_region_proxy_url
+gdir_v1_tenancies_get_tenancy_region_vault_ocid
+gdir_v1_tenancies_get_tenancy_region_cidr_private
+
+# Realm-level calls
+source cli_client/gdir_realms_v1.sh
+export REALM_KEY=oc1
+gdir_v1_realms_get_realm_api_domain
 ```
 
-**Read — Shell:**
+### Terraform client
 
 ```bash
-cd cli_client
-
-bash examples/regions.sh
-bash examples/region.sh
-REGION_KEY=eu-zurich-1 bash examples/region.sh
-
-bash examples/tenancy.sh
-TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 bash examples/tenancy.sh
-
-bash examples/realms.sh
-REALM_KEY=oc1 bash examples/realms.sh
-cd ..
+cd tf_client/examples/tenancy
+terraform init
+TF_VAR_tenancy_key=demo_corp TF_VAR_region_key=tst-region-1 terraform apply -auto-approve >/dev/null
+terraform output tenancy_region_proxy_url
+terraform output tenancy_region_vault_ocid
+terraform output tenancy_region_cidr_private
+cd ../../..
 ```
 
-**Read — Node:**
+### Node.js client
 
 ```bash
 cd node_client
 npm install
-
-# Regions
 npm run example:region
-REGION_KEY=eu-zurich-1 npm run example:region
+REGION_KEY=tst-region-1 npm run example:region
 npm run example:regions
 
-# Tenancy (1) vanilla – discover tenancy key and region from OCI context where supported
 npm run example:tenancy
 TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 npm run example:tenancy
 
-# Realms
 npm run example:realms
 REALM_KEY=oc1 npm run example:realm
 cd ..
 ```
-
-**Read — Terraform:**
-
-```bash
-cd tf_client/examples
-
-cd regions
-terraform init
-terraform apply -auto-approve 
-terraform output
-cd ..
-
-cd region
-terraform init
-terraform apply -auto-approve
-terraform output
-
-rm -f terraform.tfstate terraform.tfstate.backup
-TF_VAR_region_key=tst-region-3 terraform apply -auto-approve
-terraform output
-cd ..
-
-cd tenancy
-terraform init
-
-# Tenancy (1) vanilla – use module defaults / discovery
-terraform apply -auto-approve
-terraform output
-
-# Tenancy (3) explicit tenancy key and region key
-TF_VAR_tenancy_key=demo_corp TF_VAR_region_key=tst-region-1 terraform apply -auto-approve
-terraform output
-cd ..
-
-cd realms
-terraform init
-terraform apply -auto-approve
-terraform output
-cd ..
-
-cd realm
-terraform init
-terraform apply -auto-approve
-terraform output
-
-TF_VAR_realm_key=oc19 terraform apply -auto-approve
-terraform output
-cd ..
-
-cd ../..
-```
-
-### Online vs offline data for examples/tests
-
-- Online (live bucket): leave `TEST_DATA_DIR` unset; set `GDIR_BUCKET` if not `gdir_info`; ensure OCI CLI/SDK auth works (instance principal, config profile, etc.).
-- Offline (local fixtures): set `TEST_DATA_DIR=$PWD/tf_manager` to force CLI scripts to read local JSON files instead of Object Storage.
-
-Common environment knobs:
-
-| Var | Purpose | Default (all clients) |
-| --- | ------- | ------- |
-| `GDIR_BUCKET`  | Bucket containing catalog objects | `gdir_info` — baked into every DAL (CLI core `gdir.sh`, Node `DEFAULT_BUCKET`, Terraform `bucket_name` default) |
-| `REGION_KEY`   | Region key for region/tenancy lookups | auto-resolved from bucket OCID |
-| `TENANCY_KEY`  | Tenancy key for tenancy examples/tests | none (must set for tenancy flows) |
-| `REALM_KEY`    | Realm key for realm example | auto-resolved via regions unless set |
-| `TEST_DATA_DIR`| Path to local JSON fixtures (CLI tests/examples) | unset (use OCI) |
 
 ## Repository structure
 
@@ -163,13 +117,11 @@ Common environment knobs:
 
 ## Data domains
 
-The catalog is organised into **data domains** — independent datasets stored as separate JSON objects in the bucket. Each domain has its own schema and data validator program, evolves independently, and is accessed through a dedicated **Data Access Layer (DAL)** in client libraries provided for Node.js, shell, and Terraform.
+The catalog is organized into data domains — independent datasets stored as separate JSON objects in the bucket. Each domain has its own json schema document, evolves independently, and is accessed through a dedicated Data Access Layer (DAL) in client libraries provided for Shell, Terraform, and Node.js.
 
 ### Object path convention
 
-```
-<domain>/<version>
-```
+To maintain backward compatibility data files are stored in directories following `<domain>/<version>` scheme. As semantic versioning is applied to both data files and access layers this approach guarantees servicing older clients during evolution of the data.
 
 | Domain | Current version | Object path | Description |
 |--------|----------------|-------------|-------------|
@@ -177,13 +129,13 @@ The catalog is organised into **data domains** — independent datasets stored a
 | `tenancies` | `v1` | `tenancies/v1` | Tenancy-scoped attributes per region — private CIDRs, proxy, vault, toolchain, observability |
 | `realms` | `v1` | `realms/v1` | Realm-level attributes — name, geo-region, API domain |
 
-Additional domains (e.g. `tenancies`, `residents`) follow the same pattern.
+Additional domains (e.g. `residents`) follow the same pattern.
 
 >Note Default location of data is `gdir_info` bucket located in root compartment. The master module may be configured with compartment and bucket name to private compartments to serve resident level data. The resident level scoping is based on externally defined iam policies.
 
 ### Data definition
 
-Each domain ships four co-located artefacts in `tf_manager/`:
+Each domain ships four co-located artifacts in `tf_manager/`:
 
 | Artefact | Naming | Purpose |
 |----------|--------|---------|
@@ -194,9 +146,9 @@ Each domain ships four co-located artefacts in `tf_manager/`:
 
 The schema in this README is derived from the `.schema.json` file.
 
-### Auto-discovery
+### Tenancy auto-detection
 
-The catalog avoids requiring hardcoded identifiers by deriving them from the active OCI connection:
+To avoid configuration when not specified tenancy parameters are auto detected using CLI and default connection profile.
 
 | What | How | Override |
 |------|-----|----------|
@@ -209,64 +161,43 @@ All discoveries cascade from the OCI SDK/CLI credentials in `~/.oci/config` (or 
 
 ### Data Access Layer (DAL)
 
-Each domain+version pair has a dedicated DAL in every client library. The DAL encodes the exact field structure of that schema version and is never shared between versions or domains.
+Directory data is stored in JSON files with specified schema. Data is available at well known `gdir_info` bucket, so it easy to get the data and query it. Toi make this process even easier, global directory comes with data access layer (DAL) libraries for Shell, Terraform, and Node.js.
 
-The canonical DAL name for a domain+version is **`gdir_<domain>_<version>`**. Every client uses this name directly — as a class name, file name, or module name.
+Refer to individual README documents for each client to get full details and API reference:
 
-| Client | DAL for `regions/v2` | DAL for `tenancies/v1` | DAL for `realms/v1` |
-|--------|----------------------|------------------------|---------------------|
-| Node.js | class `gdir_regions_v2` in `node_client/src/gdir_regions_v2.ts` | class `gdir_tenancies_v1` in `node_client/src/gdir_tenancies_v1.ts` | class `gdir_realms_v1` in `node_client/src/gdir_realms_v1.ts` |
-| CLI | `cli_client/gdir_regions_v2.sh`, functions `gdir_v2_regions_*` | `cli_client/gdir_tenancies_v1.sh`, functions `gdir_v1_tenancies_*` | `cli_client/gdir_realms_v1.sh`, functions `gdir_v1_realms_*` |
-| Terraform | module `tf_client/gdir_regions_v2/` | module `tf_client/gdir_tenancies_v1/` | module `tf_client/gdir_realms_v1/` |
-
-When a schema changes incompatibly, a new version (`v2`) is introduced alongside the existing one. Consumers migrate at their own pace; both versions can be live simultaneously.
-
-When a new domain is added (e.g. `realms`), a parallel set of DAL artefacts is created — `gdir_realms_v1` class, `gdir_realms_v1.sh`, `tf_client/gdir_realms_v1/` — without touching any existing code.
-
-
-
-## Client libraries
-
-Each client ships a DAL per domain/version.
-
-### Shell (CLI)
-
-- Location: `cli_client/`
-- DAL scripts:
-  - `gdir_regions_v2.sh`
-  - `gdir_tenancies_v1.sh`
-  - `gdir_realms_v1.sh`
-- Typical usage: called from small wrapper scripts in `cli_client/examples/` (see Quick start).
-
-### Node.js
-
-- Location: `node_client/`
-- DAL classes (TypeScript, compiled to Node.js):
-  - `src/gdir_regions_v2.ts`
-  - `src/gdir_tenancies_v1.ts`
-  - `src/gdir_realms_v1.ts`
-- Typical usage: create the corresponding `gdir_<domain>_<version>` class and call its methods; examples are wired via `npm run example:*` (see Quick start).
-
-### Terraform
-
-- Location: `tf_client/`
-- DAL modules:
-  - `gdir_regions_v2/`
-  - `gdir_tenancies_v1/`
-  - `gdir_realms_v1/`
-- Typical usage: consume the modules from `tf_client/examples/{region,regions,tenancy,realm,realms}`.
+1. [Shell client (`cli_client/README.md`)](cli_client/README.md) — OCI CLI + `jq`
+2. [Terraform client (`tf_client/README.md`)](tf_client/README.md) — Terraform modules
+3. [Node.js client (`node_client/README.md`)](node_client/README.md) — Node.js/TypeScript client
 
 ## Testing
 
-- **Node (OCI)**: `npm --prefix node_client test -- --runInBand` (uses OCI Object Storage; ensure env/OCI config is set)
-- **Node (offline fixtures)**: `TEST_DATA_DIR=$PWD/tf_manager npm --prefix node_client test -- --runInBand`
-- **CLI (OCI)**: `bash cli_client/test/run_tests.sh`
-- **CLI (offline fixtures)**: `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh`
-- **Terraform**: in each example under `tf_client/examples/{region,regions,tenancy,realm,realms}` run:
-  - `terraform init`
-  - `terraform validate`
-  - optionally `terraform plan` against your bucket (requires provider access)
+### Node (OCI)
 
+```bash
+npm --prefix node_client test -- --runInBand
+```
+
+### Node (offline fixtures)
+
+```bash
+GDIR_DATA_DIR=$PWD/tf_manager npm --prefix node_client test -- --runInBand
+```
+
+### CLI (OCI)
+
+```bash
+bash cli_client/test/run_tests.sh
+```
+
+### CLI (offline fixtures)
+
+```bash
+GDIR_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh
+```
+
+### Terraform
+
+Test for tf_client are not provided.
 
 ## Data structures
 
@@ -290,7 +221,7 @@ Top-level keys are realm identifiers (e.g. `oc1`, `tst01`). Metadata fields (`sc
 
 ### `regions/v2` schema
 
-Top-level keys are region identifiers (e.g. `eu-zurich-1`). Each entry includes realm and public CIDRs; tenancy-scoped data is in `tenancies/v1`. Metadata is top-level and removed by DALs before returning maps.
+Top-level keys are region identifiers (e.g. `tst-region-1`). Each entry includes realm and public CIDRs; tenancy-scoped data is in `tenancies/v1`. Metadata is top-level and removed by DALs before returning maps.
 
 ```json
 {
@@ -310,7 +241,7 @@ Top-level keys are region identifiers (e.g. `eu-zurich-1`). Each entry includes 
 
 ### `tenancies/v1` schema
 
-Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-region attributes: private CIDRs, proxy, vault, toolchain, observability. Metadata is top-level.
+Top-level keys are tenancy identifiers (e.g. `demo_corp`). Each tenancy has per-region attributes: private CIDRs, proxy, vault, toolchain, observability. Metadata is top-level.
 
 ```json
 {
@@ -378,11 +309,11 @@ Top-level keys are tenancy identifiers (e.g. `acme_prod`). Each tenancy has per-
 
 ```bash
 # Map real tenancy key to synthetic template data (offline, local fixtures)
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=eu-zurich-1 \
+TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 \
   bash cli_client/bin/demo_mapping.sh
 
 # Custom template and region limit
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=eu-zurich-1 \
+TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 \
   GDIR_DEMO_TENANT=acme_prod GDIR_DEMO_MAX_REGIONS=2 \
   bash cli_client/bin/demo_mapping.sh
 ```
@@ -393,7 +324,22 @@ TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp REGION_KEY=eu
 - Tests: `progress/sprint_6/sprint_6_tests.md`
 - Design: `progress/sprint_6/sprint_6_design.md`
 
----
+
+## Online vs offline data for examples/tests
+
+- Online (live bucket): leave `GDIR_DATA_DIR` unset; set `GDIR_BUCKET` if not `gdir_info`; ensure OCI CLI/SDK auth works (instance principal, config profile, etc.).
+- Offline (local fixtures): set `GDIR_DATA_DIR=$PWD/tf_manager` to force CLI scripts to read local JSON files instead of Object Storage.
+
+Common environment knobs:
+
+| Var | Purpose | Default (all clients) |
+| --- | ------- | ------- |
+| `GDIR_BUCKET`  | Bucket containing catalog objects | `gdir_info` — baked into every DAL (CLI core `gdir.sh`, Node `DEFAULT_BUCKET`, Terraform `bucket_name` default) |
+| `REGION_KEY`   | Region key for region/tenancy lookups | auto-resolved from bucket OCID |
+| `TENANCY_KEY`  | Tenancy key for tenancy examples/tests | none (must set for tenancy flows) |
+| `REALM_KEY`    | Realm key for realm example | auto-resolved via regions unless set |
+| `GDIR_DATA_DIR`| Path to local JSON fixtures (CLI tests/examples) | unset (use OCI) |
+
 
 ## References
 

@@ -148,14 +148,16 @@ export class gdir_tenancies_v1 extends gdir {
     return (await this.getTenancyRegion()).network;
   }
 
-  /** Private CIDR entries */
-  async getPrivateCidrs(): Promise<CidrEntry[]> {
-    return (await this.getNetwork()).private;
+  /** Private CIDR entries (CIDR strings, aligned with CLI/TF) */
+  async getPrivateCidrs(): Promise<string[]> {
+    return (await this.getNetwork()).private.map((e: CidrEntry) => e.cidr);
   }
 
-  /** Private CIDR entries matching a given tag */
-  async getPrivateCidrsByTag(tag: string): Promise<CidrEntry[]> {
-    return (await this.getPrivateCidrs()).filter(e => e.tags.includes(tag));
+  /** Private CIDR entries matching a given tag (CIDR strings) */
+  async getPrivateCidrsByTag(tag: string): Promise<string[]> {
+    return (await this.getNetwork()).private
+      .filter((e: CidrEntry) => e.tags.includes(tag))
+      .map(e => e.cidr);
   }
 
   /** Proxy object */

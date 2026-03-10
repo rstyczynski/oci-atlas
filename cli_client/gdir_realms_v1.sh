@@ -7,8 +7,6 @@
 #   GDIR_REALMS_OBJECT — object path override (default: realms/v1)
 #   REALM_KEY          — realm key for single-realm functions (e.g. oc1, tst01)
 
-set -euo pipefail
-
 # DAL owns its object path — set before sourcing core so _gdir_fetch uses it.
 : "${GDIR_REALMS_OBJECT:=realms/v1}"
 : "${GDIR_OBJECT:=$GDIR_REALMS_OBJECT}"

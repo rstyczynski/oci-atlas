@@ -15,7 +15,7 @@ variable "tenancies_object" {
 
 variable "tenancy_key" {
   type    = string
-  default = "acme_prod"
+  default = "demo_corp"
 }
 
 variable "region_key" {

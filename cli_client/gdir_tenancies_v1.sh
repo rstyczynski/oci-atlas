@@ -2,8 +2,6 @@
 # gdir_tenancies_v1.sh — v1 tenancies schema functions.
 # Structure: { [tenancyKey]: { realm, regions: { [regionKey]: { network, security, toolchain, observability } } }, last_updated_timestamp?, schema_version? }
 
-set -euo pipefail
-
 : "${GDIR_TENANCIES_OBJECT:=tenancies/v1}"
 _gdir_tenancies_v1_set_object() { GDIR_OBJECT="$GDIR_TENANCIES_OBJECT"; }
 TENANCY_KEY="${TENANCY_KEY:-}"
@@ -107,12 +105,12 @@ gdir_v1_tenancies_get_tenancy_region_network() {
 }
 
 gdir_v1_tenancies_get_tenancy_region_cidr_private() {
-  _gdir_v1_tenancies_region_json | jq '.network.private'
+  _gdir_v1_tenancies_region_json | jq -r '.network.private[]?.cidr // empty'
 }
 
 gdir_v1_tenancies_get_tenancy_region_cidr_private_by_tag() {
   local tag="${1:?tag required}"
-  _gdir_v1_tenancies_region_json | jq --arg tag "$tag" '.network.private | map(select(.tags[]? == $tag))'
+  _gdir_v1_tenancies_region_json | jq -r --arg tag "$tag" '.network.private | map(select(.tags[]? == $tag))[]?.cidr // empty'
 }
 
 gdir_v1_tenancies_get_tenancy_region_proxy() {
@@ -125,7 +123,7 @@ gdir_v1_tenancies_get_tenancy_region_proxy_ip() { gdir_v1_tenancies_get_tenancy_
 
 gdir_v1_tenancies_get_tenancy_region_proxy_port() { gdir_v1_tenancies_get_tenancy_region_proxy | jq -r '.port'; }
 
-gdir_v1_tenancies_get_tenancy_region_proxy_noproxy() { gdir_v1_tenancies_get_tenancy_region_proxy | jq '.noproxy'; }
+gdir_v1_tenancies_get_tenancy_region_proxy_noproxy() { gdir_v1_tenancies_get_tenancy_region_proxy | jq -r '.noproxy[]? // empty'; }
 
 gdir_v1_tenancies_get_tenancy_region_proxy_noproxy_string() { gdir_v1_tenancies_get_tenancy_region_proxy | jq -r '.noproxy | join(",")'; }
 
@@ -145,7 +143,7 @@ gdir_v1_tenancies_get_tenancy_region_github() { _gdir_v1_tenancies_region_json |
 
 gdir_v1_tenancies_get_tenancy_region_github_runner() { gdir_v1_tenancies_get_tenancy_region_github | jq '.runner'; }
 
-gdir_v1_tenancies_get_tenancy_region_github_runner_labels() { gdir_v1_tenancies_get_tenancy_region_github_runner | jq '.labels'; }
+gdir_v1_tenancies_get_tenancy_region_github_runner_labels() { gdir_v1_tenancies_get_tenancy_region_github_runner | jq -r '.labels[]? // empty'; }
 
 gdir_v1_tenancies_get_tenancy_region_github_runner_image() { gdir_v1_tenancies_get_tenancy_region_github_runner | jq -r '.image'; }
 

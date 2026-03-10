@@ -3,8 +3,6 @@
 # Structure: { [regionKey]: { key, realm, network: { public } }, last_updated_timestamp?, schema_version? }
 # Source this file to get all gdir_v2_regions_* functions.
 
-set -euo pipefail
-
 : "${GDIR_REGIONS_OBJECT:=regions/v2}"
 _gdir_regions_v2_set_object() { GDIR_OBJECT="$GDIR_REGIONS_OBJECT"; }
 
@@ -89,12 +87,12 @@ gdir_v2_regions_get_realm_other_region_keys() {
 # ---------- network ---------------------------------------------------------
 
 gdir_v2_regions_get_region_cidr_public() {
-  _gdir_v2_regions_region_json | jq '.network.public // []'
+  _gdir_v2_regions_region_json | jq -r '.network.public[]?.cidr // empty'
 }
 
 gdir_v2_regions_get_region_cidr_by_tag() {
   local tag="${1:?tag required}"
-  _gdir_v2_regions_region_json | jq --arg tag "$tag" '(.network.public // []) | map(select(.tags[]? == $tag))'
+  _gdir_v2_regions_region_json | jq -r --arg tag "$tag" '(.network.public // []) | map(select(.tags[]? == $tag))[]?.cidr // empty'
 }
 
 # When run directly, print regions map

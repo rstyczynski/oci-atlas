@@ -3,7 +3,7 @@
  * Mock subclasses override fetchObject() to read local JSON test data.
  *
  * Run: npm run test:jest
- *      TEST_DATA_DIR=/path/to/tf_manager npm run test:jest
+ *      GDIR_DATA_DIR=/path/to/tf_manager npm run test:jest
  */
 import * as fs   from "fs";
 import * as path from "path";
@@ -13,7 +13,7 @@ import { gdir_regions_v2 }                          from "../src/gdir_regions_v2
 import { gdir_tenancies_v1, gdir_tenancies_config } from "../src/gdir_tenancies_v1";
 import { gdir_realms_v1, gdir_realms_config }       from "../src/gdir_realms_v1";
 
-const TEST_DATA_DIR = process.env.TEST_DATA_DIR
+const TEST_DATA_DIR = process.env.GDIR_DATA_DIR
   ?? path.resolve(__dirname, "../../tf_manager");
 
 // ---------------------------------------------------------------------------
@@ -120,17 +120,16 @@ describe("regions/v2", () => {
 
   // --- network / CIDR ------------------------------------------------------
 
-  it("getRegionCidrPublic — returns array with CIDR entries", async () => {
+  it("getRegionCidrPublic — returns array with CIDR strings", async () => {
     const cidrs = await client.getRegionCidrPublic();
     expect(cidrs.length).toBeGreaterThan(0);
-    expect(cidrs[0]).toHaveProperty("cidr", "192.0.2.0/24");
-    expect(cidrs[0].tags).toContain("public");
+    expect(cidrs[0]).toBe("192.0.2.0/24");
   });
 
   it("getRegionCidrByTag — filters by tag correctly", async () => {
     const cidrs = await client.getRegionCidrByTag("public");
     expect(cidrs.length).toBeGreaterThan(0);
-    cidrs.forEach(c => expect(c.tags).toContain("public"));
+    cidrs.forEach(c => expect(typeof c).toBe("string"));
   });
 });
 
@@ -140,13 +139,13 @@ describe("regions/v2", () => {
 
 describe("tenancies/v1", () => {
   const TENANCY_KEY = "acme_prod";
-  const REGION_KEY  = "eu-zurich-1";
+  const REGION_KEY  = "eu-frankfurt-1";
   const client      = new MockTenancies({ tenancyKey: TENANCY_KEY, regionKey: REGION_KEY });
 
   // --- document metadata ---------------------------------------------------
 
   it("getLastUpdatedTimestamp — returns timestamp", async () => {
-    expect(await client.getLastUpdatedTimestamp()).toBe("2026-02-25T12:00:00Z");
+    expect(await client.getLastUpdatedTimestamp()).toBe("2026-03-03T12:00:00Z");
   });
 
   it("getSchemaVersion — returns 1.0.0", async () => {
@@ -169,17 +168,17 @@ describe("tenancies/v1", () => {
 
   it("getTenancy — returns tenancy object", async () => {
     const tenancy = await client.getTenancy();
-    expect(tenancy).toHaveProperty("realm", "oc19");
+    expect(tenancy).toHaveProperty("realm", "oc1");
     expect(tenancy).toHaveProperty("regions");
   });
 
-  it("getTenancyRealm — returns oc19", async () => {
-    expect(await client.getTenancyRealm()).toBe("oc19");
+  it("getTenancyRealm — returns oc1", async () => {
+    expect(await client.getTenancyRealm()).toBe("oc1");
   });
 
   // --- per-region ----------------------------------------------------------
 
-  it("getTenancyRegionKeys — includes eu-zurich-1", async () => {
+  it("getTenancyRegionKeys — includes eu-frankfurt-1", async () => {
     const keys = await client.getTenancyRegionKeys();
     expect(keys).toContain(REGION_KEY);
   });
@@ -194,16 +193,16 @@ describe("tenancies/v1", () => {
 
   // --- network -------------------------------------------------------------
 
-  it("getPrivateCidrs — returns array with CIDR entries", async () => {
+  it("getPrivateCidrs — returns array with CIDR strings", async () => {
     const cidrs = await client.getPrivateCidrs();
     expect(cidrs.length).toBeGreaterThan(0);
-    expect(cidrs[0]).toHaveProperty("cidr", "10.0.0.0/16");
+    expect(cidrs[0]).toBe("10.2.0.0/16");
   });
 
   it("getPrivateCidrsByTag — filters by vcn tag", async () => {
     const cidrs = await client.getPrivateCidrsByTag("vcn");
     expect(cidrs.length).toBeGreaterThan(0);
-    cidrs.forEach(c => expect(c.tags).toContain("vcn"));
+    cidrs.forEach(c => expect(typeof c).toBe("string"));
   });
 
   it("getProxy — has url, ip, port, noproxy", async () => {
@@ -215,11 +214,11 @@ describe("tenancies/v1", () => {
   });
 
   it("getProxyUrl — correct URL", async () => {
-    expect(await client.getProxyUrl()).toBe("http://proxy.eu-zurich-1.example.com:8080");
+    expect(await client.getProxyUrl()).toBe("http://proxy.eu-frankfurt-1.acme.example.com:8080");
   });
 
   it("getProxyIp — correct IP", async () => {
-    expect(await client.getProxyIp()).toBe("10.0.1.100");
+    expect(await client.getProxyIp()).toBe("10.2.0.100");
   });
 
   it("getProxyPort — correct port", async () => {
@@ -229,7 +228,7 @@ describe("tenancies/v1", () => {
   it("getProxyNoproxy — returns array", async () => {
     const list = await client.getProxyNoproxy();
     expect(list).toContain("10.0.0.0/8");
-    expect(list).toContain("*.eu-zurich-1.oraclecloud.com");
+    expect(list).toContain("*.eu-frankfurt-1.oraclecloud.com");
   });
 
   it("getProxyNoproxyString — comma-separated", async () => {
@@ -288,7 +287,7 @@ describe("tenancies/v1", () => {
   });
 
   it("getPromScrapingCidr — valid CIDR", async () => {
-    expect(await client.getPromScrapingCidr()).toBe("10.0.1.0/24");
+    expect(await client.getPromScrapingCidr()).toBe("10.2.10.0/24");
   });
 
   it("getLokiFqdn — contains region name", async () => {

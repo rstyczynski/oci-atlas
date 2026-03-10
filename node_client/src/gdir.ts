@@ -1,3 +1,5 @@
+import * as fs from "fs/promises";
+import * as path from "path";
 import * as objectstorage from "oci-objectstorage";
 import * as common from "oci-common";
 import { Readable } from "stream";
@@ -71,8 +73,21 @@ export class gdir {
     return this.cachedRegionKey;
   }
 
-  /** Fetch raw object content from the bucket as a string */
+  /** Fetch raw object content from the bucket as a string.
+   *  If GDIR_DATA_DIR is set, reads from local JSON file instead (same as CLI):
+   *  path = GDIR_DATA_DIR / (objectName with "/" replaced by "_").json
+   */
   protected async fetchObject(): Promise<string> {
+    const dataDir = process.env.GDIR_DATA_DIR;
+    if (dataDir) {
+      const fname = this.objectName.replace(/\//g, "_") + ".json";
+      const filePath = path.join(dataDir, fname);
+      try {
+        return await fs.readFile(filePath, "utf-8");
+      } catch (err) {
+        throw new Error(`GDIR_DATA_DIR: failed to read ${filePath}: ${err}`);
+      }
+    }
     const namespace = await this.getNamespace();
     const res = await this.client.getObject({
       namespaceName: namespace,

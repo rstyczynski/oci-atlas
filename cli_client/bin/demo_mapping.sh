@@ -13,7 +13,7 @@
 #   GDIR_DEMO_MODE=true bash bin/demo_mapping.sh
 #
 # Usage (offline — explicit overrides required):
-#   TEST_DATA_DIR=../tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=my_corp REGION_KEY=eu-frankfurt-1 \
+#   GDIR_DATA_DIR=../tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=my_corp REGION_KEY=eu-frankfurt-1 \
 #     bash bin/demo_mapping.sh
 #
 # Environment Variables:

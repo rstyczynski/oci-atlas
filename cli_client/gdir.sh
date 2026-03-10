@@ -4,13 +4,27 @@
 # Source gdir_regions_v1.sh to get gdir_v1_regions_* functions.
 #
 # ENV vars (all optional):
-#   GDIR_BUCKET  — bucket name         (default: gdir_info)
-#   GDIR_OBJECT  — object path         (set by DAL, e.g. GDIR_REGIONS_OBJECT in gdir_regions_v1.sh)
-#   REGION_KEY   — region key override (default: discovered from bucket OCID)
-
-set -euo pipefail
+#   GDIR_BUCKET   — bucket name         (default: gdir_info)
+#   GDIR_OBJECT   — object path         (set by DAL, e.g. GDIR_REGIONS_OBJECT in gdir_regions_v1.sh)
+#   REGION_KEY    — region key override (default: discovered from bucket OCID)
+#   GDIR_DATA_DIR — path to local JSON fixtures (if set, used instead of OCI Object Storage)
 
 : "${GDIR_BUCKET:=gdir_info}"
+
+# ---------- tool validation ---------------------------------------------------
+
+_gdir_require_tools() {
+  local tool
+  # Required external tools: OCI CLI, jq, and basic POSIX utilities used by the DALs
+  for tool in oci jq awk tr cat head wc; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+      echo "Error: required tool '$tool' not found in PATH." >&2
+      return 1
+    fi
+  done
+}
+
+_gdir_require_tools || return 1
 
 # ---------- cache variables ---------------------------------------------------
 
@@ -22,16 +36,19 @@ _GDIR_CACHED_REALM_FOR=""   # region key for which _GDIR_CACHED_REALM was resolv
 # ---------- core helpers ------------------------------------------------------
 
 # Fetch raw JSON from bucket; cached for the shell session.
+# When GDIR_DATA_DIR is set, only local file is used (no OCI fallback).
 _gdir_fetch() {
   if [[ -n "$_GDIR_CACHE" ]]; then return; fi
-  if [[ -n "${TEST_DATA_DIR:-}" ]]; then
+  if [[ -n "${GDIR_DATA_DIR:-}" ]]; then
     local fname
     fname=$(echo "$GDIR_OBJECT" | tr '/' '_').json
-    local path="$TEST_DATA_DIR/$fname"
+    local path="$GDIR_DATA_DIR/$fname"
     if [[ -f "$path" ]]; then
       _GDIR_CACHE=$(cat "$path")
       return
     fi
+    echo "Error: GDIR_DATA_DIR is set but file not found: $path" >&2
+    return 1
   fi
   _GDIR_CACHE=$(oci os object get \
     --bucket-name "$GDIR_BUCKET" \

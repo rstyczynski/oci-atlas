@@ -25,5 +25,5 @@ podman run --rm \
     cp -r /workspace/tf_manager  /tmp/tf_manager
     cd /tmp/node_client
     npm install --silent
-    TEST_DATA_DIR=/tmp/tf_manager npm test
+    GDIR_DATA_DIR=/tmp/tf_manager npm test
   "

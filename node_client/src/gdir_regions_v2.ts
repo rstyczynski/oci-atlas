@@ -119,13 +119,15 @@ export class gdir_regions_v2 extends gdir {
   // CIDR
   // ---------------------------------------------------------------------------
 
-  /** Public CIDR entries */
-  async getRegionCidrPublic(): Promise<CidrEntry[]> {
-    return (await this.getRegion()).network.public;
+  /** Public CIDR entries (CIDR strings, aligned with CLI/TF) */
+  async getRegionCidrPublic(): Promise<string[]> {
+    return (await this.getRegion()).network.public.map((e: CidrEntry) => e.cidr);
   }
 
-  /** Public CIDR entries matching a given tag (e.g. "OCI", "OSN") */
-  async getRegionCidrByTag(tag: string): Promise<CidrEntry[]> {
-    return (await this.getRegionCidrPublic()).filter(e => e.tags.includes(tag));
+  /** Public CIDR entries matching a given tag (CIDR strings) */
+  async getRegionCidrByTag(tag: string): Promise<string[]> {
+    return (await this.getRegion()).network.public
+      .filter((e: CidrEntry) => e.tags.includes(tag))
+      .map(e => e.cidr);
   }
 }

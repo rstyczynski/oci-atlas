@@ -18,7 +18,7 @@ Status: tested
 
 ### Testing Results
 - Node: `npm --prefix node_client test -- --runInBand` — PASS
-- Bash: `TEST_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh` — PASS
+- Bash: `GDIR_DATA_DIR=$PWD/tf_manager bash cli_client/test/run_tests.sh` — PASS
 - Terraform: tenant/region/regions examples initialized and validated by user (provider reachable)
 - AJV: covered implicitly via module validation; no outstanding failures
 

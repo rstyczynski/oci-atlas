@@ -36,8 +36,16 @@ locals {
   tenancy_region_keys = try(keys(local.tenancy.regions), [])
 
   tenancy_region_network = try(local.tenancy_region.network, null)
-  tenancy_region_cidr_private = try(local.tenancy_region.network.private, [])
-  tenancy_region_cidr_by_tag  = [for entry in local.tenancy_region_cidr_private : entry if contains(entry.tags, var.cidr_tag_filter)]
+
+  # Private CIDRs — align types with CLI:
+  # - CLI raw lines: list of CIDR strings
+  # - Terraform: HCL list(string), full objects available inside `tenancy_region_network.private`
+  tenancy_region_cidr_private_entries = try(local.tenancy_region_network.private, [])
+  tenancy_region_cidr_private         = [for entry in local.tenancy_region_cidr_private_entries : entry.cidr]
+  tenancy_region_cidr_by_tag          = [
+    for entry in local.tenancy_region_cidr_private_entries : entry.cidr
+    if contains(entry.tags, var.cidr_tag_filter)
+  ]
 
   tenancy_region_proxy                = try(local.tenancy_region.network.proxy, null)
   tenancy_region_proxy_noproxy        = try(local.tenancy_region_proxy.noproxy, [])

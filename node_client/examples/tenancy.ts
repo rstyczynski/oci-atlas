@@ -1,8 +1,7 @@
 /** Tenancy-focused example (tenancies/v1)
  * Usage:
- *   npm run example:tenancy                                        # vanilla — tenancy key auto-discovered from OCI
- *   TENANCY_KEY=acme_prod npm run example:tenancy                  # explicit tenancy key
- *   TENANCY_KEY=acme_prod REGION_KEY=eu-zurich-1 npm run example:tenancy
+ *   npm run example:tenancy
+ *   TENANCY_KEY=demo_corp REGION_KEY=tst-region-1 npm run example:tenancy
  */
 import { gdir_tenancies_v1 } from "../src";
 
@@ -12,21 +11,18 @@ const REGION_KEY  = process.env.REGION_KEY;
 const client = new gdir_tenancies_v1({ tenancyKey: TENANCY_KEY, regionKey: REGION_KEY });
 
 (async () => {
-  console.log("=== Tenancy realm ===");
-  console.log(await client.getTenancyRealm());
+  console.log("=== Proxy URL ===");
+  console.log(await client.getProxyUrl());
 
-  console.log("\n=== Region keys ===");
-  console.log(await client.getTenancyRegionKeys());
+  console.log("\n=== Vault OCID ===");
+  console.log(await client.getVaultOcid());
 
-  console.log("\n=== Network (private CIDRs) ===");
+  console.log("\n=== Private CIDRs ===");
   console.log(await client.getPrivateCidrs());
 
-  console.log("\n=== Proxy ===");
-  console.log(await client.getProxy());
+  console.log("\n=== Proxy no-proxy entries ===");
+  console.log(await client.getProxyNoproxy());
 
-  console.log("\n=== GitHub runner labels ===");
-  console.log(await client.getGitHubRunnerLabels());
-
-  console.log("\n=== Prometheus scraping CIDR ===");
-  console.log(await client.getPromScrapingCidr());
+  console.log("\n=== Proxy no-proxy string ===");
+  console.log(await client.getProxyNoproxyString());
 })();

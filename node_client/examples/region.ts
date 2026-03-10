@@ -10,14 +10,8 @@ const regionsClient = new gdir_regions_v2({ regionKey: REGION_KEY });
 
 (async () => {
   // --- region metadata (v2) -------------------------------------------------
-  console.log("\n=== Region (v2) ===");
-  console.log(await regionsClient.getRegion());
-
   console.log("\n=== Region short key ===");
   console.log(await regionsClient.getRegionShortKey());
-
-  console.log("\n=== Region realm ===");
-  console.log(await regionsClient.getRegionRealm());
 
   console.log("\n=== Public CIDRs ===");
   console.log(await regionsClient.getRegionCidrPublic());

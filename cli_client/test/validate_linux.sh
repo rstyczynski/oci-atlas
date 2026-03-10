@@ -35,7 +35,7 @@ esac
 
 podman run --rm \
   --volume "$PROJECT_ROOT:/workspace:ro" \
-  --env "TEST_DATA_DIR=/workspace/tf_manager" \
+  --env "GDIR_DATA_DIR=/workspace/tf_manager" \
   --workdir "/workspace" \
   "$IMAGE" \
   bash -c "$INSTALL_JQ && bash cli_client/test/run_tests.sh"

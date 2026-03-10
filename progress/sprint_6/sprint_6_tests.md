@@ -6,7 +6,7 @@
 
 - `jq` installed
 - `bash` 4+
-- `TEST_DATA_DIR` set to `tf_manager/` for local data (no OCI connection needed for most tests)
+- `GDIR_DATA_DIR` set to `tf_manager/` for local data (no OCI connection needed for most tests)
 - `TENANCY_KEY` set explicitly for tests that would otherwise trigger live OCI discovery
 
 ## GD-6. Synthetic Data Sets Review — Tests
@@ -91,14 +91,14 @@ Expected output:
 
 ```bash
 cd /path/to/global-directory
-TEST_DATA_DIR=tf_manager TENANCY_KEY=demo_corp REGION_KEY=eu-zurich-1 \
+GDIR_DATA_DIR=tf_manager TENANCY_KEY=demo_corp REGION_KEY=eu-zurich-1 \
   bash cli_client/test/run_tests.sh
 ```
 
 Alternative quick check:
 
 ```bash
-TEST_DATA_DIR=tf_manager TENANCY_KEY=demo_corp REGION_KEY=eu-zurich-1 \
+GDIR_DATA_DIR=tf_manager TENANCY_KEY=demo_corp REGION_KEY=eu-zurich-1 \
   bash -c '
     source cli_client/gdir_tenancies_v1.sh
     echo "Realm: $(gdir_v1_tenancies_get_tenancy_realm)"
@@ -126,7 +126,7 @@ Regions: eu-zurich-1
 **Test Sequence:**
 
 ```bash
-TEST_DATA_DIR=tf_manager TENANCY_KEY=acme_prod \
+GDIR_DATA_DIR=tf_manager TENANCY_KEY=acme_prod \
   bash -c '
     source cli_client/gdir_tenancies_v1.sh
     echo "Realm: $(gdir_v1_tenancies_get_tenancy_realm)"
@@ -155,7 +155,7 @@ eu-region-2
 **Test Sequence:**
 
 ```bash
-TEST_DATA_DIR=tf_manager bash cli_client/test/run_tests.sh
+GDIR_DATA_DIR=tf_manager bash cli_client/test/run_tests.sh
 ```
 
 Expected output:
@@ -204,7 +204,7 @@ Results: all passed
 **Test Sequence:**
 
 ```bash
-TEST_DATA_DIR=tf_manager bash cli_client/examples/demo_mapping.sh
+GDIR_DATA_DIR=tf_manager bash cli_client/examples/demo_mapping.sh
 echo "Exit: $?"
 ```
 
@@ -230,7 +230,7 @@ mapped_regions array, template_data, note.
 **Test Sequence:**
 
 ```bash
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=acme_prod \
+GDIR_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=acme_prod \
   bash cli_client/examples/demo_mapping.sh 2>/dev/null | jq '{demo_mode, real_tenancy_key, template_tenant, mapped_regions}'
 ```
 
@@ -258,7 +258,7 @@ Expected output:
 **Test Sequence:**
 
 ```bash
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp GDIR_DEMO_MAX_REGIONS=1 \
+GDIR_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp GDIR_DEMO_MAX_REGIONS=1 \
   bash cli_client/examples/demo_mapping.sh 2>/dev/null | jq '{mapped_regions, regions: .template_data.regions | keys}'
 ```
 
@@ -284,7 +284,7 @@ Expected output:
 **Test Sequence:**
 
 ```bash
-TEST_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp GDIR_DEMO_TENANT=nonexistent \
+GDIR_DATA_DIR=tf_manager GDIR_DEMO_MODE=true TENANCY_KEY=demo_corp GDIR_DEMO_TENANT=nonexistent \
   bash cli_client/examples/demo_mapping.sh
 echo "Exit: $?"
 ```
@@ -310,7 +310,7 @@ Exit: 1
 **Test Sequence:**
 
 ```bash
-TEST_DATA_DIR=tf_manager REALM_KEY=tst02 \
+GDIR_DATA_DIR=tf_manager REALM_KEY=tst02 \
   bash -c '
     source cli_client/gdir_realms_v1.sh
     echo "Type: $(gdir_v1_realms_get_realm_type)"
@@ -354,5 +354,5 @@ Name: Test dataset realm 2
 
 ## Test Execution Notes
 
-All tests run with `TEST_DATA_DIR=tf_manager` for offline execution. Tests T7 and T10
+All tests run with `GDIR_DATA_DIR=tf_manager` for offline execution. Tests T7 and T10
 use false/non-existent inputs to verify error handling. No `exit` commands in test sequences.
