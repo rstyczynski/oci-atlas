@@ -290,6 +290,30 @@ Top-level keys are tenancy identifiers (e.g. `demo_corp`). Each tenancy has per-
 
 ## Recent Updates
 
+### Sprint 7 - Restructure client directories
+
+**Status:** implemented
+
+**Backlog Items Implemented:**
+
+- **GD-10**: Restructure client directories — tested
+
+**Key Features Added:**
+
+- `cli_client/` → `clients/shell/`
+- `node_client/` → `clients/node/`
+- `tf_client/` → `clients/terraform/`
+- `tf_manager/` → `manager/`
+- All relative path references updated; shell 21/21 and node 51/51 tests pass
+
+**Documentation:**
+
+- Implementation: `progress/sprint_7/sprint_7_implementation.md`
+- Tests: `progress/sprint_7/sprint_7_tests.md`
+- Design: `progress/sprint_7/sprint_7_design.md`
+
+---
+
 ### Sprint 6 - Synthetic Data Sets Review
 
 **Status:** implemented
