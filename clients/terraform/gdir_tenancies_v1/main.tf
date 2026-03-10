@@ -25,9 +25,8 @@ locals {
   tenancy_key            = coalesce(var.tenancy_key, local.discovered_tenancy_key)
   region_key             = coalesce(var.region_key, local.active_region)
   _raw                   = jsondecode(data.oci_objectstorage_object.tenancies_v1.content)
-  last_updated_timestamp = try(local._raw.last_updated_timestamp, null)
   schema_version         = try(local._raw.schema_version, null)
-  tenancies              = { for k, v in local._raw : k => v if !(k == "last_updated_timestamp" || k == "schema_version") }
+  tenancies              = { for k, v in local._raw : k => v if !(k == "schema_version") }
 
   tenancy = try(local.tenancies[local.tenancy_key], null)
   realm   = try(local.tenancy.realm, null)

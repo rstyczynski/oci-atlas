@@ -1,5 +1,4 @@
 // Scalars
-output "last_updated_timestamp" { value = local.last_updated_timestamp }
 output "realm_type"             { value = local.realm_type }
 output "realm_name"             { value = local.realm_name }
 output "realm_description"      { value = local.realm_description }

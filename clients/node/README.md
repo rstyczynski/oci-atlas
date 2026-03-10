@@ -83,7 +83,6 @@ Data access function are grouped by return types:
 
 - **Scalars**
   - `getSchemaVersion()` → schema version string.
-  - `getLastUpdatedTimestamp()` → ISO 8601 timestamp.
   - `getRegionShortKey()` → short region key (e.g. `ZRH`).
   - `getRegionRealm()` → realm key (e.g. `oc1`, `tst01`).
 - **Lists**
@@ -103,7 +102,6 @@ Data access function are grouped by return types:
 
 - **Scalars**
   - `getSchemaVersion()`
-  - `getLastUpdatedTimestamp()`
   - `getTenancyRealm()` → tenancy realm.
   - `getProxyUrl()`, `getProxyIp()`, `getProxyPort()`
   - `getProxyNoproxyString()` → comma-separated `NO_PROXY` value.
@@ -131,7 +129,6 @@ Data access function are grouped by return types:
 
 - **Scalars**
   - `getSchemaVersion()`
-  - `getLastUpdatedTimestamp()`
   - `getRealmType()`
   - `getRealmName()`
   - `getRealmDescription()`

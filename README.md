@@ -238,12 +238,11 @@ Test for clients/terraform are not provided.
 
 ### `realms/v1` schema
 
-Top-level keys are realm identifiers (e.g. `oc1`, `tst01`). Metadata fields (`schema_version`, `last_updated_timestamp`) are top-level; DALs strip them from the realm map.
+Top-level keys are realm identifiers (e.g. `oc1`, `tst01`). Metadata field (`schema_version`) is top-level; DALs strip it from the realm map.
 
 ```json
 {
   "schema_version": "1.0.0",
-  "last_updated_timestamp": "<ISO-8601-UTC>",
   "<realm-key>": {
     "type": "public | government | sovereign | drcc | alloy | airgapped",
     "geo-region": "<geo>",
@@ -261,7 +260,6 @@ Top-level keys are region identifiers (e.g. `tst-region-1`). Each entry includes
 ```json
 {
   "schema_version": "1.0.0",
-  "last_updated_timestamp": "<ISO-8601-UTC>",
   "<region-key>": {
     "key": "<short-key>",
     "realm": "<realm-key>",
@@ -281,7 +279,6 @@ Top-level keys are tenancy identifiers (e.g. `demo_corp`). Each tenancy has per-
 ```json
 {
   "schema_version": "1.0.0",
-  "last_updated_timestamp": "<ISO-8601-UTC>",
   "<tenancy-key>": {
     "realm": "<realm-key>",
     "regions": {

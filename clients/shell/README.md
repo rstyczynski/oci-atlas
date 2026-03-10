@@ -92,7 +92,7 @@ Data object is accessible trough helper access functions, that returns:
 
 | Function | Returns | JSON path / expression | Description |
 | --- | --- | --- | --- |
-| `gdir_v2_regions_get_regions` | JSON object | `del(.last_updated_timestamp, .schema_version)` | Full regions map |
+| `gdir_v2_regions_get_regions` | JSON object | `del(.schema_version)` | Full regions map |
 | `gdir_v2_regions_get_region` | JSON object | `.[REGION_KEY]` | Current/selected region object |
 | `gdir_v2_regions_get_realm_regions` | JSON object | `select(.value.realm == current_realm)` | Regions in current realm |
 | `gdir_v2_regions_get_realm_other_regions` | JSON object | `del(.[$self])` over realm regions | Same-realm regions except current |
@@ -102,7 +102,6 @@ SDK level functions
 | Function | Returns | JSON path / expression | Description |
 | --- | --- | --- | --- |
 | `gdir_v2_regions_get_schema_version` | raw scalar (text) | `.schema_version` | Data schema version |
-| `gdir_v2_regions_get_last_updated_timestamp` | raw scalar (text) | `.last_updated_timestamp` | Data timestamp |
 
 ### Tenancies (`gdir_v1_tenancies_*`)
 
@@ -128,7 +127,6 @@ SDK level functions
 | Function | Returns | JSON path / expression | Description |
 | --- | --- | --- | --- |
 | `gdir_v1_tenancies_get_schema_version` | raw scalar (text) | `.schema_version` | Data schema version |
-| `gdir_v1_tenancies_get_last_updated_timestamp` | raw scalar (text) | `.last_updated_timestamp` | Data timestamp |
 
 #### Raw lines (tenancies)
 
@@ -145,7 +143,7 @@ SDK level functions
 
 | Function | Returns | JSON path / expression | Description |
 | --- | --- | --- | --- |
-| `gdir_v1_tenancies_get_tenancies` | JSON object | `del(.last_updated_timestamp, .schema_version)` | Full tenancies map |
+| `gdir_v1_tenancies_get_tenancies` | JSON object | `del(.schema_version)` | Full tenancies map |
 | `gdir_v1_tenancies_get_tenancy` | JSON object | `.[TENANCY_KEY]` | Selected tenancy object (explicit or auto-discovered key) |
 | `gdir_v1_tenancies_get_tenancy_region` | JSON object | `.[TENANCY_KEY].regions[REGION_KEY]` | Selected tenancy region object |
 | `gdir_v1_tenancies_get_tenancy_region_network` | JSON object | `.network` | Region network section |
@@ -172,7 +170,6 @@ SDK level functions
 | Function | Returns | JSON path / expression | Description |
 | --- | --- | --- | --- |
 | `gdir_v1_realms_get_schema_version` | raw scalar (text) | `.schema_version` | Data schema version |
-| `gdir_v1_realms_get_last_updated_timestamp` | raw scalar (text) | `.last_updated_timestamp` | Data timestamp |
 
 #### Raw lines (realms)
 
@@ -184,5 +181,5 @@ SDK level functions
 
 | Function | Returns | JSON path / expression | Description |
 | --- | --- | --- | --- |
-| `gdir_v1_realms_get_realms` | JSON object | `del(.last_updated_timestamp, .schema_version)` | Full realms map |
+| `gdir_v1_realms_get_realms` | JSON object | `del(.schema_version)` | Full realms map |
 | `gdir_v1_realms_get_realm` | JSON object | `.[REALM_KEY]` | Selected realm object |

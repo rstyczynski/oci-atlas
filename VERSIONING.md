@@ -20,11 +20,10 @@ All version numbers follow `MAJOR.MINOR.PATCH` (e.g., `1.2.3`).
 
 ### `schema_version` field
 
-Every JSON data object carries a top-level `schema_version` field alongside `last_updated_timestamp`:
+Every JSON data object carries a top-level `schema_version` field:
 
 ```json
 {
-  "last_updated_timestamp": "2026-02-25T12:00:00Z",
   "schema_version": "1.0.0",
   ...
 }
@@ -32,7 +31,7 @@ Every JSON data object carries a top-level `schema_version` field alongside `las
 
 **Format:** Full semver string `"MAJOR.MINOR.PATCH"` (e.g., `"1.0.0"`, `"2.1.3"`).
 
-**Placement:** Top-level, next to `last_updated_timestamp`. Not inside individual entries.
+**Placement:** Top-level. Not inside individual entries.
 
 **Purpose:** Consumers can detect stale cached data without a separate Object Storage API call. All three parts are meaningful:
 - MAJOR bump signals the consumer must update its code before parsing the object.

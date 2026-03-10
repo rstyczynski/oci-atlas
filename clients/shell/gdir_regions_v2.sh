@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # gdir_regions_v2.sh — v2 regions schema functions for the global directory.
-# Structure: { [regionKey]: { key, realm, network: { public } }, last_updated_timestamp?, schema_version? }
+# Structure: { [regionKey]: { key, realm, network: { public } }, schema_version? }
 # Source this file to get all gdir_v2_regions_* functions.
 
 : "${GDIR_REGIONS_OBJECT:=regions/v2}"
@@ -17,18 +17,12 @@ gdir_v2_regions_get_schema_version() {
   echo "$_GDIR_CACHE" | jq -r '.schema_version // empty'
 }
 
-gdir_v2_regions_get_last_updated_timestamp() {
-  _gdir_regions_v2_set_object
-  _gdir_fetch
-  echo "$_GDIR_CACHE" | jq -r '.last_updated_timestamp // empty'
-}
-
 # ---------- helpers ---------------------------------------------------------
 
 _gdir_v2_regions_get_regions_json() {
   _gdir_regions_v2_set_object
   _gdir_fetch
-  echo "$_GDIR_CACHE" | jq 'del(.last_updated_timestamp, .schema_version)'
+  echo "$_GDIR_CACHE" | jq 'del(.schema_version)'
 }
 
 _gdir_v2_regions_resolved_key() {

@@ -194,10 +194,6 @@
   },
   "description": "OCI tenancy attributes \u2014 realm membership and per-region subscription attributes (network, security, toolchain, observability). Region keys in the regions sub-map must correspond to keys in regions/v2 (enforced by data governance, not schema).",
   "properties": {
-    "last_updated_timestamp": {
-      "description": "ISO 8601 UTC timestamp injected by tf_manager at upload time",
-      "type": "string"
-    },
     "schema_version": {
       "description": "Semver version of this data object, format MAJOR.MINOR.PATCH (e.g. \"1.0.0\")",
       "type": "string"

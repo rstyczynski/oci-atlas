@@ -7,11 +7,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../gdir_realms_v1.sh"
 
-# --- metadata ----------------------------------------------------------------
-echo "=== Data last updated ==="
-_ts=$(gdir_v1_realms_get_last_updated_timestamp)
-echo "${_ts:-(no timestamp — upload via tf_manager to add one)}"
-
 if [[ -n "${REALM_KEY:-}" ]]; then
   # --- single realm ------------------------------------------------------------
   echo ""

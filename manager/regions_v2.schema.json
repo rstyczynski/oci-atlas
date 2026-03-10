@@ -63,10 +63,6 @@
   },
   "description": "OCI physical region attributes \u2014 public network CIDRs only. Tenancy-specific attributes (proxy, vault, toolchain, observability) are in tenancies/v1.",
   "properties": {
-    "last_updated_timestamp": {
-      "description": "ISO 8601 UTC timestamp injected by tf_manager at upload time",
-      "type": "string"
-    },
     "schema_version": {
       "description": "Semver version of this data object, format MAJOR.MINOR.PATCH (e.g. \"1.0.0\")",
       "type": "string"

@@ -44,10 +44,6 @@
   },
   "description": "Realm-level attributes \u2014 type, name, geo-region, API domain",
   "properties": {
-    "last_updated_timestamp": {
-      "description": "ISO 8601 UTC timestamp injected by tf_manager at upload time",
-      "type": "string"
-    },
     "schema_version": {
       "description": "Semver version of this data object, format MAJOR.MINOR.PATCH (e.g. \"1.0.0\")",
       "type": "string"

@@ -31,11 +31,6 @@ export class gdir_realms_v1 extends gdir {
   // Document metadata
   // ---------------------------------------------------------------------------
 
-  /** ISO 8601 timestamp injected by tf_manager at upload time */
-  async getLastUpdatedTimestamp(): Promise<string | undefined> {
-    return this.getDoc().then(d => d["last_updated_timestamp"] as string | undefined);
-  }
-
   /** Semver version of this data object */
   async getSchemaVersion(): Promise<string | undefined> {
     return this.getDoc().then(d => d["schema_version"] as string | undefined);
@@ -48,7 +43,7 @@ export class gdir_realms_v1 extends gdir {
   /** All realms (v1 schema) — metadata fields excluded. */
   async getRealms(): Promise<RealmsMap> {
     const doc = await this.getDoc();
-    const { last_updated_timestamp, schema_version, ...realms } = doc;
+    const { schema_version, ...realms } = doc;
     return realms as RealmsMap;
   }
 

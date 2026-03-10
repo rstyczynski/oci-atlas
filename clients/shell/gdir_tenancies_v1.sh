@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # gdir_tenancies_v1.sh — v1 tenancies schema functions.
-# Structure: { [tenancyKey]: { realm, regions: { [regionKey]: { network, security, toolchain, observability } } }, last_updated_timestamp?, schema_version? }
+# Structure: { [tenancyKey]: { realm, regions: { [regionKey]: { network, security, toolchain, observability } } }, schema_version? }
 
 : "${GDIR_TENANCIES_OBJECT:=tenancies/v1}"
 _gdir_tenancies_v1_set_object() { GDIR_OBJECT="$GDIR_TENANCIES_OBJECT"; }
@@ -17,18 +17,12 @@ gdir_v1_tenancies_get_schema_version() {
   echo "$_GDIR_CACHE" | jq -r '.schema_version // empty'
 }
 
-gdir_v1_tenancies_get_last_updated_timestamp() {
-  _gdir_tenancies_v1_set_object
-  _gdir_fetch
-  echo "$_GDIR_CACHE" | jq -r '.last_updated_timestamp // empty'
-}
-
 # ---------- helpers ---------------------------------------------------------
 
 _gdir_v1_tenancies_get_tenancies_json() {
   _gdir_tenancies_v1_set_object
   _gdir_fetch
-  echo "$_GDIR_CACHE" | jq 'del(.last_updated_timestamp, .schema_version)'
+  echo "$_GDIR_CACHE" | jq 'del(.schema_version)'
 }
 
 _gdir_v1_tenancies_resolved_key() {

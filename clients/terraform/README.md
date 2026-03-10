@@ -150,7 +150,6 @@ In all modules, if a resolved key does not exist in the catalog data, downstream
 
 - Metadata:
   - `schema_version`
-  - `last_updated_timestamp`
 - Catalog:
   - `regions` — full regions map (without metadata).
   - `region_keys` — list of all region keys.
@@ -175,7 +174,6 @@ In all modules, if a resolved key does not exist in the catalog data, downstream
 
 - Metadata:
   - `schema_version`
-  - `last_updated_timestamp`
   - `tenancies` — full tenancies map (without metadata).
   - `tenancy` — selected tenancy object (by `tenancy_key`).
   - `tenancy_realm` — realm of selected tenancy.
@@ -223,7 +221,6 @@ In all modules, if a resolved key does not exist in the catalog data, downstream
 
 - Metadata:
   - `schema_version`
-  - `last_updated_timestamp`
 - Catalog:
   - `realms` — full realms map (without metadata).
   - `realm_keys` — all realm keys.

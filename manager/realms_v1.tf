@@ -11,7 +11,7 @@ resource "oci_objectstorage_object" "v1_realms" {
   bucket       = oci_objectstorage_bucket.info.name
   namespace    = data.oci_objectstorage_namespace.ns.namespace
   object       = "realms/v1"
-  content      = jsonencode(merge(jsondecode(file("${path.module}/realms_v1.json")), { last_updated_timestamp = timestamp() }))
+  content      = file("${path.module}/realms_v1.json")
   content_type = "application/json"
 
   depends_on = [data.external.validate_realms_v1]

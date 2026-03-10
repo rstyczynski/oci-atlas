@@ -14,7 +14,6 @@ module "gdir_realms_v1" {
 
 locals {
   realm_key              = local.effective_realm_key
-  last_updated_timestamp = module.gdir_realms_v1.last_updated_timestamp
   realm_type             = module.gdir_realms_v1.realm_type
   realm_name             = module.gdir_realms_v1.realm_name
   realm_description      = module.gdir_realms_v1.realm_description

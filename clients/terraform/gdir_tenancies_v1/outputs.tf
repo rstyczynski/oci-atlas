@@ -1,5 +1,4 @@
 // Scalars
-output "last_updated_timestamp" { value = local.last_updated_timestamp }
 output "schema_version"         { value = local.schema_version }
 output "tenancy_key"            { value = local.tenancy_key }
 output "region_key"             { value = local.region_key }

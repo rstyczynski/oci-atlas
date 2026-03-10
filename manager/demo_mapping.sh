@@ -73,19 +73,16 @@ if [[ "${GDIR_DEMO_MODE:-}" == "true" ]]; then
   # --- Build live.json: real tenancy key + real region key → template region data ---
   schema_version="$(jq -r '.schema_version' "$SOURCE_FILE")"
   demo_corp_data="$(jq '.demo_corp // null' "$SOURCE_FILE")"
-  now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
   jq -n \
     --arg sv         "$schema_version" \
-    --arg ts         "$now" \
     --arg tenant_key "$real_tenancy_key" \
     --arg realm      "$_realm" \
     --arg region_key "$real_region_key" \
     --argjson region_data "$_tmpl_region_data" \
     --argjson demo_corp "$demo_corp_data" \
     '{
-      schema_version:          $sv,
-      last_updated_timestamp:  $ts,
+      schema_version: $sv,
       ($tenant_key): {
         realm:   $realm,
         regions: { ($region_key): $region_data }

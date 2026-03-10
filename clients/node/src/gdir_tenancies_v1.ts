@@ -78,11 +78,6 @@ export class gdir_tenancies_v1 extends gdir {
   // Document metadata
   // ---------------------------------------------------------------------------
 
-  /** ISO 8601 timestamp injected by tf_manager at upload time */
-  async getLastUpdatedTimestamp(): Promise<string | undefined> {
-    return this.getDoc().then(d => d["last_updated_timestamp"] as string | undefined);
-  }
-
   /** Semver version of this data object */
   async getSchemaVersion(): Promise<string | undefined> {
     return this.getDoc().then(d => d["schema_version"] as string | undefined);
@@ -95,7 +90,7 @@ export class gdir_tenancies_v1 extends gdir {
   /** All tenancies — metadata fields excluded */
   async getTenancies(): Promise<TenanciesMap> {
     const doc = await this.getDoc();
-    const { last_updated_timestamp, schema_version, ...tenancies } = doc;
+    const { schema_version, ...tenancies } = doc;
     return tenancies as TenanciesMap;
   }
 

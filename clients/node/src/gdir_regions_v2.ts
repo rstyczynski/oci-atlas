@@ -25,11 +25,6 @@ export class gdir_regions_v2 extends gdir {
   // Document metadata
   // ---------------------------------------------------------------------------
 
-  /** ISO 8601 timestamp injected by tf_manager at upload time */
-  async getLastUpdatedTimestamp(): Promise<string | undefined> {
-    return this.getDoc().then(d => d["last_updated_timestamp"] as string | undefined);
-  }
-
   /** Semver version of this data object */
   async getSchemaVersion(): Promise<string | undefined> {
     return this.getDoc().then(d => d["schema_version"] as string | undefined);
@@ -42,7 +37,7 @@ export class gdir_regions_v2 extends gdir {
   /** All regions (v2 schema) — metadata fields excluded. */
   async getRegions(): Promise<RegionsV2Map> {
     const doc = await this.getDoc();
-    const { last_updated_timestamp, schema_version, ...regions } = doc;
+    const { schema_version, ...regions } = doc;
     return regions as RegionsV2Map;
   }
 

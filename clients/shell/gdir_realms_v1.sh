@@ -16,12 +16,6 @@ source "$SCRIPT_DIR/gdir.sh"
 
 # ---------- public API realms/v1 ---------------------------------------------
 
-# ISO 8601 timestamp injected by manager at upload time
-gdir_v1_realms_get_last_updated_timestamp() {
-  _gdir_fetch
-  echo "$_GDIR_CACHE" | jq -r '.last_updated_timestamp // empty'
-}
-
 # Semver version of this data object
 gdir_v1_realms_get_schema_version() {
   _gdir_fetch
@@ -31,13 +25,13 @@ gdir_v1_realms_get_schema_version() {
 # All realms (pretty JSON), metadata fields excluded
 gdir_v1_realms_get_realms() {
   _gdir_fetch
-  echo "$_GDIR_CACHE" | jq 'del(.last_updated_timestamp, .schema_version)'
+  echo "$_GDIR_CACHE" | jq 'del(.schema_version)'
 }
 
 # List of realm keys (metadata keys excluded)
 gdir_v1_realms_get_realm_keys() {
   _gdir_fetch
-  echo "$_GDIR_CACHE" | jq -r 'keys[] | select(. != "last_updated_timestamp" and . != "schema_version")'
+  echo "$_GDIR_CACHE" | jq -r 'keys[] | select(. != "schema_version")'
 }
 
 # Full realm object for REALM_KEY

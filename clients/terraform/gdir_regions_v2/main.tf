@@ -15,9 +15,8 @@ locals {
   active_region          = try(split(".", data.oci_objectstorage_bucket.info.bucket_id)[3], null)
   region_key             = coalesce(var.region_key, local.active_region)
   _raw                   = jsondecode(data.oci_objectstorage_object.regions_v2.content)
-  last_updated_timestamp = try(local._raw.last_updated_timestamp, null)
   schema_version         = try(local._raw.schema_version, null)
-  regions                = { for k, v in local._raw : k => v if !(k == "last_updated_timestamp" || k == "schema_version") }
+  regions                = { for k, v in local._raw : k => v if !(k == "schema_version") }
 
   region = try(local.regions[local.region_key], null)
   realm = try(local.region.realm, null)

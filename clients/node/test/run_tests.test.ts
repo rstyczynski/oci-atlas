@@ -52,10 +52,6 @@ describe("regions/v2", () => {
 
   // --- document metadata ---------------------------------------------------
 
-  it("getLastUpdatedTimestamp — returns timestamp", async () => {
-    expect(await client.getLastUpdatedTimestamp()).toBe("2026-02-25T12:00:00Z");
-  });
-
   it("getSchemaVersion — returns 1.0.0", async () => {
     expect(await client.getSchemaVersion()).toBe("1.0.0");
   });
@@ -143,10 +139,6 @@ describe("tenancies/v1", () => {
   const client      = new MockTenancies({ tenancyKey: TENANCY_KEY, regionKey: REGION_KEY });
 
   // --- document metadata ---------------------------------------------------
-
-  it("getLastUpdatedTimestamp — returns timestamp", async () => {
-    expect(await client.getLastUpdatedTimestamp()).toBe("2026-03-03T12:00:00Z");
-  });
 
   it("getSchemaVersion — returns 1.0.0", async () => {
     expect(await client.getSchemaVersion()).toBe("1.0.0");
@@ -301,10 +293,6 @@ describe("tenancies/v1", () => {
 
 describe("realms/v1", () => {
   const client = new MockRealms({ realmKey: "oc1" });
-
-  it("getLastUpdatedTimestamp — returns timestamp", async () => {
-    expect(await client.getLastUpdatedTimestamp()).toBe("2026-02-25T12:00:00Z");
-  });
 
   it("getSchemaVersion — returns 1.0.0", async () => {
     expect(await client.getSchemaVersion()).toBe("1.0.0");

@@ -1,6 +1,5 @@
 // Scalars
 output "schema_version"         { value = local.schema_version }
-output "last_updated_timestamp" { value = local.last_updated_timestamp }
 output "region_short_key"       { value = local.region_short_key }
 
 // Lists (HCL list(string))
