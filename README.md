@@ -10,6 +10,8 @@ Global Directory provides a catalog of OCI realm, region, and tenancy attributes
 
 The JSON data is available in this Git repository and in an OCI Object Storage bucket. To simplify lookups, Global Directory provides Data Access Layer (DAL) clients for Shell (CLI), Node.js, Terraform, and Ansible. You can either consume raw JSON directly or use the client libraries.
 
+![Global Directory architecture](models/model-CA%20TF%20no.3%200.2.svg)
+
 In practice, Global Directory is a managed equivalent of `jq data.json`: the data is centralized, schema-validated before upload, versioned, and exposed through client APIs instead of ad-hoc one-off queries.
 
 ## Contents
