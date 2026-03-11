@@ -187,9 +187,24 @@ Terraform client by default uses `gdir_info` bucket to get data. To make even si
 
 Exemplary code implements the same as other exemplary DAL programs.
 
-Manager takes one more responsibility to maintain outputs, which in fact are copy of terraform's DAL logic. It should be implemented reusing DAL or combining terraform client with manager. Should be analyzed.
+Manager takes one more responsibility to maintain outputs, which in fact are copy of terraform's DAL logic. It should be implemented reusing DAL or combining terraform client with manager. Major version must be embedded in output's name - the same schema as for CLI client. Should be analyzed.
 
 ### GD-18. Remove last_updated_timestamp field
 
 Remove `last_updated_timestamp` field from data, schema. Update manager, client, all docs. Perform tests.
 
+### GD-19. Detect updated data file change according to semantic versioning rules
+
+Manager detects data file change:
+
+1. major - interface change braking current contract i.e. current clients will be not able to use the data
+2. minor - data extended i a way that access to new fields requires new interface version, but old data may be accesses with older versions
+3. patch - fixed errors in data. Current interfaces gets correct data after the fix
+
+### GD-20. Add realm, tenancy, region level custom TLS CA
+
+Answer question how custom CA are created? Per geographical region? Per OCI region? Add proper data fields.
+
+Discover other custom CA? Decide where to place certificates.
+
+### GD-21. Data access functions are prefixed by schema version in all clients
