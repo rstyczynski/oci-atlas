@@ -59,7 +59,7 @@ cd manager
 GDIR_DEMO_MODE=true bash demo_mapping.sh
 terraform init
 terraform apply -auto-approve
-rm -f manager/tenancies_v1.demo.json
+rm -f tenancies_v1.demo.json
 cd ..
 ```
 
